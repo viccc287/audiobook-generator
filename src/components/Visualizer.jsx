@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Image from './Image.jsx';
 import EditableText from './EditableText.jsx';
 
-export default function Visualizer({ withTemplate }) {
+export default function Visualizer({withTemplate}) {
 
 	const titleClass = 'font-jakarta text-4xl font-bold'
 	const subtitleClass = 'font-poppins text-2xl'

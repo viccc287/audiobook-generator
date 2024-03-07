@@ -1,7 +1,7 @@
 import IndividualPanel from './IndividualPanel';
 import { useGlobalContext } from '../contexts/GlobalContext';
 
-function EditableText({ textStyles, index }) {
+function EditableText({ textStyles, elementIndex, pageIndex }) {
 	const { state, dispatch } = useGlobalContext();
 
 	const handleTextChange = e => {

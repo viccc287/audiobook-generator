@@ -4,49 +4,47 @@ import React, { createContext, useContext, useReducer } from 'react';
 const GlobalContext = createContext();
 
 const initialState = {
-  images: {},
-  text: {
-    0: 'Tito el jaguar',
-    1: 'Tito es un jaguar aventurero y amigable que ama explorar y descubrir cosas nuevas. Con su ayuda, podrás aprender habilidades importantes para ser un aventurero valiente y seguro de ti mismo. Te invita a unirte a él en sus emocionantes aventuras llenas de juegos y actividades divertidas. ¡Tito es el compañero perfecto para Tribunales Amigables!'
-  },
-  audios: {},
-  isLoading: {},
+  pages: [
+    {
+      images: {},
+      text: {
+        0: 'Tito el jaguar',
+        1: 'Tito es un jaguar aventurero y amigable que ama explorar y descubrir cosas nuevas. Con su ayuda, podrás aprender habilidades importantes para ser un aventurero valiente y seguro de ti mismo. Te invita a unirte a él en sus emocionantes aventuras llenas de juegos y actividades divertidas. ¡Tito es el compañero perfecto para Tribunales Amigables!'
+      },
+      audios: {},
+      isLoading: {},
+    }
+  ]
 };
 
 function globalReducer(state, action) {
+  const { pageIndex, elementIndex, payload } = action;
+  const updatedPage = { ...state.pages[pageIndex] };
+
   switch (action.type) {
     case 'SET_IMAGE':
+      updatedPage.images[elementIndex] = payload.image;
       return {
         ...state,
-        images: {
-          ...state.images,
-          [action.payload.index]: action.payload.image,
-        },
+        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
       };
     case 'SET_TEXT':
-      console.log(state)
-        return {
-          ...state,
-          text: {
-            ...state.text,
-            [action.payload.index]: action.payload.text,
-          },
-        };
-    case 'SET_AUDIO':
+      updatedPage.text[elementIndex] = payload.text;
       return {
         ...state,
-        audios: {
-          ...state.audios,
-          [action.payload.index]: action.payload.audio,
-        },
+        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
+      };
+    case 'SET_AUDIO':
+      updatedPage.audios[elementIndex] = payload.audio;
+      return {
+        ...state,
+        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
       };
     case 'SET_LOADING':
+      updatedPage.isLoading[elementIndex] = payload.isLoading;
       return {
         ...state,
-        isLoading: {
-          ...state.isLoading,
-          [action.payload.index]: action.payload.isLoading,
-        },
+        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
       };
     default:
       return state;
