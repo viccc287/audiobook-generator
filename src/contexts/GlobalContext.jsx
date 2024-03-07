@@ -19,7 +19,22 @@ const initialState = {
 
 function globalReducer(state, action) {
   const { type, payload } = action;
+  
   switch (type) {
+    case 'ADD_PAGE':
+      return {
+        ...state,
+        pages: [...pages, {
+          images: {},
+          text: {
+            0: 'Editar título',
+            1: 'Editar texto'
+          },
+          audios: {},
+          isLoading: {},
+        }]
+        
+      };
     case 'SET_IMAGE':
       return {
         ...state,
