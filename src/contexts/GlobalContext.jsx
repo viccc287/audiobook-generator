@@ -18,38 +18,77 @@ const initialState = {
 };
 
 function globalReducer(state, action) {
-  const { pageIndex, elementIndex, payload } = action;
-  const updatedPage = { ...state.pages[pageIndex] };
-
-  switch (action.type) {
+  const { type, payload } = action;
+  switch (type) {
     case 'SET_IMAGE':
-      updatedPage.images[elementIndex] = payload.image;
       return {
         ...state,
-        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
+        pages: state.pages.map((page, i) => {
+          if (i === payload.pageIndex) {
+            return {
+              ...page,
+              images: {
+                ...page.images,
+                [payload.elementIndex]: payload.image,
+              }
+            }
+          }
+          return page;
+        })
       };
     case 'SET_TEXT':
-      updatedPage.text[elementIndex] = payload.text;
       return {
         ...state,
-        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
+        pages: state.pages.map((page, i) => {
+          if (i === payload.pageIndex) {
+            return {
+              ...page,
+              text: {
+                ...page.text,
+                [payload.elementIndex]: payload.text,
+              }
+            }
+          }
+          return page;
+        })
       };
     case 'SET_AUDIO':
-      updatedPage.audios[elementIndex] = payload.audio;
       return {
         ...state,
-        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
+        pages: state.pages.map((page, i) => {
+          if (i === payload.pageIndex) {
+            return {
+              ...page,
+              audios: {
+                ...page.audios,
+                [payload.elementIndex]: payload.audio,
+              }
+            }
+          }
+          return page;
+        })
       };
     case 'SET_LOADING':
-      updatedPage.isLoading[elementIndex] = payload.isLoading;
-      return {
+      return console.log(payload.isLoading),{
         ...state,
-        pages: state.pages.map((page, i) => (i === pageIndex ? updatedPage : page))
+        pages: state.pages.map((page, i) => {
+          if (i === payload.pageIndex) {
+            return {
+              ...page,
+              isLoading: {
+                ...page.isLoading,
+                [payload.elementIndex]: payload.isLoading,
+              }
+            }
+          }
+          return page;
+        })
       };
     default:
       return state;
   }
 }
+
 
 export function GlobalProvider({ children }) {
   const [state, dispatch] = useReducer(globalReducer, initialState);

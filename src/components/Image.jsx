@@ -1,16 +1,23 @@
-import React, { useRef, useContext } from 'react';
+import { useRef } from 'react';
 import { PhotoIcon } from '@heroicons/react/16/solid';
 import { useGlobalContext } from '../contexts/GlobalContext';
 
-function Image({ width, height, index }) {
+function Image({ width, height, pageIndex, elementIndex }) {
 	const { state, dispatch } = useGlobalContext();
 	const fileInputRef = useRef(null);
+
+	const currentPage = state.pages[pageIndex];
+
 
 	const handleImageChange = e => {
 		const file = e.target.files[0];
 		dispatch({
 			type: 'SET_IMAGE',
-			payload: { index: index, image: URL.createObjectURL(file) },
+			payload: {
+				pageIndex: pageIndex,
+				elementIndex: elementIndex,
+				image: URL.createObjectURL(file),
+			},
 		});
 	};
 
@@ -23,7 +30,11 @@ function Image({ width, height, index }) {
 		const file = e.dataTransfer.files[0];
 		dispatch({
 			type: 'SET_IMAGE',
-			payload: { index: index, image: URL.createObjectURL(file) },
+			payload: {
+				pageIndex: pageIndex,
+				elementIndex: elementIndex,
+				image: URL.createObjectURL(file),
+			},
 		});
 	};
 
@@ -35,7 +46,9 @@ function Image({ width, height, index }) {
 	return (
 		<label
 			className={`flex aspect-video h-${height} w-${width} cursor-pointer justify-center ${
-				state.images[index] ? '' : 'border-4 border-dashed border-white/50'
+				currentPage.images[elementIndex]
+					? ''
+					: 'border-4 border-dashed border-white/50'
 			}`}
 			onDragOver={handleDragOver}
 			onDrop={handleDrop}
@@ -47,10 +60,10 @@ function Image({ width, height, index }) {
 				type='file'
 				onChange={handleImageChange}
 			/>
-			{state.images[index] ? (
+			{currentPage.images[elementIndex] ? (
 				<img
 					className='size-full object-cover'
-					src={state.images[index]}
+					src={currentPage.images[elementIndex]}
 					alt='Preview'
 					width='200'
 				/>

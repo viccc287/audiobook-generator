@@ -3,7 +3,6 @@ import {
 	PlayIcon,
 	PauseIcon,
 	ArrowDownTrayIcon,
-	XCircleIcon,
 } from '@heroicons/react/16/solid';
 
 function CustomAudioPlayer({ audioUrl}) {

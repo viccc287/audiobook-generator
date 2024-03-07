@@ -3,12 +3,15 @@ import { useGlobalContext } from '../contexts/GlobalContext';
 
 function EditableText({ textStyles, elementIndex, pageIndex }) {
 	const { state, dispatch } = useGlobalContext();
+	
+	const currentPage = state.pages[pageIndex]
 
 	const handleTextChange = e => {
 		dispatch({
 			type: 'SET_TEXT',
 			payload: {
-				index: index,
+				pageIndex: pageIndex,
+				elementIndex: elementIndex,
 				text: e.target.textContent,
 			},
 		});
@@ -21,9 +24,9 @@ function EditableText({ textStyles, elementIndex, pageIndex }) {
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
 			>
-				{state.text[index]}
+				{currentPage.text[elementIndex]}
 			</p>
-			<IndividualPanel textToSend={state.text[index]} index={index} />
+			<IndividualPanel textToSend={currentPage.text[elementIndex]}pageIndex={pageIndex} elementIndex={elementIndex} />
 		</div>
 	);
 }

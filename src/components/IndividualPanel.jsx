@@ -8,9 +8,10 @@ import CustomAudioPlayer from './CustomAudioPlayer';
 import { useState, useRef } from 'react';
 import { useGlobalContext } from '../contexts/GlobalContext';
 
-function IndividualPanel({ textToSend, index }) {
+function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 	const [panelStates, setPanelStates] = useState({ error: false, displayText: '' });
 	const { state, dispatch } = useGlobalContext();
+	const currentPage = state.pages[pageIndex];
 
 	const fileInputRef = useRef(null);
 
@@ -19,11 +20,12 @@ function IndividualPanel({ textToSend, index }) {
 		if (fileInputRef.current.files.length > 0) {
 			const fileUrl = URL.createObjectURL(fileInputRef.current.files[0]);
 			dispatch({
-				type: 'SET_AUDIO', // Utilizar el tipo correcto para establecer el audio en el contexto
+				type: 'SET_AUDIO',
 				payload: {
-					index: index,
+					pageIndex: pageIndex,
+					elementIndex: elementIndex,
 					audio: <CustomAudioPlayer audioUrl={fileUrl} />,
-				}, // Utilizar payload con el formato correcto
+				}, 
 			});
 			setPanelStates({
 				...panelStates,
@@ -35,18 +37,22 @@ function IndividualPanel({ textToSend, index }) {
 	const handleFetch = e => {
 		e.preventDefault();
 		dispatch({
-			type: 'SET_LOADING',
-			payload: { index: index, isLoading: true },
-		});
+				type: 'SET_LOADING',
+				payload: {
+					pageIndex: pageIndex,
+					elementIndex: elementIndex,
+					isLoading: true,
+				}, 
+			});
 		const options = {
 			method: 'POST',
 			headers: {
-				'xi-api-key': '3d2b2175bdc519bcd217fd8508ea578b',
+				'xi-api-key': 'a9b66f7a96e4a716848db53e77ac3b9f',
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
 				model_id: 'eleven_multilingual_v2',
-				displayText: textToSend,
+				text: textToSend,
 				voice_settings: {
 					similarity_boost: 1,
 					stability: 1,
@@ -55,7 +61,7 @@ function IndividualPanel({ textToSend, index }) {
 		};
 
 		fetch(
-			'https://api.elevenlabs.io/v1/displayText-to-speech/21m00Tcm4TlvDq8ikWAM',
+			'https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM',
 			options,
 		)
 			.then(response => {
@@ -78,13 +84,18 @@ function IndividualPanel({ textToSend, index }) {
 				dispatch({
 					type: 'SET_AUDIO',
 					payload: {
-						index: index,
+						pageIndex: pageIndex,
+						elementIndex: elementIndex,
 						audio: <CustomAudioPlayer audioUrl={url} />,
-					},
+					}, 
 				});
 				dispatch({
 					type: 'SET_LOADING',
-					payload: { index: index, isLoading: true },
+					payload: {
+						pageIndex: pageIndex,
+						elementIndex: elementIndex,
+						isLoading: false,
+					}, 
 				});
 				setPanelStates({
 					...panelStates,
@@ -101,7 +112,11 @@ function IndividualPanel({ textToSend, index }) {
 				const oldDisplayText = panelStates.displayText;
 				dispatch({
 					type: 'SET_LOADING',
-					payload: { index: index, isLoading: false },
+					payload: {
+						pageIndex: pageIndex,
+						elementIndex: elementIndex,
+						isLoading: false,
+					}, 
 				});
 				console.error(err);
 
@@ -118,7 +133,7 @@ function IndividualPanel({ textToSend, index }) {
 	return (
 		<div className='pointer-events-none absolute left-0 top-0 flex size-full items-end justify-end'>
 			<div className='pointer-events-auto flex size-fit h-10 items-center justify-center gap-1 bg-white p-2'>
-				{state.isLoading[index] ? (
+				{currentPage.isLoading[elementIndex] ? (
 					<ArrowPathIcon className='h-full animate-spin text-black' />
 				) : panelStates.error ? (
 					<ExclamationCircleIcon className='h-full text-red-500 transition duration-200 hover:scale-110' />
@@ -139,8 +154,8 @@ function IndividualPanel({ textToSend, index }) {
 					className='hidden'
 					onChange={handleFileUpload}
 				/>
-				{state.audios[index]}
-				<p className='displayText-xs'>{panelStates.displayText}</p>
+				{currentPage.audios[elementIndex]}
+				<p className='text-xs'>{panelStates.displayText}</p>
 			</div>
 		</div>
 	);
