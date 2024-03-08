@@ -3,8 +3,6 @@ import { useGlobalContext } from '../contexts/GlobalContext';
 
 import {
 	PlusCircleIcon,
-	TrashIcon,
-	XCircleIcon,
 	XMarkIcon,
 } from '@heroicons/react/16/solid';
 
@@ -46,9 +44,15 @@ export default function PageNavigation({
 	};
 
 	const currentPages = state.pages.map((_, index) => {
+
+		let classString = 'hover:ring flex items-center transition duration-150 justify-center overflow-clip rounded-lg bg-white font-jakarta font-bold text-black hover:ring-white'
+
+		index === currentDisplayedPageIndex ?  classString = classString.replace('bg-white','bg-slate-700 text-white ring ring-black ') : ''
+
 		return (
 			<div
-				className={`hover:ring flex items-center transition duration-150 justify-center overflow-clip rounded-lg bg-white font-jakarta font-bold text-black hover:ring-white ${index === currentDisplayedPageIndex ? ' bg-slate-700 text-white ring ring-black' : ''}`}
+				key={index}
+				className={classString}
 			>
 				<button
 					key={index}
