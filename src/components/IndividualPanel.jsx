@@ -6,27 +6,29 @@ import {
 } from '@heroicons/react/16/solid';
 import CustomAudioPlayer from './CustomAudioPlayer';
 import { useState, useRef } from 'react';
-import { useGlobalContext } from '../contexts/GlobalContext';
 
-function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
-	const [panelStates, setPanelStates] = useState({ error: false, displayText: '' });
-	const { state, dispatch } = useGlobalContext();
-	const currentPage = state.pages[pageIndex];
+import { pageReducer } from '../lib/pageReducer';
+
+function IndividualPanel({
+	textToSend,
+	pages,
+	setPageContent,
+	displayedPageIndex,
+	elementKey,
+}) {
+	const [panelStates, setPanelStates] = useState({
+		error: false,
+		displayText: '',
+	});
+	const currentPage = pages[displayedPageIndex];
 
 	const fileInputRef = useRef(null);
 
 	const handleFileUpload = e => {
 		e.preventDefault();
 		if (fileInputRef.current.files.length > 0) {
-			const fileUrl = URL.createObjectURL(fileInputRef.current.files[0]);
-			dispatch({
-				type: 'SET_AUDIO',
-				payload: {
-					pageIndex: pageIndex,
-					elementIndex: elementIndex,
-					audio: <CustomAudioPlayer audioUrl={fileUrl} />,
-				}, 
-			});
+			const url = URL.createObjectURL(fileInputRef.current.files[0]);
+			setAudio(url);
 			setPanelStates({
 				...panelStates,
 				displayText: fileInputRef.current.files[0].name,
@@ -34,16 +36,24 @@ function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 		}
 	};
 
+	const loading = value => {
+		pageReducer(pages, setPageContent, 'SET_LOADING', {
+			pageIndex: displayedPageIndex,
+			elementKey: elementKey,
+			loading: value,
+		});
+	};
+	const setAudio = url => {
+		pageReducer(pages, setPageContent, 'SET_AUDIO', {
+			pageIndex: displayedPageIndex,
+			elementKey: elementKey,
+			audio: <CustomAudioPlayer audioUrl={url} />,
+		});
+	};
+
 	const handleFetch = e => {
 		e.preventDefault();
-		dispatch({
-				type: 'SET_LOADING',
-				payload: {
-					pageIndex: pageIndex,
-					elementIndex: elementIndex,
-					isLoading: true,
-				}, 
-			});
+		loading(true);
 		const options = {
 			method: 'POST',
 			headers: {
@@ -81,22 +91,8 @@ function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 			})
 			.then(blob => {
 				const url = window.URL.createObjectURL(blob);
-				dispatch({
-					type: 'SET_AUDIO',
-					payload: {
-						pageIndex: pageIndex,
-						elementIndex: elementIndex,
-						audio: <CustomAudioPlayer audioUrl={url} />,
-					}, 
-				});
-				dispatch({
-					type: 'SET_LOADING',
-					payload: {
-						pageIndex: pageIndex,
-						elementIndex: elementIndex,
-						isLoading: false,
-					}, 
-				});
+				setAudio(url);
+				loading(false);
 				setPanelStates({
 					...panelStates,
 					error: false,
@@ -110,14 +106,7 @@ function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 					displayText: 'Error con la API',
 				});
 				const oldDisplayText = panelStates.displayText;
-				dispatch({
-					type: 'SET_LOADING',
-					payload: {
-						pageIndex: pageIndex,
-						elementIndex: elementIndex,
-						isLoading: false,
-					}, 
-				});
+				loading(false);
 				console.error(err);
 
 				setTimeout(() => {
@@ -133,7 +122,7 @@ function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 	return (
 		<div className='pointer-events-none absolute left-0 top-0 flex size-full items-end justify-end'>
 			<div className='pointer-events-auto flex size-fit h-10 items-center justify-center gap-1 bg-white p-2'>
-				{currentPage.isLoading[elementIndex] ? (
+				{currentPage.loading[elementKey] ? (
 					<ArrowPathIcon className='h-full animate-spin text-black' />
 				) : panelStates.error ? (
 					<ExclamationCircleIcon className='h-full text-red-500 transition duration-200 hover:scale-110' />
@@ -154,7 +143,7 @@ function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 					className='hidden'
 					onChange={handleFileUpload}
 				/>
-				{currentPage.audios[elementIndex]}
+				{currentPage.audios[elementKey]}
 				<p className='text-xs'>{panelStates.displayText}</p>
 			</div>
 		</div>

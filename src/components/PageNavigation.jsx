@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { useGlobalContext } from '../contexts/GlobalContext';
 
 import {
@@ -45,7 +44,7 @@ export default function PageNavigation({
 
 	const currentPages = state.pages.map((_, index) => {
 
-		let classString = 'hover:ring flex items-center transition duration-150 justify-center overflow-clip rounded-lg bg-white font-jakarta font-bold text-black hover:ring-white'
+		let classString = 'hover:ring flex items-center transition duration-150 justify-center overflow-clip rounded-lg bg-white font-inter font-bold text-black hover:ring-white'
 
 		index === currentDisplayedPageIndex ?  classString = classString.replace('bg-white','bg-slate-700 text-white ring ring-black ') : ''
 
@@ -82,7 +81,7 @@ export default function PageNavigation({
 				}}
 				className='aspect-video rounded-lg bg-white/20 p-2 text-sm text-white/40 transition duration-200 hover:ring hover:ring-white/50'
             />
-            <span className='w-full text-center font-jamarta text-2xl font-bold'>
+            <span className='w-full text-center font-inter text-2xl font-bold'>
                 {currentDisplayedPageIndex+1} / {state.pages.length}
             </span>
 		</>

@@ -4,8 +4,9 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-        jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
-        poppins: ["Poppins", "sans-serif"],
+				jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+				inter: ['Inter', 'sans-serif'],
+				poppins: ['Poppins', 'sans-serif'],
 			},
 		},
 	},
