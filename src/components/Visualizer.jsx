@@ -12,13 +12,13 @@ export default function Visualizer({ withTemplate, pageIndex }) {
 				<EditableText
 					textStyles={titleClass}
 					pageIndex={pageIndex}
-					elementIndex={0}
+					elementKey={'title'}
 				/>
 
 				<EditableText
 					textStyles={subtitleClass}
 					pageIndex={pageIndex}
-					elementIndex={1}
+					elementIndex={'subtitle'}
 				/>
 			</>
 		),
@@ -27,7 +27,7 @@ export default function Visualizer({ withTemplate, pageIndex }) {
 				<EditableText
 					textStyles={titleClass}
 					pageIndex={pageIndex}
-					elementIndex={0}
+					elementIndex={'title'}
 				/>
 				<Image
 					width='full'

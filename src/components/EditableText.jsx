@@ -1,20 +1,17 @@
-import IndividualPanel from './IndividualPanel';
-import { displayedPageIndexAtom, pagesAtom } from '../lib/atoms.jsx';
-import { useAtom, useAtomValue } from 'jotai';
-import { pageReducer } from '../lib/pageReducer.jsx';
+
+import {
+	currentPageTextAtom,
+} from '../lib/atoms.jsx';
+import { useAtom } from 'jotai';
+import IndividualPanel from '../components/IndividualPanel.jsx'
+
 
 function EditableText({ textStyles, elementKey }) {
-	const displayedPageIndex = useAtomValue(displayedPageIndexAtom);
-	const [pages, setPages] = useAtom(pagesAtom);
 
-	const currentPage = pages[displayedPageIndex];
+	const [text, setText] = useAtom(currentPageTextAtom);
 
 	const handleTextChange = e => {
-		pageReducer(pages, setPages, 'SET_TEXT', {
-			pageIndex: displayedPageIndex,
-			elementKey: elementKey,
-			text: e.target.textContent
-		} )
+		setText({...text, [elementKey]:e.target.textContent})
 	};
 	return (
 		<div className='relative w-full max-w-full rounded bg-white/5'>
@@ -24,15 +21,12 @@ function EditableText({ textStyles, elementKey }) {
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
 			>
-				{currentPage.text[elementKey]}
+				{text[elementKey]}
 			</p>
-			 <IndividualPanel
-				textToSend={currentPage.text[elementKey]}
-				pages={pages}
-				setPageContent={setPages}
-				displayedPageIndex={displayedPageIndex}
+		{<IndividualPanel
+				textToSend={text[elementKey]}
 				elementKey={elementKey}
-			/> 
+			/> }
 		</div>
 	);
 }

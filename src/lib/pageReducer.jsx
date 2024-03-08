@@ -49,6 +49,7 @@ export function pageReducer(pages, setPages, type, payload) {
                 }),
             );
         case 'SET_AUDIO':
+            console.log('--- PAYLOAD EN REDUCER: ', payload)
 			return setPages(
 				pages.map((page, i) => {
 					if (i === payload.pageIndex) {
@@ -70,7 +71,7 @@ export function pageReducer(pages, setPages, type, payload) {
 							...page,
 							loading: {
 								...page.loading,
-								[payload.elementKey]: payload.loadingState,
+								[payload.elementKey]: payload.loading,
 							},
 						};
 					} else return page;

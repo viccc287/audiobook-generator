@@ -1,24 +1,28 @@
 import { useRef } from 'react';
 import { PhotoIcon } from '@heroicons/react/16/solid';
-import { useGlobalContext } from '../contexts/GlobalContext';
+import { pageReducer } from '../lib/pageReducer';
+import { pagesAtom, displayedPageIndexAtom } from '../lib/atoms';
+import { useAtom, useAtomValue } from 'jotai';
 
-function Image({ width, height, pageIndex, elementIndex }) {
-	const { state, dispatch } = useGlobalContext();
+function Image({ width, height, elementKey }) {
 	const fileInputRef = useRef(null);
 
-	const currentPage = state.pages[pageIndex];
+	const [pages, setPages] = useAtom(pagesAtom);
+	const displayedPageIndex = useAtomValue(displayedPageIndexAtom);
 
+	const currentPage = pages[displayedPageIndex];
+
+	const setImage = file => {
+		pageReducer(pages, setPages, 'SET_IMAGE', {
+			pageIndex: displayedPageIndex,
+			elementKey: elementKey,
+			image: URL.createObjectURL(file),
+		});
+	};
 
 	const handleImageChange = e => {
 		const file = e.target.files[0];
-		dispatch({
-			type: 'SET_IMAGE',
-			payload: {
-				pageIndex: pageIndex,
-				elementIndex: elementIndex,
-				image: URL.createObjectURL(file),
-			},
-		});
+		setImage(file);
 	};
 
 	const handleDragOver = e => {
@@ -28,17 +32,10 @@ function Image({ width, height, pageIndex, elementIndex }) {
 	const handleDrop = e => {
 		e.preventDefault();
 		const file = e.dataTransfer.files[0];
-		dispatch({
-			type: 'SET_IMAGE',
-			payload: {
-				pageIndex: pageIndex,
-				elementIndex: elementIndex,
-				image: URL.createObjectURL(file),
-			},
-		});
+		setImage(file);
 	};
 
-	const handleClick = () => {
+	const handleClick = e => {
 		e.stopPropagation();
 		fileInputRef.current.click();
 	};
@@ -46,7 +43,7 @@ function Image({ width, height, pageIndex, elementIndex }) {
 	return (
 		<label
 			className={`flex h-${height} w-${width} cursor-pointer justify-center ${
-				currentPage.images[elementIndex]
+				currentPage.images[elementKey]
 					? ''
 					: 'border-4 border-dashed border-white/50'
 			}`}
@@ -60,10 +57,10 @@ function Image({ width, height, pageIndex, elementIndex }) {
 				type='file'
 				onChange={handleImageChange}
 			/>
-			{currentPage.images[elementIndex] ? (
+			{currentPage.images[elementKey] ? (
 				<img
 					className='size-full object-cover'
-					src={currentPage.images[elementIndex]}
+					src={currentPage.images[elementKey]}
 					alt='Preview'
 					width='200'
 				/>

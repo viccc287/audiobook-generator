@@ -7,20 +7,18 @@ import {
 import CustomAudioPlayer from './CustomAudioPlayer';
 import { useState, useRef } from 'react';
 
-import { pageReducer } from '../lib/pageReducer';
+import { currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
+import { useAtom } from 'jotai';
 
-function IndividualPanel({
-	textToSend,
-	pages,
-	setPageContent,
-	displayedPageIndex,
-	elementKey,
-}) {
+function IndividualPanel({ textToSend, elementKey }) {
 	const [panelStates, setPanelStates] = useState({
 		error: false,
 		displayText: '',
 	});
-	const currentPage = pages[displayedPageIndex];
+
+
+	const [audios, setAudios] = useAtom( currentPageAudiosAtom );
+	const [loading, setLoading] = useAtom( currentPageLoadingAtom );
 
 	const fileInputRef = useRef(null);
 
@@ -28,7 +26,10 @@ function IndividualPanel({
 		e.preventDefault();
 		if (fileInputRef.current.files.length > 0) {
 			const url = URL.createObjectURL(fileInputRef.current.files[0]);
-			setAudio(url);
+			setAudios({
+				...audios,
+				[elementKey]: <CustomAudioPlayer audioUrl={url} />,
+			});
 			setPanelStates({
 				...panelStates,
 				displayText: fileInputRef.current.files[0].name,
@@ -36,24 +37,10 @@ function IndividualPanel({
 		}
 	};
 
-	const loading = value => {
-		pageReducer(pages, setPageContent, 'SET_LOADING', {
-			pageIndex: displayedPageIndex,
-			elementKey: elementKey,
-			loading: value,
-		});
-	};
-	const setAudio = url => {
-		pageReducer(pages, setPageContent, 'SET_AUDIO', {
-			pageIndex: displayedPageIndex,
-			elementKey: elementKey,
-			audio: <CustomAudioPlayer audioUrl={url} />,
-		});
-	};
-
 	const handleFetch = e => {
 		e.preventDefault();
-		loading(true);
+		setLoading({ ...loading, [elementKey]: true });
+
 		const options = {
 			method: 'POST',
 			headers: {
@@ -66,6 +53,7 @@ function IndividualPanel({
 				voice_settings: {
 					similarity_boost: 1,
 					stability: 1,
+					use_speaker_boost:1
 				},
 			}),
 		};
@@ -91,8 +79,12 @@ function IndividualPanel({
 			})
 			.then(blob => {
 				const url = window.URL.createObjectURL(blob);
-				setAudio(url);
-				loading(false);
+
+				setAudios({
+					...audios,
+					[elementKey]: <CustomAudioPlayer audioUrl={url} />,
+				});
+				setLoading({ ...loading, [elementKey]: false });
 				setPanelStates({
 					...panelStates,
 					error: false,
@@ -106,7 +98,7 @@ function IndividualPanel({
 					displayText: 'Error con la API',
 				});
 				const oldDisplayText = panelStates.displayText;
-				loading(false);
+				setLoading({ ...loading, [elementKey]: false });
 				console.error(err);
 
 				setTimeout(() => {
@@ -122,7 +114,7 @@ function IndividualPanel({
 	return (
 		<div className='pointer-events-none absolute left-0 top-0 flex size-full items-end justify-end'>
 			<div className='pointer-events-auto flex size-fit h-10 items-center justify-center gap-1 bg-white p-2'>
-				{currentPage.loading[elementKey] ? (
+				{loading[elementKey] ? (
 					<ArrowPathIcon className='h-full animate-spin text-black' />
 				) : panelStates.error ? (
 					<ExclamationCircleIcon className='h-full text-red-500 transition duration-200 hover:scale-110' />
@@ -143,7 +135,7 @@ function IndividualPanel({
 					className='hidden'
 					onChange={handleFileUpload}
 				/>
-				{currentPage.audios[elementKey]}
+				{audios[elementKey]}
 				<p className='text-xs'>{panelStates.displayText}</p>
 			</div>
 		</div>
