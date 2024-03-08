@@ -48,7 +48,7 @@ export default function PageNavigation({
 	const currentPages = state.pages.map((_, index) => {
 		return (
 			<div
-				className={`hover:ring flex items-center transition duration-150 justify-center overflow-clip rounded-lg bg-white font-jakarta font-bold text-black hover:ring-white ${index === currentDisplayedPageIndex ? ' bg-indigo-700 text-white ring ring-black' : ''}`}
+				className={`hover:ring flex items-center transition duration-150 justify-center overflow-clip rounded-lg bg-white font-jakarta font-bold text-black hover:ring-white ${index === currentDisplayedPageIndex ? ' bg-slate-700 text-white ring ring-black' : ''}`}
 			>
 				<button
 					key={index}
