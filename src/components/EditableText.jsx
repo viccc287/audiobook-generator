@@ -17,9 +17,9 @@ function EditableText({ textStyles, elementIndex, pageIndex }) {
 		});
 	};
 	return (
-		<div className='relative h-auto w-full max-w-full rounded bg-white/5'>
+		<div className='relative w-full max-w-full rounded bg-white/5'>
 			<p
-				className={`h-full w-full max-w-full p-10 leading-normal  text-white focus:outline-dashed focus:outline-4 ${textStyles}`}
+				className={`w-full p-10 leading-normal  text-white focus:outline-dashed focus:outline-4 ${textStyles}`}
 				contentEditable
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}

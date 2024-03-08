@@ -2,32 +2,30 @@ import React, { useState } from 'react';
 import TemplateSelector from './components/TemplateSelector';
 import Visualizer from './components/Visualizer';
 import { GlobalProvider } from './contexts/GlobalContext';
+import PageNavigation from './components/PageNavigation';
 
 function App() {
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [template, setTemplate] = useState('titleSubtitle');
+	const [displayedPageIndex, setDisplayedPageIndex] = useState(0);
+	const [template, setTemplate] = useState('titleSubtitle');
 
-  const handleTemplateSelect = selectedTemplate => {
-    setTemplate(selectedTemplate);
-  };
-
-  return (
-    <div className='flex h-fit min-h-screen w-screen flex-col bg-violet-950'>
-      <div className='flex h-20 w-screen items-center gap-5 bg-black/50 px-10 font-jakarta font-bold text-white'>
-        <p className='bg-black/50 p-3 text-sm'>AUDIOCUENTOS</p>
-      </div>
-      <div className='flex size-full p-8'>
-        <TemplateSelector
-          changeTemplateFunction={handleTemplateSelect}
-        />
-        <div className='align-center flex w-2/3 justify-center'>
-          <GlobalProvider>
-            <Visualizer pageIndex={currentPageIndex} withTemplate={template} />
-          </GlobalProvider>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<GlobalProvider>
+			<div className='flex min-h-screen bg-violet-950'>
+				<div className='flex flex-col items-start space-y-4 bg-black/50 px-5 py-8 text-white'>
+					<PageNavigation currentDisplayedPageIndex={displayedPageIndex} changeDisplayedPageFunction={setDisplayedPageIndex} />
+				</div>
+				<div className='flex flex-auto p-8'>
+					<TemplateSelector changeTemplateFunction={setTemplate} />
+					<div className='flex w-2/3 flex-col items-center justify-start gap-5 '>
+						<Visualizer
+							pageIndex={displayedPageIndex}
+							withTemplate={template}
+						/>
+					</div>
+				</div>
+			</div>
+		</GlobalProvider>
+	);
 }
 
 export default App;

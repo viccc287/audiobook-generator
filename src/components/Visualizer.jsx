@@ -8,35 +8,34 @@ export default function Visualizer({ withTemplate, pageIndex }) {
 
 	const Templates = {
 		titleSubtitle: (
-			<div className='flex size-full flex-col items-center gap-5'>
+			<>
 				<EditableText
 					textStyles={titleClass}
 					pageIndex={pageIndex}
 					elementIndex={0}
 				/>
+
 				<EditableText
 					textStyles={subtitleClass}
 					pageIndex={pageIndex}
 					elementIndex={1}
 				/>
-			</div>
+			</>
 		),
 		textImage: (
-			<div className='flex size-full flex-col items-center gap-5'>
+			<>
 				<EditableText
 					textStyles={titleClass}
 					pageIndex={pageIndex}
 					elementIndex={0}
 				/>
-				<div className='flex size-full flex-wrap items-start'>
-					<Image
-						width='full'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={0}
-					/>
-				</div>
-			</div>
+				<Image
+					width='full'
+					height='full'
+					pageIndex={pageIndex}
+					elementIndex={0}
+				/>
+			</>
 		),
 		text2Images: (
 			<div className='flex size-full flex-col items-center gap-5'>

@@ -99,7 +99,7 @@ function IndividualPanel({ textToSend, pageIndex, elementIndex }) {
 				});
 				setPanelStates({
 					...panelStates,
-					error: true,
+					error: false,
 					displayText: 'Generado',
 				});
 			})

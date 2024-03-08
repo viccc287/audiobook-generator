@@ -1,7 +1,7 @@
 import { PhotoIcon } from '@heroicons/react/16/solid';
 function TemplateSelector({ changeTemplateFunction}) {
 	return (
-		<div className='flex size-fit h-full w-1/3 flex-wrap items-start gap-5'>
+		<div className='flex size-fit h-full w-1/3 flex-wrap items-start justify-center gap-5'>
 			<button
 				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
 				onClick={() => changeTemplateFunction('titleSubtitle')}

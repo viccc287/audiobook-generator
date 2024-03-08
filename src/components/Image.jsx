@@ -45,7 +45,7 @@ function Image({ width, height, pageIndex, elementIndex }) {
 
 	return (
 		<label
-			className={`flex aspect-video h-${height} w-${width} cursor-pointer justify-center ${
+			className={`flex h-${height} w-${width} cursor-pointer justify-center ${
 				currentPage.images[elementIndex]
 					? ''
 					: 'border-4 border-dashed border-white/50'
@@ -68,7 +68,7 @@ function Image({ width, height, pageIndex, elementIndex }) {
 					width='200'
 				/>
 			) : (
-				<PhotoIcon className='h-full text-neutral-400 ' />
+				<PhotoIcon className='w-64 text-neutral-400 ' />
 			)}
 		</label>
 	);
