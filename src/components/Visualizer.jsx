@@ -1,123 +1,69 @@
-import { useState } from 'react';
 import Image from './Image.jsx';
 import EditableText from './EditableText.jsx';
+import { currentPageTemplateAtom } from '../lib/atoms.jsx';
+import { useAtomValue } from 'jotai';
 
-export default function Visualizer({ withTemplate, pageIndex }) {
+export default function Visualizer() {
 	const titleClass = 'font-jakarta text-4xl font-bold';
 	const subtitleClass = 'font-poppins text-2xl';
+
+	const template = useAtomValue(currentPageTemplateAtom);
 
 	const Templates = {
 		titleSubtitle: (
 			<>
-				<EditableText
-					textStyles={titleClass}
-					pageIndex={pageIndex}
-					elementKey={'title'}
-				/>
+				<EditableText textStyles={titleClass} elementKey='title' />
 
-				<EditableText
-					textStyles={subtitleClass}
-					pageIndex={pageIndex}
-					elementIndex={'subtitle'}
-				/>
+				<EditableText textStyles={subtitleClass} elementKey='subtitle' />
 			</>
+		),
+		textOnly: (
+			<div className='flex size-full flex-col items-center gap-5'>
+				<EditableText textStyles={subtitleClass} elementKey='subtitle' />
+			</div>
 		),
 		textImage: (
 			<>
-				<EditableText
-					textStyles={titleClass}
-					pageIndex={pageIndex}
-					elementIndex={'title'}
-				/>
-				<Image
-					width='full'
-					height='full'
-					pageIndex={pageIndex}
-					elementIndex={0}
-				/>
+				<EditableText textStyles={titleClass} elementKey='title' />
+				<Image width='full' height='full' elementKey='first' />
 			</>
 		),
+
 		text2Images: (
 			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText
-					textStyles={titleClass}
-					pageIndex={pageIndex}
-					elementIndex={0}
-				/>
+				<EditableText textStyles={titleClass} elementKey='title' />
 				<div className='flex size-full flex-wrap items-start'>
-					<Image
-						width='1/2'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={0}
-					/>
-					<Image
-						width='1/2'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={1}
-					/>
+					<Image width='1/2' height='full' elementKey='first' />
+					<Image width='1/2' height='full' elementKey='second' />
 				</div>
 			</div>
 		),
 		imageOnly: (
 			<div className='flex size-full flex-col items-center gap-5'>
 				<div className='flex size-full flex-wrap items-start'>
-					<Image
-						width='full'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={0}
-					/>
+					<Image width='full' height='full' elementKey='first' />
 				</div>
 			</div>
 		),
 		twoImages: (
 			<div className='flex size-full flex-col items-center gap-5'>
 				<div className='flex size-full flex-wrap items-start'>
-					<Image
-						width='1/2'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={0}
-					/>
-					<Image
-						width='1/2'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={1}
-					/>
+					<Image width='1/2' height='full' elementKey='first' />
+					<Image width='1/2' height='full' elementKey='second' />
 				</div>
 			</div>
 		),
-		textOnly: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText
-					textStyles={subtitleClass}
-					pageIndex={pageIndex}
-					elementIndex={1}
-				/>
-			</div>
-		),
+
 		leftTextRightImage: (
 			<div className='flex size-full items-center gap-5'>
 				<div className='flex h-full w-1/2'>
-					<EditableText
-						textStyles={subtitleClass}
-						pageIndex={pageIndex}
-						elementIndex={1}
-					/>
+					<EditableText textStyles={subtitleClass} elementKey='subtitle' />
 				</div>
 				<div className='flex h-full w-1/2 flex-wrap items-start'>
-					<Image
-						width='full'
-						height='full'
-						pageIndex={pageIndex}
-						elementIndex={0}
-					/>
+					<Image width='full' height='full' elementKey='first' />
 				</div>
 			</div>
 		),
 	};
-	return Templates[withTemplate];
+	return Templates[template];
 }

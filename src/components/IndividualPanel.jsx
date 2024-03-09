@@ -53,7 +53,6 @@ function IndividualPanel({ textToSend, elementKey }) {
 				voice_settings: {
 					similarity_boost: 1,
 					stability: 1,
-					use_speaker_boost:1
 				},
 			}),
 		};

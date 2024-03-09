@@ -14,7 +14,7 @@ function EditableText({ textStyles, elementKey }) {
 		setText({...text, [elementKey]:e.target.textContent})
 	};
 	return (
-		<div className='relative w-full max-w-full rounded bg-white/5'>
+		<div className='relative w-full max-w-full rounded  bg-white/5'>
 			<p
 				className={`w-full p-10 leading-normal  text-white focus:outline-dashed focus:outline-4 ${textStyles}`}
 				contentEditable

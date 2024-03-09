@@ -1,10 +1,15 @@
 import { PhotoIcon } from '@heroicons/react/16/solid';
-function TemplateSelector({ changeTemplateFunction}) {
+import { useSetAtom } from 'jotai';
+import { currentPageTemplateAtom } from '../lib/atoms';
+function TemplateSelector() {
+	
+const setTemplate = useSetAtom(currentPageTemplateAtom)
+
 	return (
 		<div className='flex size-fit h-full w-1/3 flex-wrap items-start justify-center gap-5'>
 			<button
 				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('titleSubtitle')}
+				onClick={() => setTemplate('titleSubtitle')}
 			>
 				<div className='flex h-32 w-40 flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='h-full w-full divide-y divide-black border border-black'>
@@ -21,7 +26,7 @@ function TemplateSelector({ changeTemplateFunction}) {
             
 			<button
 				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('textImage')}
+				onClick={() => setTemplate('textImage')}
 			>
 				<div className='flex h-32 w-40 flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='h-full w-full divide-y divide-black border border-black'>
@@ -38,7 +43,7 @@ function TemplateSelector({ changeTemplateFunction}) {
             
 			<button
 				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('text2Images')}
+				onClick={() => setTemplate('text2Images')}
 			>
 				<div className='flex h-32 w-40 flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='h-full w-full divide-y divide-black border border-black'>
@@ -56,7 +61,7 @@ function TemplateSelector({ changeTemplateFunction}) {
      
 			<button
 				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('imageOnly')}
+				onClick={() => setTemplate('imageOnly')}
 			>
 				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='flex h-full w-full justify-center divide-y divide-x divide-black border border-black'>
@@ -68,7 +73,7 @@ function TemplateSelector({ changeTemplateFunction}) {
             
 			<button
 				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('twoImages')}
+				onClick={() => setTemplate('twoImages')}
 			>
 				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='flex h-full w-full justify-center divide-x divide-black border border-black'>
@@ -81,7 +86,7 @@ function TemplateSelector({ changeTemplateFunction}) {
 
             <button
 				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('textOnly')}
+				onClick={() => setTemplate('textOnly')}
 			>
 				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='flex h-full w-full justify-center items-center divide-x divide-black border border-black'>
@@ -95,7 +100,7 @@ function TemplateSelector({ changeTemplateFunction}) {
             
             <button
 				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('leftTextRightImage')}
+				onClick={() => setTemplate('leftTextRightImage')}
 			>
 				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
 					<div className='flex h-full w-full justify-center divide-x divide-black border border-black'>
