@@ -17,7 +17,11 @@ export const pagesAtom = atom([
     name:'Cap 1',
 		template: 'imageOnly',
 		images: {},
-		text: {},
+    text: {
+      title: 'Cap 1',
+			subtitle:
+				'Cap 1 subtitulo',
+    },
 		audios: {},
 		loading: {},
 	},
