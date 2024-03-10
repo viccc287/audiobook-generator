@@ -1,7 +1,8 @@
 import { atom } from 'jotai';
 
 export const pagesAtom = atom([
-	{
+  {
+    name:'Prefacio',
 		template: 'titleSubtitle',
 		images: {},
 		text: {
@@ -12,14 +13,16 @@ export const pagesAtom = atom([
 		audios: {},
 		loading: {},
 	},
-	{
+  {
+    name:'Cap 1',
 		template: 'imageOnly',
 		images: {},
 		text: {},
 		audios: {},
 		loading: {},
 	},
-	{
+  {
+    name:'Cap 2',
 		template: 'textImage',
 		images: {},
 		text: {
@@ -50,6 +53,16 @@ export const currentPageTemplateAtom = atom(
     const pageIndex = get(displayedPageIndexAtom);
     const pages = get(pagesAtom);
     pages[pageIndex].template = newTemplate;
+    set(pagesAtom, [...pages]);
+  }
+);
+
+export const currentPageNameAtom = atom(
+  (get) => get(pagesAtom)[get(displayedPageIndexAtom)].name,
+  (get, set, newName) => {
+    const pageIndex = get(displayedPageIndexAtom);
+    const pages = get(pagesAtom);
+    pages[pageIndex].name = newName;
     set(pagesAtom, [...pages]);
   }
 );

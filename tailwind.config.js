@@ -8,6 +8,9 @@ export default {
 				inter: ['Inter', 'sans-serif'],
 				poppins: ['Poppins', 'sans-serif'],
 			},
+			transitionProperty: {
+				'width': 'width',
+			}
 		},
 	},
 	plugins: [],
