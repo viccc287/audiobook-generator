@@ -4,12 +4,6 @@ import { useState, useRef } from 'react';
 import { displayedPageIndexAtom } from '../lib/atoms';
 
 import {
-	ChevronDownIcon,
-	PlusIcon,
-	TrashIcon,
-	XMarkIcon,
-} from '@heroicons/react/16/solid';
-import {
 	Menu,
 	MenuButton,
 	MenuList,
@@ -29,7 +23,16 @@ import {
 	Flex,
 	Text,
 	StackDivider,
+	Spacer,
 } from '@chakra-ui/react';
+import {
+	HamburgerIcon,
+	AddIcon,
+	DeleteIcon,
+	ChevronDownIcon,
+	PlusSquareIcon,
+	CheckIcon,
+} from '@chakra-ui/icons';
 
 export default function PageNavigation() {
 	const [displayedPageIndex, setDisplayedPageIndex] = useAtom(
@@ -37,37 +40,38 @@ export default function PageNavigation() {
 	);
 	const [pages, setPages] = useAtom(pagesAtom);
 
-	const { isOpen, onOpen, onClose } = useDisclosure();
-	const cancelRef = useRef();
+	const {
+		isOpen: isDeleteDialogOpen,
+		onOpen: openDeleteDialog,
+		onClose: closeDeleteDialog,
+	} = useDisclosure();
+
+	const cancelRef = useRef(null);
+	const dragItemIndex = useRef(0);
+	const draggedOverItemIndex = useRef(0);
+
 	const [indexToDelete, setIndexToDelete] = useState(null);
 
-	const confirmDeletePage = (e, index) => {
-		e.stopPropagation();
+	const confirmDeletePage = index => {
 		setIndexToDelete(index);
-		onOpen();
+		openDeleteDialog();
 	};
 
-	const handleAddPage = () => {
-		setPages([
-			...pages,
-			{
-				name: 'Página',
-				template: 'titleSubtitle',
-				images: {},
-				text: {
-					title: 'Editar título',
-					subtitle: 'Editar subtítulo',
-				},
-				audios: {},
-				loading: {},
-			},
-		]);
-	};
-
-	const handleInsertPageAfter = index => {
+	const handleSort = () => {
 		const newPages = [...pages];
-		newPages.splice(index+1, 0, {
-			name: `Página ${index+2}`,
+		const temp = newPages[dragItemIndex.current];
+		newPages[dragItemIndex.current] = newPages[draggedOverItemIndex.current];
+		newPages[draggedOverItemIndex.current] = temp;
+
+		if (dragItemIndex.current === displayedPageIndex)
+			setDisplayedPageIndex(draggedOverItemIndex.current);
+		setPages(newPages);
+	};
+
+	function handleInsertPageAfter(index) {
+		const newPages = [...pages];
+		newPages.splice(index + 1, 0, {
+			name: `Nueva página`,
 			template: 'titleSubtitle',
 			images: {},
 			text: {
@@ -78,7 +82,13 @@ export default function PageNavigation() {
 			loading: {},
 		});
 		setPages(newPages);
-	};
+	}
+
+	function duplicatePage(index) {
+		const newPages = [...pages];
+		newPages.splice(index + 1, 0, JSON.parse(JSON.stringify(pages[index])));
+		setPages(newPages);
+	}
 
 	const handleDeletePage = () => {
 		const deletePage = () => {
@@ -96,19 +106,46 @@ export default function PageNavigation() {
 		if (pages.length === 1) {
 			alert('No se puede borrar la única página del libro');
 		} else {
-			onClose();
+			closeDeleteDialog();
 			deletePage();
 		}
 	};
-	const currentPages = pages.map((page, index) => {
+
+	const [contextMenu, setContextMenu] = useState({
+		isOpen: false,
+		pageIndex: null,
+	});
+
+	const pageNavElements = pages.map((page, index) => {
 		return (
-			<ButtonGroup isAttached key={index}>
+			<Flex
+				key={index}
+				bgColor={
+					displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'
+				}
+			>
 				<Button
+					fontSize='inherit'
+					draggable
+					onDragStart={() => (dragItemIndex.current = index)}
+					onDragEnter={() => (draggedOverItemIndex.current = index)}
+					onDragEnd={handleSort}
+					onDragOver={e => e.preventDefault()}
 					rounded='0'
 					onClick={() => {
 						setDisplayedPageIndex(index);
 					}}
-					bgColor='blackAlpha.100'
+					fontWeight={displayedPageIndex === index ? 'bold' : 'regular'}
+					bgColor='transparent'
+					onContextMenu={e => {
+						e.preventDefault(); // Evitar que aparezca el menú contextual del navegador
+						e.stopPropagation(); // Evitar que se propague el evento
+
+						setContextMenu({
+							isOpen: true,
+							pageIndex: index,
+						});
+					}}
 				>
 					{page.name}
 				</Button>
@@ -116,43 +153,95 @@ export default function PageNavigation() {
 					<MenuButton
 						rounded='0'
 						as={IconButton}
-						icon={<Icon as={ChevronDownIcon} />}
-						bgColor='blackAlpha.100'
+						icon={<ChevronDownIcon />}
+						bgColor='transparent'
 					></MenuButton>
 					<MenuList color='black'>
 						<MenuItem
-							icon={<Icon as={PlusIcon} />}
+							icon={<PlusSquareIcon />}
+							onClick={() => {
+								duplicatePage(index);
+							}}
+						>
+							Duplicar página
+						</MenuItem>
+						<MenuItem
+							icon={<AddIcon />}
 							onClick={() => handleInsertPageAfter(index)}
 						>
 							Insertar página a la derecha
 						</MenuItem>
 						<MenuItem
-							icon={<Icon as={TrashIcon} />}
-							onClick={e => {
-								confirmDeletePage(e, index);
+							icon={<DeleteIcon />}
+							onClick={() => {
+								confirmDeletePage(index);
 							}}
 						>
 							Eliminar página
 						</MenuItem>
 					</MenuList>
 				</Menu>
-			</ButtonGroup>
+			</Flex>
+		);
+	});
+
+	const pageMenuElements = pages.map((page, index) => {
+		let icon = null;
+		if (index === displayedPageIndex) icon = <CheckIcon />;
+
+		return (
+			<MenuItem
+				_hover={{ bgColor: 'blackAlpha.200' }}
+				icon={icon}
+				key={index}
+				onClick={() => {
+					setDisplayedPageIndex(index);
+				}}
+				bgColor={
+					displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'
+				}
+				fontWeight={displayedPageIndex === index ? 'bold' : 'regular'}
+			>
+				{`${index + 1}. ${page.name}`}
+			</MenuItem>
 		);
 	});
 
 	return (
 		<>
-			<Flex direction='row' wrap='wrap' bgColor='white'>
-				{currentPages}
-				<Text>
-				{displayedPageIndex + 1} / {pages.length}
-			</Text>
+			<Flex
+				direction='row'
+				bgColor='white'
+				fontFamily='inter'
+				fontSize='sm'
+				px={8}
+				overflow='auto'
+			>
+				<IconButton
+					icon={<AddIcon boxSize={3} />}
+					onClick={() => handleInsertPageAfter(displayedPageIndex)}
+				/>
+				<Menu isLazy>
+					<MenuButton
+						rounded='0'
+						as={IconButton}
+						icon={<HamburgerIcon boxSize={3} />}
+						bgColor='transparent'
+					></MenuButton>
+					<Box p='0'>
+						<MenuList maxHeight={72} overflow='auto' color='black'>
+							{pageMenuElements}
+						</MenuList>
+					</Box>
+				</Menu>
+
+				{pageNavElements}
 			</Flex>
 
 			<AlertDialog
-				isOpen={isOpen}
+				isOpen={isDeleteDialogOpen}
 				leastDestructiveRef={cancelRef}
-				onClose={onClose}
+				onClose={closeDeleteDialog}
 			>
 				<AlertDialogOverlay>
 					<AlertDialogContent>
@@ -165,7 +254,7 @@ export default function PageNavigation() {
 						</AlertDialogBody>
 
 						<AlertDialogFooter>
-							<Button ref={cancelRef} onClick={onClose}>
+							<Button ref={cancelRef} onClick={closeDeleteDialog}>
 								Cancelar
 							</Button>
 							<Button colorScheme='red' onClick={handleDeletePage} ml={3}>
