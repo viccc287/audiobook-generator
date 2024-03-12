@@ -1,6 +1,6 @@
 import { pagesAtom } from '../lib/atoms';
 import { useAtom } from 'jotai';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { displayedPageIndexAtom } from '../lib/atoms';
 
 import {
@@ -24,6 +24,8 @@ import {
 	Text,
 	StackDivider,
 	Spacer,
+	Circle,
+	Input,
 } from '@chakra-ui/react';
 import {
 	HamburgerIcon,
@@ -32,6 +34,12 @@ import {
 	ChevronDownIcon,
 	PlusSquareIcon,
 	CheckIcon,
+	ArrowRightIcon,
+	ChevronRightIcon,
+	ChevronLeftIcon,
+	CheckCircleIcon,
+	CloseIcon,
+	EditIcon,
 } from '@chakra-ui/icons';
 
 export default function PageNavigation() {
@@ -46,11 +54,55 @@ export default function PageNavigation() {
 		onClose: closeDeleteDialog,
 	} = useDisclosure();
 
+	const containerRef = useRef(null);
 	const cancelRef = useRef(null);
 	const dragItemIndex = useRef(0);
 	const draggedOverItemIndex = useRef(0);
+	const inputRef = useRef(null);
 
 	const [indexToDelete, setIndexToDelete] = useState(null);
+	const [isOverflown, setIsOverflown] = useState(false);
+	const [editingPageIndex, setEditingPageIndex] = useState(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [newPageName, setNewPageName] = useState('');
+
+	useEffect(() => {
+		const container = containerRef.current;
+		if (container.clientWidth < container.scrollWidth) setIsOverflown(true);
+		else if (isOverflown) setIsOverflown(false);
+		else return;
+	}, [pages]);
+
+	const handleRenamePage = index => {
+		setEditingPageIndex(index);
+		setNewPageName(pages[index].name);
+		setIsEditing(true);
+	};
+
+	const handlePageNameChange = event => {
+		setNewPageName(event.target.value);
+	};
+
+	const handleSavePageName = () => {
+		const newPages = [...pages];
+		newPages[editingPageIndex].name = newPageName;
+		setPages(newPages);
+		setEditingPageIndex(null); // Finalizar el modo de edición
+		setIsEditing(false);
+	};
+
+	const handleCancelRename = () => {
+		setEditingPageIndex(null); // Cancelar el modo de edición
+	};
+
+	const handleKeyPress = event => {
+		if (event.key === 'Enter') {
+			event.preventDefault(); // Evitar que se envíe el formulario si está dentro de uno
+			handleSavePageName(); // Llamar a la función para guardar el nombre de la página
+		}
+	};
+
+	// -----------------------------------------------------
 
 	const confirmDeletePage = index => {
 		setIndexToDelete(index);
@@ -111,14 +163,19 @@ export default function PageNavigation() {
 		}
 	};
 
-	const [contextMenu, setContextMenu] = useState({
-		isOpen: false,
-		pageIndex: null,
-	});
+	function handleScroll(moveTo) {
+		const container = containerRef.current;
+
+		if (moveTo === 'left') container.scrollLeft -= 500;
+		else if (moveTo === 'right') container.scrollLeft += 500;
+		console.log(container.scrollLeft);
+	}
 
 	const pageNavElements = pages.map((page, index) => {
 		return (
 			<Flex
+				borderInline='1px'
+				borderColor='blackAlpha.300'
 				key={index}
 				bgColor={
 					displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'
@@ -126,28 +183,40 @@ export default function PageNavigation() {
 			>
 				<Button
 					fontSize='inherit'
-					draggable
-					onDragStart={() => (dragItemIndex.current = index)}
-					onDragEnter={() => (draggedOverItemIndex.current = index)}
+					draggable={!isEditing}
+					onDragStart={e => {
+						e.stopPropagation();
+						dragItemIndex.current = index;
+					}}
+					onDragEnter={e => (draggedOverItemIndex.current = index)}
 					onDragEnd={handleSort}
 					onDragOver={e => e.preventDefault()}
 					rounded='0'
 					onClick={() => {
 						setDisplayedPageIndex(index);
 					}}
-					fontWeight={displayedPageIndex === index ? 'bold' : 'regular'}
+					onDoubleClick={() => handleRenamePage(index)}
+					fontWeight={displayedPageIndex === index ? 'bold' : 'normal'}
 					bgColor='transparent'
-					onContextMenu={e => {
-						e.preventDefault(); // Evitar que aparezca el menú contextual del navegador
-						e.stopPropagation(); // Evitar que se propague el evento
-
-						setContextMenu({
-							isOpen: true,
-							pageIndex: index,
-						});
-					}}
 				>
-					{page.name}
+					<Text pe={4} fontWeight='semibold' color='blackAlpha.500'>
+						{index + 1}
+					</Text>
+					{editingPageIndex === index ? (
+						<Input
+							w={24}
+							px={2}
+							fontSize='sm'
+							fontWeight='normal'
+							value={newPageName}
+							onChange={handlePageNameChange}
+							onBlur={handleSavePageName}
+							onKeyDown={handleKeyPress}
+							ref={inputRef}
+						/>
+					) : (
+						<Text px={2}>{page.name}</Text>
+					)}
 				</Button>
 				<Menu isLazy>
 					<MenuButton
@@ -178,6 +247,12 @@ export default function PageNavigation() {
 							}}
 						>
 							Eliminar página
+						</MenuItem>
+						<MenuItem
+							icon={<EditIcon/>}
+							onClick={() => handleRenamePage(index)}
+						>
+							Renombrar página
 						</MenuItem>
 					</MenuList>
 				</Menu>
@@ -210,34 +285,80 @@ export default function PageNavigation() {
 	return (
 		<>
 			<Flex
-				direction='row'
 				bgColor='white'
+				ps={10}
+				pe={20}
 				fontFamily='inter'
 				fontSize='sm'
-				px={8}
-				overflow='auto'
+				alignItems='center'
 			>
-				<IconButton
-					icon={<AddIcon boxSize={3} />}
-					onClick={() => handleInsertPageAfter(displayedPageIndex)}
-				/>
-				<Menu isLazy>
-					<MenuButton
-						rounded='0'
-						as={IconButton}
-						icon={<HamburgerIcon boxSize={3} />}
+				<Flex>
+					<IconButton
+						icon={<AddIcon boxSize={3} />}
+						onClick={() => handleInsertPageAfter(displayedPageIndex)}
 						bgColor='transparent'
-					></MenuButton>
-					<Box p='0'>
-						<MenuList maxHeight={72} overflow='auto' color='black'>
-							{pageMenuElements}
-						</MenuList>
-					</Box>
-				</Menu>
+					/>
+					<Menu isLazy>
+						<MenuButton
+							rounded='0'
+							as={IconButton}
+							icon={<HamburgerIcon boxSize={3} />}
+							bgColor='transparent'
+						></MenuButton>
+						<Box p='0'>
+							<MenuList
+								maxHeight={72}
+								overflow='auto'
+								color='black'
+								sx={{
+									'&::-webkit-scrollbar': {
+										width: '6px',
+										backgroundColor: 'white',
+									},
+									'&::-webkit-scrollbar-thumb': {
+										backgroundColor: 'rgba(0, 0, 0, 0.25)',
+										borderRadius: '8px',
+									},
+									'&::-webkit-scrollbar-track': {
+										backgroundColor: 'rgba(0, 0, 0, 0.25)',
+										// Agrega un padding en la parte superior e inferior del track
+										padding: '10px 0',
+									},
+								}}
+							>
+								{pageMenuElements}
+							</MenuList>
+						</Box>
+					</Menu>
+				</Flex>
+				<Flex px={3} overflow='hidden'>
+					<Flex
+						ref={containerRef}
+						direction='row'
+						bgColor='transparent'
+						overflow='hidden'
+						scrollBehavior='smooth'
+					>
+						{pageNavElements}
+					</Flex>
+				</Flex>
 
-				{pageNavElements}
+				<Spacer></Spacer>
+				{isOverflown ? (
+					<Flex>
+						<IconButton
+							icon={<ChevronLeftIcon boxSize={6} />}
+							onClick={() => handleScroll('left')}
+							bgColor='transparent'
+						/>
+						<IconButton
+							icon={<ChevronRightIcon boxSize={6} />}
+							onClick={() => handleScroll('right')}
+							bgColor='transparent'
+						/>
+					</Flex>
+				) : null}
 			</Flex>
-
 			<AlertDialog
 				isOpen={isDeleteDialogOpen}
 				leastDestructiveRef={cancelRef}
