@@ -58,7 +58,6 @@ export default function PageNavigation() {
 	const cancelRef = useRef(null);
 	const dragItemIndex = useRef(0);
 	const draggedOverItemIndex = useRef(0);
-	const inputRef = useRef(null);
 
 	const [indexToDelete, setIndexToDelete] = useState(null);
 	const [isOverflown, setIsOverflown] = useState(false);
@@ -72,6 +71,12 @@ export default function PageNavigation() {
 		else if (isOverflown) setIsOverflown(false);
 		else return;
 	}, [pages]);
+
+	useEffect(() => {
+        const container = containerRef.current;
+        const selectedPage = container.children[displayedPageIndex];
+        selectedPage.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+    }, [displayedPageIndex]);
 
 	const handleRenamePage = index => {
 		setEditingPageIndex(index);
@@ -87,18 +92,14 @@ export default function PageNavigation() {
 		const newPages = [...pages];
 		newPages[editingPageIndex].name = newPageName;
 		setPages(newPages);
-		setEditingPageIndex(null); // Finalizar el modo de edición
+		setEditingPageIndex(null);
 		setIsEditing(false);
-	};
-
-	const handleCancelRename = () => {
-		setEditingPageIndex(null); // Cancelar el modo de edición
 	};
 
 	const handleKeyPress = event => {
 		if (event.key === 'Enter') {
-			event.preventDefault(); // Evitar que se envíe el formulario si está dentro de uno
-			handleSavePageName(); // Llamar a la función para guardar el nombre de la página
+			event.preventDefault(); 
+			handleSavePageName(); 
 		}
 	};
 
@@ -165,10 +166,8 @@ export default function PageNavigation() {
 
 	function handleScroll(moveTo) {
 		const container = containerRef.current;
-
-		if (moveTo === 'left') container.scrollLeft -= 500;
-		else if (moveTo === 'right') container.scrollLeft += 500;
-		console.log(container.scrollLeft);
+		if (moveTo === 'left') container.scrollLeft -= (container.clientWidth);
+		else if (moveTo === 'right') container.scrollLeft += (container.clientWidth);
 	}
 
 	const pageNavElements = pages.map((page, index) => {
@@ -212,7 +211,6 @@ export default function PageNavigation() {
 							onChange={handlePageNameChange}
 							onBlur={handleSavePageName}
 							onKeyDown={handleKeyPress}
-							ref={inputRef}
 						/>
 					) : (
 						<Text px={2}>{page.name}</Text>
@@ -283,6 +281,7 @@ export default function PageNavigation() {
 	});
 
 	return (
+		console.log('RENDERIZADO'),
 		<>
 			<Flex
 				bgColor='white'
@@ -345,7 +344,7 @@ export default function PageNavigation() {
 
 				<Spacer></Spacer>
 				{isOverflown ? (
-					<Flex>
+					<Flex shadow='-10px 0px 15px 0px rgba(0,0,0,0.10)'>
 						<IconButton
 							icon={<ChevronLeftIcon boxSize={6} />}
 							onClick={() => handleScroll('left')}
