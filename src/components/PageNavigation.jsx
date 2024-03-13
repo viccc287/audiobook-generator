@@ -73,10 +73,10 @@ export default function PageNavigation() {
 	}, [pages]);
 
 	useEffect(() => {
-        const container = containerRef.current;
-        const selectedPage = container.children[displayedPageIndex];
-        selectedPage.scrollIntoView({ inline: 'center', behavior: 'smooth' });
-    }, [displayedPageIndex]);
+		const container = containerRef.current;
+		const selectedPage = container.children[displayedPageIndex];
+		selectedPage.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+	}, [displayedPageIndex]);
 
 	const handleRenamePage = index => {
 		setEditingPageIndex(index);
@@ -98,8 +98,12 @@ export default function PageNavigation() {
 
 	const handleKeyPress = event => {
 		if (event.key === 'Enter') {
-			event.preventDefault(); 
-			handleSavePageName(); 
+			event.preventDefault();
+			handleSavePageName();
+		} else if (event.key === 'Escape') {
+			event.preventDefault();
+			setEditingPageIndex(null);
+			setIsEditing(false);
 		}
 	};
 
@@ -166,8 +170,8 @@ export default function PageNavigation() {
 
 	function handleScroll(moveTo) {
 		const container = containerRef.current;
-		if (moveTo === 'left') container.scrollLeft -= (container.clientWidth);
-		else if (moveTo === 'right') container.scrollLeft += (container.clientWidth);
+		if (moveTo === 'left') container.scrollLeft -= container.clientWidth;
+		else if (moveTo === 'right') container.scrollLeft += container.clientWidth;
 	}
 
 	const pageNavElements = pages.map((page, index) => {
@@ -225,6 +229,7 @@ export default function PageNavigation() {
 					></MenuButton>
 					<MenuList color='black'>
 						<MenuItem
+							_hover={{ bgColor: 'blackAlpha.200' }}
 							icon={<PlusSquareIcon />}
 							onClick={() => {
 								duplicatePage(index);
@@ -233,12 +238,14 @@ export default function PageNavigation() {
 							Duplicar página
 						</MenuItem>
 						<MenuItem
+							_hover={{ bgColor: 'blackAlpha.200' }}
 							icon={<AddIcon />}
 							onClick={() => handleInsertPageAfter(index)}
 						>
 							Insertar página a la derecha
 						</MenuItem>
 						<MenuItem
+							_hover={{ bgColor: 'blackAlpha.200' }}
 							icon={<DeleteIcon />}
 							onClick={() => {
 								confirmDeletePage(index);
@@ -247,7 +254,8 @@ export default function PageNavigation() {
 							Eliminar página
 						</MenuItem>
 						<MenuItem
-							icon={<EditIcon/>}
+							_hover={{ bgColor: 'blackAlpha.200' }}
+							icon={<EditIcon />}
 							onClick={() => handleRenamePage(index)}
 						>
 							Renombrar página
@@ -281,7 +289,6 @@ export default function PageNavigation() {
 	});
 
 	return (
-		console.log('RENDERIZADO'),
 		<>
 			<Flex
 				bgColor='white'
@@ -320,8 +327,6 @@ export default function PageNavigation() {
 									},
 									'&::-webkit-scrollbar-track': {
 										backgroundColor: 'rgba(0, 0, 0, 0.25)',
-										// Agrega un padding en la parte superior e inferior del track
-										padding: '10px 0',
 									},
 								}}
 							>

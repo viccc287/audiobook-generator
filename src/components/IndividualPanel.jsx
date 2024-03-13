@@ -6,9 +6,45 @@ import {
 } from '@heroicons/react/16/solid';
 import CustomAudioPlayer from './CustomAudioPlayer';
 import { useState, useRef } from 'react';
+import {
+	FaGear,
+	FaUpload,
+	FaChevronDown,
+	FaPlus,
+	FaMinus,
+} from 'react-icons/fa6';
+import {
+	Icon,
+	IconButton,
+	Button,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverHeader,
+	PopoverBody,
+	PopoverFooter,
+	PopoverArrow,
+	PopoverCloseButton,
+	PopoverAnchor,
+	Flex,
+	Slider,
+	SliderTrack,
+	SliderFilledTrack,
+	SliderThumb,
+	SliderMark,
+	Text,
+	VStack,
+	Select,
+	Accordion,
+	AccordionItem,
+	AccordionButton,
+	AccordionPanel,
+	AccordionIcon,
+} from '@chakra-ui/react';
 
 import { currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
 import { useAtom } from 'jotai';
+import VoicePreviewPlayer from './VoicePreviewPlayer';
 
 function IndividualPanel({ textToSend, elementKey }) {
 	const [panelStates, setPanelStates] = useState({
@@ -16,9 +52,10 @@ function IndividualPanel({ textToSend, elementKey }) {
 		displayText: '',
 	});
 
+	const [selectedVoiceName, setSelectedVoiceName] = useState('Seleccionar voz a generar');
 
-	const [audios, setAudios] = useAtom( currentPageAudiosAtom );
-	const [loading, setLoading] = useAtom( currentPageLoadingAtom );
+	const [audios, setAudios] = useAtom(currentPageAudiosAtom);
+	const [loading, setLoading] = useAtom(currentPageLoadingAtom);
 
 	const fileInputRef = useRef(null);
 
@@ -112,20 +149,85 @@ function IndividualPanel({ textToSend, elementKey }) {
 
 	return (
 		<div className='pointer-events-none absolute left-0 top-0 flex size-full items-end justify-end'>
-			<div className='pointer-events-auto flex size-fit h-10 items-center justify-center gap-1 bg-white p-2'>
-				{loading[elementKey] ? (
-					<ArrowPathIcon className='h-full animate-spin text-black' />
-				) : panelStates.error ? (
-					<ExclamationCircleIcon className='h-full text-red-500 transition duration-200 hover:scale-110' />
-				) : (
-					<SpeakerWaveIcon
-						onClick={handleFetch}
-						className='h-full cursor-pointer text-black transition duration-200 hover:scale-110 '
-					/>
-				)}
-				<ArrowUpTrayIcon
+			<div className='pointer-events-auto flex size-fit h-10 items-center justify-center gap-1 overflow-clip bg-white'>
+				<Popover isLazy>
+					<PopoverTrigger>
+						<IconButton bgColor='transparent' icon={<FaGear />}>
+							Trigger
+						</IconButton>
+					</PopoverTrigger>
+					<PopoverContent fontFamily='inter' fontSize='sm'>
+						<PopoverArrow />
+						<PopoverCloseButton />
+						<PopoverHeader fontWeight='bold'>
+							Opciones de texto a voz
+						</PopoverHeader>
+						<PopoverBody as={Flex} direction='column' alignItems='stretch'>
+							<Accordion allowToggle>
+								<AccordionItem border='0px'>
+									{({ isExpanded }) => (
+										<>
+											<AccordionButton fontSize='sm'>
+												<Flex as='span' flex='1' textAlign='left'>
+													{selectedVoiceName}
+												</Flex>
+												{isExpanded ? <FaMinus /> : <FaPlus />}
+											</AccordionButton>
+											<AccordionPanel>
+												<Flex direction='column'>
+													<VoicePreviewPlayer
+														audioSrc='freya.mp3'
+														voiceName='Freya'
+														gender='female'
+														onMouseEnter={() => setSelectedVoiceName('Freya')}
+													/>
+													<VoicePreviewPlayer
+														audioSrc='sarah.mp3'
+														voiceName='Sarah'
+														gender='female'
+													/>
+													<VoicePreviewPlayer
+														audioSrc='alice.mp3'
+														voiceName='Alice'
+														gender='female'
+													/>
+													<VoicePreviewPlayer
+														audioSrc='grace.mp3'
+														voiceName='Grace'
+														gender='female'
+													/>
+													<VoicePreviewPlayer
+														audioSrc='bill.mp3'
+														voiceName='Bill'
+													/>
+													<VoicePreviewPlayer
+														audioSrc='liam.mp3'
+														voiceName='Liam'
+													/>
+													<VoicePreviewPlayer
+														audioSrc='patrick.mp3'
+														voiceName='Patrick'
+													/>
+												</Flex>
+											</AccordionPanel>
+										</>
+									)}
+								</AccordionItem>
+							</Accordion>
+							<Button
+								onClick={handleFetch}
+								isLoading={loading[elementKey]}
+								loadingText='Generando'
+							>
+								Generar
+							</Button>
+						</PopoverBody>
+					</PopoverContent>
+				</Popover>
+				<IconButton
+					bgColor='transparent'
+					icon={<FaUpload />}
 					onClick={() => fileInputRef.current.click()}
-					className='h-full cursor-pointer text-black transition duration-200 hover:scale-110'
 				/>
 				<input
 					ref={fileInputRef}

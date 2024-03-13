@@ -19,6 +19,11 @@ export const theme = extendTheme({
 				bgColor: 'transparent',
 			},
 		},
+		MenuItem: {
+			baseStyle: {
+				_hover: { bgColor: 'blackAlpha.200' }
+			}
+		}
 	},
 	fonts: {
 		inter: `'Inter', sans-serif`,
