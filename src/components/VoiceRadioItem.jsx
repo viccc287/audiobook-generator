@@ -1,4 +1,4 @@
-import { Flex, Radio, IconButton, Icon, Spacer, Text } from '@chakra-ui/react';
+import { Flex, Radio, Button, Icon, Spacer, Text } from '@chakra-ui/react';
 import { useState, useRef, useEffect } from 'react';
 import { FaPlay, FaStop } from 'react-icons/fa6';
 import { FaMale, FaFemale } from 'react-icons/fa';
@@ -51,17 +51,31 @@ export default function VoiceRadioItem({ name, gender }) {
 					<Text>{voiceName}</Text>
 					<Spacer />
 					{!isPlaying ? (
-						<IconButton
+						<Button
+							width={32}
+							_hover={{ border: '1px solid green' }}
+							_active={{ transform: 'scale(0.95)' }}
+							fontSize='xs'
+							bgColor='transparent'
 							color='green.600'
-							icon={<FaPlay />}
+							rightIcon={<FaPlay />}
 							onClick={togglePlayPause}
-						/>
+						>
+							Preescuchar
+						</Button>
 					) : (
-						<IconButton
+						<Button
+							width={32}
+							_hover={{ border: '1px solid red' }}
+							_active={{ transform: 'scale(0.95)' }}
+							fontSize='xs'
+							bgColor='transparent'
 							color='red.600'
-							icon={<FaStop />}
+							rightIcon={<FaStop />}
 							onClick={togglePlayPause}
-						/>
+						>
+							Detener
+						</Button>
 					)}
 				</Flex>
 			</>
