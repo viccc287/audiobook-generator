@@ -3,9 +3,11 @@ import { useState, useRef, useEffect } from 'react';
 import { FaPause, FaPlay, FaStop } from 'react-icons/fa6';
 import { FaMale, FaFemale } from 'react-icons/fa';
 
-export default function VoicePreviewPlayer({ audioSrc, voiceName, gender }) {
+export default function VoicePreviewPlayer({ audioSrc, gender }) {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const audioRef = useRef(null);
+
+	const voiceName = audioSrc.replace('.mp3','').charAt(0).toUpperCase()
 
 	const togglePlayPause = () => {
 		const audio = audioRef.current;

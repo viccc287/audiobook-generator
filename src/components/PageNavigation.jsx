@@ -291,6 +291,9 @@ export default function PageNavigation() {
 	return (
 		<>
 			<Flex
+				w='100%'
+				pos='fixed'
+				bottom={0}
 				bgColor='white'
 				ps={10}
 				pe={20}

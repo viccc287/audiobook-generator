@@ -40,6 +40,8 @@ import {
 	AccordionButton,
 	AccordionPanel,
 	AccordionIcon,
+	Radio,
+	RadioGroup,
 } from '@chakra-ui/react';
 
 import { currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
@@ -52,7 +54,9 @@ function IndividualPanel({ textToSend, elementKey }) {
 		displayText: '',
 	});
 
-	const [selectedVoiceName, setSelectedVoiceName] = useState('Seleccionar voz a generar');
+	const [selectedVoiceName, setSelectedVoiceName] = useState(
+		'Seleccionar voz a generar',
+	);
 
 	const [audios, setAudios] = useAtom(currentPageAudiosAtom);
 	const [loading, setLoading] = useAtom(currentPageLoadingAtom);
@@ -162,58 +166,39 @@ function IndividualPanel({ textToSend, elementKey }) {
 						<PopoverHeader fontWeight='bold'>
 							Opciones de texto a voz
 						</PopoverHeader>
-						<PopoverBody as={Flex} direction='column' alignItems='stretch'>
-							<Accordion allowToggle>
-								<AccordionItem border='0px'>
-									{({ isExpanded }) => (
-										<>
-											<AccordionButton fontSize='sm'>
-												<Flex as='span' flex='1' textAlign='left'>
-													{selectedVoiceName}
-												</Flex>
-												{isExpanded ? <FaMinus /> : <FaPlus />}
-											</AccordionButton>
-											<AccordionPanel>
-												<Flex direction='column'>
-													<VoicePreviewPlayer
-														audioSrc='freya.mp3'
-														voiceName='Freya'
-														gender='female'
-														onMouseEnter={() => setSelectedVoiceName('Freya')}
-													/>
-													<VoicePreviewPlayer
-														audioSrc='sarah.mp3'
-														voiceName='Sarah'
-														gender='female'
-													/>
-													<VoicePreviewPlayer
-														audioSrc='alice.mp3'
-														voiceName='Alice'
-														gender='female'
-													/>
-													<VoicePreviewPlayer
-														audioSrc='grace.mp3'
-														voiceName='Grace'
-														gender='female'
-													/>
-													<VoicePreviewPlayer
-														audioSrc='bill.mp3'
-														voiceName='Bill'
-													/>
-													<VoicePreviewPlayer
-														audioSrc='liam.mp3'
-														voiceName='Liam'
-													/>
-													<VoicePreviewPlayer
-														audioSrc='patrick.mp3'
-														voiceName='Patrick'
-													/>
-												</Flex>
-											</AccordionPanel>
-										</>
-									)}
-								</AccordionItem>
-							</Accordion>
+						<PopoverBody>
+							<RadioGroup>
+								<Radio>
+									<VoicePreviewPlayer
+										audioSrc='freya.mp3'
+										voiceName='Freya'
+										gender='female'
+										onMouseEnter={() => setSelectedVoiceName('Freya')}
+									/>
+								</Radio>
+
+								<VoicePreviewPlayer
+									audioSrc='sarah.mp3'
+									voiceName='Sarah'
+									gender='female'
+								/>
+								<VoicePreviewPlayer
+									audioSrc='alice.mp3'
+									voiceName='Alice'
+									gender='female'
+								/>
+								<VoicePreviewPlayer
+									audioSrc='grace.mp3'
+									voiceName='Grace'
+									gender='female'
+								/>
+								<VoicePreviewPlayer audioSrc='bill.mp3' voiceName='Bill' />
+								<VoicePreviewPlayer audioSrc='liam.mp3' voiceName='Liam' />
+								<VoicePreviewPlayer
+									audioSrc='patrick.mp3'
+									voiceName='Patrick'
+								/>
+							</RadioGroup>
 							<Button
 								onClick={handleFetch}
 								isLoading={loading[elementKey]}

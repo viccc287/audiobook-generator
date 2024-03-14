@@ -11,7 +11,7 @@ function App() {
 					<Visualizer />
 				</div>
 			</div>
-			<PageNavigation />
+				<PageNavigation />
 		</div>
 	);
 }
