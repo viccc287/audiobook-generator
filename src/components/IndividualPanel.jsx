@@ -1,52 +1,22 @@
 import {
-	SpeakerWaveIcon,
-	ArrowPathIcon,
-	ExclamationCircleIcon,
-	ArrowUpTrayIcon,
-} from '@heroicons/react/16/solid';
-import CustomAudioPlayer from './CustomAudioPlayer';
-import { useState, useRef } from 'react';
-import {
-	FaGear,
-	FaUpload,
-	FaChevronDown,
-	FaPlus,
-	FaMinus,
-} from 'react-icons/fa6';
-import {
-	Icon,
-	IconButton,
 	Button,
+	IconButton,
 	Popover,
-	PopoverTrigger,
+	PopoverArrow,
+	PopoverBody,
+	PopoverCloseButton,
 	PopoverContent,
 	PopoverHeader,
-	PopoverBody,
-	PopoverFooter,
-	PopoverArrow,
-	PopoverCloseButton,
-	PopoverAnchor,
-	Flex,
-	Slider,
-	SliderTrack,
-	SliderFilledTrack,
-	SliderThumb,
-	SliderMark,
-	Text,
-	VStack,
-	Select,
-	Accordion,
-	AccordionItem,
-	AccordionButton,
-	AccordionPanel,
-	AccordionIcon,
-	Radio,
+	PopoverTrigger,
 	RadioGroup,
 } from '@chakra-ui/react';
+import { useRef, useState } from 'react';
+import { FaGear, FaUpload } from 'react-icons/fa6';
+import CustomAudioPlayer from './CustomAudioPlayer';
 
-import { currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
 import { useAtom } from 'jotai';
-import VoicePreviewPlayer from './VoicePreviewPlayer';
+import { currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
+import VoiceRadioItem from './VoiceRadioItem';
 
 function IndividualPanel({ textToSend, elementKey }) {
 	const [panelStates, setPanelStates] = useState({
@@ -54,9 +24,20 @@ function IndividualPanel({ textToSend, elementKey }) {
 		displayText: '',
 	});
 
-	const [selectedVoiceName, setSelectedVoiceName] = useState(
-		'Seleccionar voz a generar',
-	);
+
+	const voicesJSON = [
+		{ name: 'Bill', id: 'pqHfZKP75CvOlQylNhV4', gender: 'male' },
+		{ name: 'Liam', id: 'jsCqWAovK2LkecY7zXl4', gender: 'male' },
+		{ name: 'Patrick', id: 'ODq5zmih8GrVes37Dizd', gender: 'male' },
+		{ name: 'Harry', id: 'SOYHLrjzK2X1ezoPC6cr', gender: 'male' },
+		{ name: 'Sarah', id: 'EXAVITQu4vr4xnSDxMaL', gender: 'female' },
+		{ name: 'Alice', id: 'Xb7hH8MSUJpSbSDYk0k2', gender: 'female' },
+		{ name: 'Freya', id: 'jsCqWAovK2LkecY7zXl4', gender: 'female' },
+		{ name: 'Grace', id: 'oWAxZDx7w5VEj9dCyTzz', gender: 'female' },
+	];
+
+	const [selectedVoiceName, setSelectedVoiceName] = useState(voicesJSON[0].name);
+	
 
 	const [audios, setAudios] = useAtom(currentPageAudiosAtom);
 	const [loading, setLoading] = useAtom(currentPageLoadingAtom);
@@ -79,6 +60,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 	};
 
 	const handleFetch = e => {
+		const voiceId = voicesJSON.find(voice => voice.name === selectedVoiceName).id
 		e.preventDefault();
 		setLoading({ ...loading, [elementKey]: true });
 
@@ -90,16 +72,16 @@ function IndividualPanel({ textToSend, elementKey }) {
 			},
 			body: JSON.stringify({
 				model_id: 'eleven_multilingual_v2',
-				text: textToSend,
+				text: textToSend ,
 				voice_settings: {
-					similarity_boost: 1,
-					stability: 1,
+					similarity_boost: 0.5,
+					stability: 0.5,
 				},
 			}),
 		};
 
 		fetch(
-			'https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM',
+			`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
 			options,
 		)
 			.then(response => {
@@ -167,44 +149,20 @@ function IndividualPanel({ textToSend, elementKey }) {
 							Opciones de texto a voz
 						</PopoverHeader>
 						<PopoverBody>
-							<RadioGroup>
-								<Radio>
-									<VoicePreviewPlayer
-										audioSrc='freya.mp3'
-										voiceName='Freya'
-										gender='female'
-										onMouseEnter={() => setSelectedVoiceName('Freya')}
-									/>
-								</Radio>
-
-								<VoicePreviewPlayer
-									audioSrc='sarah.mp3'
-									voiceName='Sarah'
-									gender='female'
-								/>
-								<VoicePreviewPlayer
-									audioSrc='alice.mp3'
-									voiceName='Alice'
-									gender='female'
-								/>
-								<VoicePreviewPlayer
-									audioSrc='grace.mp3'
-									voiceName='Grace'
-									gender='female'
-								/>
-								<VoicePreviewPlayer audioSrc='bill.mp3' voiceName='Bill' />
-								<VoicePreviewPlayer audioSrc='liam.mp3' voiceName='Liam' />
-								<VoicePreviewPlayer
-									audioSrc='patrick.mp3'
-									voiceName='Patrick'
-								/>
+							<RadioGroup
+								value={selectedVoiceName}
+								onChange={setSelectedVoiceName}
+							>
+								{voicesJSON.map((voice, index) => (
+									<VoiceRadioItem key={index} name={voice.name} gender={voice.gender} />
+								))}
 							</RadioGroup>
 							<Button
 								onClick={handleFetch}
 								isLoading={loading[elementKey]}
 								loadingText='Generando'
 							>
-								Generar
+								Generar con voz de {selectedVoiceName}
 							</Button>
 						</PopoverBody>
 					</PopoverContent>
