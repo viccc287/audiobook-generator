@@ -46,7 +46,7 @@ function Image({ width, height, elementKey }) {
 					alt='Preview'
 				/>
 			) : (
-				<PhotoIcon className='w-64 text-neutral-400 ' />
+				<PhotoIcon className='w-full text-neutral-400 ' />
 			)}
 		</label>
 	);

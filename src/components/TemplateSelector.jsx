@@ -6,15 +6,17 @@ import { FaImage } from 'react-icons/fa6';
 function TemplateSelector() {
 	const setTemplate = useSetAtom(currentPageTemplateAtom);
 
-	const width = 170;
-	const height = 150;
+	const gap = '10px';
 
-	function TemplateItem({ width, height, name, oc, children }) {
+	function TemplateItem({ parentGap, name, oc, children }) {
 		//Children must be GridItems. 5 rows and 2 cols
 		return (
 			<Flex
-				w={width}
-				minH={height}
+				grow='1'
+				minW='100px'
+				maxW={`calc(33% - ${parentGap})`}
+				minH='150px'
+				maxH='25%'
 				bgColor='blackAlpha.500'
 				rounded='16px'
 				p={3}
@@ -34,7 +36,6 @@ function TemplateSelector() {
 					bgColor='white'
 					flexGrow='1'
 					flexShrink='0'
-					flexBasis={height * 0.6}
 					p={2}
 					rounded='8px'
 					templateRows='repeat(5, 1fr)'
@@ -47,7 +48,7 @@ function TemplateSelector() {
 					textAlign='center'
 					fontFamily='inter'
 					fontWeight='semibold'
-					fontSize={height * 0.09}
+					fontSize='0.75rem'
 				>
 					{name}
 				</Text>
@@ -56,12 +57,11 @@ function TemplateSelector() {
 	}
 
 	return (
-		<Grid w='33.3%' h='100%' gap={5} gridTemplateColumns={`repeat(auto-fill, ${width}px)`} justifyContent='space-evenly'>
+		<Flex w='100%' h='fit-content' wrap='wrap' gap={gap} justify='space-evenly'>
 			<TemplateItem
 				oc={() => setTemplate('titleSubtitle')}
-				width={width}
-				height={height}
 				name='Título y subtítulo'
+				parentGap={gap}
 			>
 				<GridItem
 					as={Flex}
@@ -85,12 +85,7 @@ function TemplateSelector() {
 				</GridItem>
 			</TemplateItem>
 
-			<TemplateItem
-				oc={() => setTemplate('textImage')}
-				width={width}
-				height={height}
-				name='Texto e imagen'
-			>
+			<TemplateItem oc={() => setTemplate('textImage')} name='Texto e imagen' parentGap={gap}>
 				<GridItem
 					as={Flex}
 					border='1px solid'
@@ -108,17 +103,13 @@ function TemplateSelector() {
 					align='center'
 					colSpan={2}
 					rowSpan={3}
+					p={1}
 				>
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
 				</GridItem>
 			</TemplateItem>
 
-			<TemplateItem
-				oc={() => setTemplate('text2Images')}
-				width={width}
-				height={height}
-				name='Texto y 2 imágenes'
-			>
+			<TemplateItem oc={() => setTemplate('text2Images')} name='Texto y 2 imágenes' parentGap={gap}>
 				<GridItem
 					as={Flex}
 					border='1px solid'
@@ -136,18 +127,15 @@ function TemplateSelector() {
 					align='center'
 					colSpan={2}
 					rowSpan={3}
+					wrap='wrap'
+					p={1}
 				>
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
 				</GridItem>
 			</TemplateItem>
 
-			<TemplateItem
-				oc={() => setTemplate('imageOnly')}
-				width={width}
-				height={height}
-				name='Solo imagen'
-			>
+			<TemplateItem oc={() => setTemplate('imageOnly')} name='Solo imagen' parentGap={gap}>
 				<GridItem
 					as={Flex}
 					border='1px solid'
@@ -155,17 +143,14 @@ function TemplateSelector() {
 					align='center'
 					colSpan={5}
 					rowSpan={5}
+					wrap='wrap'
+					p={1}
 				>
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
 				</GridItem>
 			</TemplateItem>
 
-			<TemplateItem
-				oc={() => setTemplate('twoImages')}
-				width={width}
-				height={height}
-				name='2 imágenes'
-			>
+			<TemplateItem oc={() => setTemplate('twoImages')} name='Dos imágenes' parentGap={gap}>
 				<GridItem
 					as={Flex}
 					border='1px solid'
@@ -173,18 +158,15 @@ function TemplateSelector() {
 					align='center'
 					colSpan={5}
 					rowSpan={5}
+					p={2}
+					gap={1}
 				>
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
 				</GridItem>
 			</TemplateItem>
 
-			<TemplateItem
-				oc={() => setTemplate('textOnly')}
-				width={width}
-				height={height}
-				name='Solo texto'
-			>
+			<TemplateItem oc={() => setTemplate('textOnly')} name='Solo texto' parentGap={gap}>
 				<GridItem
 					as={Flex}
 					border='1px solid'
@@ -199,9 +181,8 @@ function TemplateSelector() {
 
 			<TemplateItem
 				oc={() => setTemplate('leftTextRightImage')}
-				width={width}
-				height={height}
-				name='Texto a la izquierda e imagen a la derecha'
+				name='Texto izquierda e imagen derecha'
+				parentGap={gap}
 			>
 				<GridItem
 					as={Flex}
@@ -220,16 +201,16 @@ function TemplateSelector() {
 					align='center'
 					colSpan={1}
 					rowSpan={5}
+					p={1}
 				>
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
 				</GridItem>
 			</TemplateItem>
 
 			<TemplateItem
 				oc={() => setTemplate('leftTextRightImage')}
-				width={width}
-				height={height}
-				name='Texto a la derecha e imagen a la izquierda'
+				name='Texto izquierda e imagen derecha'
+				parentGap={gap}
 			>
 				<GridItem
 					as={Flex}
@@ -239,7 +220,7 @@ function TemplateSelector() {
 					colSpan={1}
 					rowSpan={5}
 				>
-					<Icon as={FaImage} boxSize={height * 0.25} color='gray' flexGrow='1' />
+					<Icon as={FaImage} w='50%' h='70%' color='gray' />
 				</GridItem>
 				<GridItem
 					as={Flex}
@@ -248,11 +229,12 @@ function TemplateSelector() {
 					align='center'
 					colSpan={1}
 					rowSpan={5}
+					p={1}
 				>
 					Texto
 				</GridItem>
 			</TemplateItem>
-		</Grid>
+		</Flex>
 	);
 }
 
