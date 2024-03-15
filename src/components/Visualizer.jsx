@@ -2,10 +2,16 @@ import Image from './Image.jsx';
 import EditableText from './EditableText.jsx';
 import { currentPageTemplateAtom } from '../lib/atoms.jsx';
 import { useAtomValue } from 'jotai';
+import { Flex } from '@chakra-ui/react';
 
 export default function Visualizer() {
-	const titleClass = {fontFamily: 'inter', fontSize: '2.5rem', fontWeight: 'black', textAlign:'center'};
-	const subtitleClass = {fontFamily: 'inter', fontSize: '1.25rem', fontWeight: 'semiboldy'}
+	const titleClass = {
+		fontFamily: 'inter',
+		fontSize: '3rem',
+		fontWeight: 'black',
+		textAlign: 'center',
+	};
+	const subtitleClass = { fontFamily: 'inter', fontSize: '1.5rem', fontWeight: 'semibold' };
 
 	const template = useAtomValue(currentPageTemplateAtom);
 
@@ -18,51 +24,40 @@ export default function Visualizer() {
 			</>
 		),
 		textOnly: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText textStyles={subtitleClass} elementKey='subtitle' />
-			</div>
+			<>
+				<EditableText textProps={subtitleClass} elementKey='subtitle' />
+			</>
 		),
 		textImage: (
 			<>
-				<EditableText textStyles={titleClass} elementKey='title' />
+				<EditableText textProps={titleClass} elementKey='title' />
 				<Image width='full' height='full' elementKey='first' />
 			</>
 		),
 
 		text2Images: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText textStyles={titleClass} elementKey='title' />
-				<div className='flex size-full flex-wrap items-start'>
+			<>
+				<EditableText textProps={titleClass} elementKey='title' />
+				<Flex boxSize='full'>
 					<Image width='1/2' height='full' elementKey='first' />
 					<Image width='1/2' height='full' elementKey='second' />
-				</div>
-			</div>
+				</Flex>
+			</>
 		),
-		imageOnly: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<div className='flex size-full flex-wrap items-start'>
-					<Image width='full' height='full' elementKey='first' />
-				</div>
-			</div>
-		),
+		imageOnly: <Image width='full' height='full' elementKey='first' />,
 		twoImages: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<div className='flex size-full flex-wrap items-start'>
-					<Image width='1/2' height='full' elementKey='first' />
-					<Image width='1/2' height='full' elementKey='second' />
-				</div>
-			</div>
+			<Flex boxSize='full'>
+				<Image width='1/2' height='full' elementKey='first' />
+				<Image width='1/2' height='full' elementKey='second' />
+			</Flex>
 		),
 
 		leftTextRightImage: (
-			<div className='flex size-full items-center gap-5'>
-				<div className='flex h-full w-1/2'>
-					<EditableText textStyles={subtitleClass} elementKey='subtitle' />
-				</div>
-				<div className='flex h-full w-1/2 flex-wrap items-start'>
-					<Image width='full' height='full' elementKey='first' />
-				</div>
-			</div>
+			<Flex boxSize='full'>
+				<EditableText textProps={subtitleClass} elementKey='subtitle' />
+
+				<Image width='full' height='full' elementKey='first' />
+			</Flex>
 		),
 	};
 	return Templates[template];

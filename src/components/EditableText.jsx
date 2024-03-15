@@ -12,11 +12,12 @@ function EditableText({ textProps, elementKey }) {
 	return (
 		<Flex pos='relative' rounded='1rem' bgColor='whiteAlpha.50' w='100%'>
 			<Text
-			flexGrow={1}
-			p={10}
-			color='black'
-			_mediaDark={{color:'white'}}
-			_focus={{outline: '5px solid rgba(0,0,0,0.25)', borderRadius: '1rem'}}
+				fontFamily='inter'
+				flexGrow={1}
+				p={10}
+				color='black'
+				_mediaDark={{ color: 'white' }}
+				_focus={{ outline: '5px solid rgba(0,0,0,0.25)', borderRadius: '1rem' }}
 				{...textProps}
 				contentEditable
 				suppressContentEditableWarning={true}

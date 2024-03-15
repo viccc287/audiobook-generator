@@ -292,7 +292,7 @@ export default function PageNavigation() {
 		<>
 			<Flex
 				w='100%'
-				pos='fixed'
+				pos='sticky'
 				bottom={0}
 				bgColor='white'
 				ps={10}
@@ -349,7 +349,6 @@ export default function PageNavigation() {
 						{pageNavElements}
 					</Flex>
 				</Flex>
-
 				<Spacer></Spacer>
 				{isOverflown ? (
 					<Flex shadow='-10px 0px 15px 0px rgba(0,0,0,0.10)'>
@@ -372,7 +371,7 @@ export default function PageNavigation() {
 				onClose={closeDeleteDialog}
 			>
 				<AlertDialogOverlay>
-					<AlertDialogContent>
+					<AlertDialogContent fontFamily='inter'>
 						<AlertDialogHeader fontSize='lg' fontWeight='bold'>
 							Borrar Página
 						</AlertDialogHeader>
