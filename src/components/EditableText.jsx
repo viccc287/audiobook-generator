@@ -1,33 +1,31 @@
-
-import {
-	currentPageTextAtom,
-} from '../lib/atoms.jsx';
+import { currentPageTextAtom } from '../lib/atoms.jsx';
 import { useAtom } from 'jotai';
-import IndividualPanel from '../components/IndividualPanel.jsx'
+import IndividualPanel from '../components/IndividualPanel.jsx';
+import { Flex, Text } from '@chakra-ui/react';
 
-
-function EditableText({ textStyles, elementKey }) {
-
+function EditableText({ textProps, elementKey }) {
 	const [text, setText] = useAtom(currentPageTextAtom);
 
 	const handleTextChange = e => {
-		setText({...text, [elementKey]:e.target.textContent})
+		setText({ ...text, [elementKey]: e.target.textContent });
 	};
 	return (
-		<div className='relative w-full max-w-full rounded  bg-white/5'>
-			<p
-				className={`w-full p-10 leading-normal  text-white focus:outline-dashed focus:outline-4 ${textStyles}`}
+		<Flex pos='relative' rounded='1rem' bgColor='whiteAlpha.50' w='100%'>
+			<Text
+			flexGrow={1}
+			p={10}
+			color='black'
+			_mediaDark={{color:'white'}}
+			_focus={{outline: '5px solid rgba(0,0,0,0.25)', borderRadius: '1rem'}}
+				{...textProps}
 				contentEditable
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
 			>
 				{text[elementKey]}
-			</p>
-		{<IndividualPanel
-				textToSend={text[elementKey]}
-				elementKey={elementKey}
-			/> }
-		</div>
+			</Text>
+			{<IndividualPanel textToSend={text[elementKey]} elementKey={elementKey} />}
+		</Flex>
 	);
 }
 export default EditableText;

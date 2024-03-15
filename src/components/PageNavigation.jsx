@@ -354,12 +354,12 @@ export default function PageNavigation() {
 				{isOverflown ? (
 					<Flex shadow='-10px 0px 15px 0px rgba(0,0,0,0.10)'>
 						<IconButton
-							icon={<ChevronLeftIcon boxSize={6} />}
+							icon={<ChevronLeftIcon boxSize={5} />}
 							onClick={() => handleScroll('left')}
 							bgColor='transparent'
 						/>
 						<IconButton
-							icon={<ChevronRightIcon boxSize={6} />}
+							icon={<ChevronRightIcon boxSize={5} />}
 							onClick={() => handleScroll('right')}
 							bgColor='transparent'
 						/>

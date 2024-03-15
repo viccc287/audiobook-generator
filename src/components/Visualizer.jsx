@@ -4,17 +4,17 @@ import { currentPageTemplateAtom } from '../lib/atoms.jsx';
 import { useAtomValue } from 'jotai';
 
 export default function Visualizer() {
-	const titleClass = 'font-jakarta text-4xl font-bold';
-	const subtitleClass = 'font-poppins text-2xl';
+	const titleClass = {fontFamily: 'inter', fontSize: '2.5rem', fontWeight: 'black', textAlign:'center'};
+	const subtitleClass = {fontFamily: 'inter', fontSize: '1.25rem', fontWeight: 'semiboldy'}
 
 	const template = useAtomValue(currentPageTemplateAtom);
 
 	const Templates = {
 		titleSubtitle: (
 			<>
-				<EditableText textStyles={titleClass} elementKey='title' />
+				<EditableText textProps={titleClass} elementKey='title' />
 
-				<EditableText textStyles={subtitleClass} elementKey='subtitle' />
+				<EditableText textProps={subtitleClass} elementKey='subtitle' />
 			</>
 		),
 		textOnly: (
