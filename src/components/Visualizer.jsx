@@ -1,8 +1,9 @@
 import Image from './Image.jsx';
 import EditableText from './EditableText.jsx';
-import { currentPageTemplateAtom } from '../lib/atoms.jsx';
-import { useAtomValue } from 'jotai';
-import { Flex } from '@chakra-ui/react';
+import { currentPageColorAtom, currentPageTemplateAtom } from '../lib/atoms.jsx';
+import {  useAtomValue } from 'jotai';
+import { Flex, Input } from '@chakra-ui/react';
+import CustomColorSelector from './CustomColorSelector.jsx';
 
 export default function Visualizer() {
 	const titleClass = {
@@ -11,11 +12,15 @@ export default function Visualizer() {
 		fontWeight: 'black',
 		textAlign: 'center',
 	};
+
 	const subtitleClass = { fontFamily: 'inter', fontSize: '1.5rem', fontWeight: 'semibold' };
 
-	const template = useAtomValue(currentPageTemplateAtom);
 
-	const Templates = {
+	const selectedTemplate = useAtomValue(currentPageTemplateAtom);
+	const selectedColor = useAtomValue(currentPageColorAtom)
+
+
+	const templates = {
 		titleSubtitle: (
 			<>
 				<EditableText textProps={titleClass} elementKey='title' />
@@ -60,5 +65,10 @@ export default function Visualizer() {
 			</Flex>
 		),
 	};
-	return Templates[template];
+	return (
+		<Flex pos='relative' w='full' direction='column' gap={5} p={5} alignItems='center' rounded='15px' bgColor={selectedColor}>
+			{templates[selectedTemplate]}
+			<CustomColorSelector />
+		</Flex>
+	);
 }

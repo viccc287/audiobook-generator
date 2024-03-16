@@ -10,7 +10,7 @@ function EditableText({ textProps, elementKey }) {
 		setText({ ...text, [elementKey]: e.target.textContent });
 	};
 	return (
-		<Flex pos='relative' rounded='1rem' bgColor='whiteAlpha.50' w='100%'>
+		<Flex pos='relative' rounded='1rem' bgColor='blackAlpha.300' w='100%'>
 			<Text
 				fontFamily='inter'
 				flexGrow={1}

@@ -5,16 +5,20 @@ import { Flex } from '@chakra-ui/react';
 
 function App() {
 	return (
-		<div className='flex min-h-screen flex-col bg-white dark:bg-gray-900'>
-			<div className='flex flex-auto p-8 gap-8'>
-				<Flex w='33%'>
-
-				<TemplateSelector />
+		<div className='flex min-h-dvh  flex-col bg-white dark:bg-gray-800'>
+			<Flex
+				flex='auto'
+				p={{ base: 4, md: 6, lg: 8 }}
+				gap={{ base: 4, md: 6, lg: 8 }}
+				direction={{ base: 'column', md: 'row' }}
+			>
+				<Flex w={{ base: '100%', md: '33.33%' }}>
+					<TemplateSelector />
 				</Flex>
-				<div className='flex max-h-screen w-2/3 flex-col items-center justify-start gap-5'>
+				<Flex w={{ base: '100%', md: '66.66%' }} >
 					<Visualizer />
-				</div>
-			</div>
+				</Flex>
+			</Flex>
 			<PageNavigation />
 		</div>
 	);

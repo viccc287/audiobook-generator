@@ -3,7 +3,8 @@ import { atom } from 'jotai';
 export const pagesAtom = atom([
   {
     name:'Prefacio',
-		template: 'titleSubtitle',
+    template: 'titleSubtitle',
+    color:'#1A237E',
 		images: {},
 		text: {
 			title: 'Tito el jaguar',
@@ -15,7 +16,8 @@ export const pagesAtom = atom([
 	},
   {
     name:'Cap 1',
-		template: 'imageOnly',
+    template: 'imageOnly',
+    color:'#880E4F',
 		images: {},
     text: {
       title: 'Cap 1',
@@ -27,7 +29,8 @@ export const pagesAtom = atom([
 	},
   {
     name:'Cap 2',
-		template: 'textImage',
+    template: 'textImage',
+    color:'#004D40',
 		images: {},
 		text: {
 			title: 'Title',
@@ -71,6 +74,17 @@ export const currentPageNameAtom = atom(
   }
 );
 
+
+export const currentPageColorAtom = atom(
+  (get) => get(pagesAtom)[get(displayedPageIndexAtom)].color,
+  (get, set, newColor) => {
+    const pageIndex = get(displayedPageIndexAtom);
+    const pages = get(pagesAtom);
+    pages[pageIndex].color = newColor;
+    set(pagesAtom, [...pages]);
+  }
+);
+
 export const currentPageImagesAtom = atom(
   (get) => get(pagesAtom)[get(displayedPageIndexAtom)].images,
   (get, set, newImages) => {
@@ -90,6 +104,7 @@ export const currentPageAudiosAtom = atom(
     set(pagesAtom, [...pages]);
   }
 );
+
 
 export const currentPageLoadingAtom = atom(
   (get) => get(pagesAtom)[get(displayedPageIndexAtom)].loading,
