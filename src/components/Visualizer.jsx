@@ -1,7 +1,7 @@
-import Image from './Image.jsx';
+import CustomImage from './CustomImage.jsx';
 import EditableText from './EditableText.jsx';
 import { currentPageColorAtom, currentPageTemplateAtom } from '../lib/atoms.jsx';
-import {  useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { Flex, Input } from '@chakra-ui/react';
 import CustomColorSelector from './CustomColorSelector.jsx';
 
@@ -15,10 +15,8 @@ export default function Visualizer() {
 
 	const subtitleClass = { fontFamily: 'inter', fontSize: '1.5rem', fontWeight: 'semibold' };
 
-
 	const selectedTemplate = useAtomValue(currentPageTemplateAtom);
-	const selectedColor = useAtomValue(currentPageColorAtom)
-
+	const selectedColor = useAtomValue(currentPageColorAtom);
 
 	const templates = {
 		titleSubtitle: (
@@ -36,7 +34,7 @@ export default function Visualizer() {
 		textImage: (
 			<>
 				<EditableText textProps={titleClass} elementKey='title' />
-				<Image width='full' height='full' elementKey='first' />
+				<CustomImage elementKey='first' />
 			</>
 		),
 
@@ -44,16 +42,16 @@ export default function Visualizer() {
 			<>
 				<EditableText textProps={titleClass} elementKey='title' />
 				<Flex boxSize='full'>
-					<Image width='1/2' height='full' elementKey='first' />
-					<Image width='1/2' height='full' elementKey='second' />
+					<CustomImage elementKey='first' />
+					<CustomImage elementKey='second' />
 				</Flex>
 			</>
 		),
-		imageOnly: <Image width='full' height='full' elementKey='first' />,
+		imageOnly: <CustomImage elementKey='first' />,
 		twoImages: (
 			<Flex boxSize='full'>
-				<Image width='1/2' height='full' elementKey='first' />
-				<Image width='1/2' height='full' elementKey='second' />
+				<CustomImage elementKey='first' />
+				<CustomImage elementKey='second' />
 			</Flex>
 		),
 
@@ -61,12 +59,21 @@ export default function Visualizer() {
 			<Flex boxSize='full'>
 				<EditableText textProps={subtitleClass} elementKey='subtitle' />
 
-				<Image width='full' height='full' elementKey='first' />
+				<CustomImage  elementKey='first' />
 			</Flex>
 		),
 	};
 	return (
-		<Flex pos='relative' w='full' direction='column' gap={5} p={5} alignItems='center' rounded='15px' bgColor={selectedColor}>
+		<Flex
+			pos='relative'
+			w='full'
+			direction='column'
+			gap={5}
+			p={5}
+			alignItems='stretch'
+			rounded='15px'
+			bgColor={selectedColor}
+		>
 			{templates[selectedTemplate]}
 			<CustomColorSelector />
 		</Flex>

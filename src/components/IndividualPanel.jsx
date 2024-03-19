@@ -123,6 +123,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 				justify='center'
 				overflow='clip'
 				bgColor='white'
+				rounded='10px'
 			>
 				<Popover isLazy>
 					<PopoverTrigger>

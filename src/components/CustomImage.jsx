@@ -1,9 +1,10 @@
 import { useRef } from 'react';
-import { PhotoIcon } from '@heroicons/react/16/solid';
 import { currentPageImagesAtom } from '../lib/atoms';
 import { useAtom } from 'jotai';
+import { FaImage } from 'react-icons/fa6';
+import { Flex, Icon, Image } from '@chakra-ui/react';
 
-function Image({ width, height, elementKey }) {
+function CustomImage({ width, height, elementKey }) {
 	const fileInputRef = useRef(null);
 
 	const [images, setImages] = useAtom(currentPageImagesAtom);
@@ -26,30 +27,29 @@ function Image({ width, height, elementKey }) {
 	};
 
 	return (
-		<label
-			className={`flex w-${width} h-${height} cursor-pointer justify-center border-4 border-white/50 ${
-				images[elementKey] ? `` : `border-4 border-dashed`
-			}`}
+		<Flex
+			as='label'
+			h='full'
+			w='full'
+			cursor='pointer'
+			align='center'
+			justify='center'
+			border={images[elementKey] ? '' : '3px dashed rgba(255,255,255,0.5)'}
 			onDragOver={handleDragOver}
 			onDrop={handleDrop}
+			rounded='10px'
 		>
-			<input
-				ref={fileInputRef}
-				className='hidden'
-				type='file'
-				onChange={handleImageChange}
+			<input ref={fileInputRef} className='hidden' type='file' onChange={handleImageChange} />
+
+			<Image
+				src={images[elementKey]}
+				h='full'
+				alt='Preview'
+				fit='contain'
+				fallback={<Icon as={FaImage} color='whiteAlpha.500' boxSize={{ base: 16, md: 32, xl: 48 }} />}
 			/>
-			{images[elementKey] ? (
-				<img
-					className='object-cover'
-					src={images[elementKey]}
-					alt='Preview'
-				/>
-			) : (
-				<PhotoIcon className='w-full text-neutral-400 ' />
-			)}
-		</label>
+		</Flex>
 	);
 }
 
-export default Image;
+export default CustomImage;

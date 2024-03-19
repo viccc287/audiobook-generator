@@ -15,7 +15,7 @@ function App() {
 				<Flex w={{ base: '100%', md: '33.33%' }}>
 					<TemplateSelector />
 				</Flex>
-				<Flex w={{ base: '100%', md: '66.66%' }} >
+				<Flex w={{ base: '100%', md: '66.66%' }}  >
 					<Visualizer />
 				</Flex>
 			</Flex>
