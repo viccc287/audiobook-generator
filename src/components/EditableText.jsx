@@ -10,18 +10,15 @@ function EditableText({ textProps, elementKey }) {
 		setText({ ...text, [elementKey]: e.target.textContent });
 	};
 	return (
-		<Flex pos='relative' rounded='10px' bgColor='blackAlpha.300' w='100%'>
+		<Flex pos='relative' rounded='10px' bgColor='transparent' w='100%'>
 			<Text
-				fontFamily='inter'
+				p={5}
 				flexGrow={1}
-				p={10}
-				color='black'
-				_mediaDark={{ color: 'white' }}
 				_focus={{ outline: '5px solid rgba(0,0,0,0.25)', borderRadius: '10px' }}
-				{...textProps}
 				contentEditable
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
+				{...textProps}
 			>
 				{text[elementKey]}
 			</Text>

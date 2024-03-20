@@ -6,6 +6,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import { extendTheme } from '@chakra-ui/react';
 import '@fontsource-variable/inter';
+import '@fontsource-variable/playpen-sans';
+import '@fontsource/acme';
 
 export const theme = extendTheme({
 	components: {
@@ -27,6 +29,8 @@ export const theme = extendTheme({
 	},
 	fonts: {
 		inter: `'Inter', sans-serif`,
+		acme: `'Acme', sans-serif`,
+		playpen: `'Playpen Sans Variable', cursive`,
 	},
 });
 

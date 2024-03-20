@@ -124,6 +124,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 				overflow='clip'
 				bgColor='white'
 				rounded='10px'
+				boxShadow='0 5px 20px rgba(0,0,0,0.25)'
 			>
 				<Popover isLazy>
 					<PopoverTrigger>

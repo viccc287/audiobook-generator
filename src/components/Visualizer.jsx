@@ -6,60 +6,147 @@ import { Flex, Input } from '@chakra-ui/react';
 import CustomColorSelector from './CustomColorSelector.jsx';
 
 export default function Visualizer() {
-	const titleClass = {
-		fontFamily: 'inter',
+	const selectedTemplate = useAtomValue(currentPageTemplateAtom);
+	const selectedColor = useAtomValue(currentPageColorAtom);
+
+	function padZero(str, len) {
+		len = len || 2;
+		var zeros = new Array(len).join('0');
+		return (zeros + str).slice(-len);
+	}
+
+	function invertColor(hex, bw) {
+		if (hex.indexOf('#') === 0) {
+			hex = hex.slice(1);
+		}
+		// convert 3-digit hex to 6-digits.
+		if (hex.length === 3) {
+			hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+		}
+		if (hex.length !== 6) {
+			throw new Error('Invalid HEX color.');
+		}
+		var r = parseInt(hex.slice(0, 2), 16),
+			g = parseInt(hex.slice(2, 4), 16),
+			b = parseInt(hex.slice(4, 6), 16);
+		if (bw) {
+			// https://stackoverflow.com/a/3943023/112731
+			return r * 0.299 + g * 0.587 + b * 0.114 > 149 ? '#000000' : '#FFFFFF';
+		}
+		// invert color components
+		r = (255 - r).toString(16);
+		g = (255 - g).toString(16);
+		b = (255 - b).toString(16);
+		// pad each with zeros and return
+		return '#' + padZero(r) + padZero(g) + padZero(b);
+	}
+
+	const invertedColor = invertColor(selectedColor, true);
+
+	const titleProps = {
+		fontFamily: 'playpen',
 		fontSize: '3rem',
 		fontWeight: 'black',
 		textAlign: 'center',
+		color: invertedColor,
 	};
 
-	const subtitleClass = { fontFamily: 'inter', fontSize: '1.5rem', fontWeight: 'semibold' };
+	const subtitleProps = {
+		fontFamily: 'playpen',
+		fontSize: '1.75rem',
+		fontWeight: 'regular',
+		textAlign: 'center',
+		color: invertedColor,
+	};
 
-	const selectedTemplate = useAtomValue(currentPageTemplateAtom);
-	const selectedColor = useAtomValue(currentPageColorAtom);
+	const textProps = {
+		fontFamily: 'playpen',
+		fontSize: '1.5rem',
+		fontWeight: 'regular',
+		color: invertedColor,
+	};
 
 	const templates = {
 		titleSubtitle: (
 			<>
-				<EditableText textProps={titleClass} elementKey='title' />
-
-				<EditableText textProps={subtitleClass} elementKey='subtitle' />
+				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+			</>
+		),
+		titleSubtitleImage: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<CustomImage elementKey='first' color={invertedColor} />
 			</>
 		),
 		textOnly: (
 			<>
-				<EditableText textProps={subtitleClass} elementKey='subtitle' />
+				<Flex boxSize='full' gap='inherit' align='center'>
+					<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				</Flex>
 			</>
 		),
 		textImage: (
 			<>
-				<EditableText textProps={titleClass} elementKey='title' />
-				<CustomImage elementKey='first' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<CustomImage elementKey='first' color={invertedColor} />
+			</>
+		),
+
+		titleImageText: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<Flex boxSize='full' gap='inherit'>
+					<CustomImage elementKey='first' color={invertedColor} />
+					<EditableText textProps={textProps} elementKey='subtitle' />
+				</Flex>
+			</>
+		),
+		titleTextImage: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<Flex boxSize='full' gap='inherit'>
+					<EditableText textProps={textProps} elementKey='subtitle' />
+					<CustomImage elementKey='first' color={invertedColor} />
+				</Flex>
 			</>
 		),
 
 		text2Images: (
 			<>
-				<EditableText textProps={titleClass} elementKey='title' />
-				<Flex boxSize='full'>
-					<CustomImage elementKey='first' />
-					<CustomImage elementKey='second' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<Flex boxSize='full' gap='inherit'>
+					<CustomImage elementKey='first' color={invertedColor} />
+					<CustomImage elementKey='second' color={invertedColor} />
 				</Flex>
 			</>
 		),
-		imageOnly: <CustomImage elementKey='first' />,
+		imageText: (
+			<>
+				<CustomImage elementKey='first' color={invertedColor} />
+				<EditableText textProps={titleProps} elementKey='title' />
+			</>
+		),
+		imageOnly: <CustomImage elementKey='first' color={invertedColor} />,
 		twoImages: (
-			<Flex boxSize='full'>
-				<CustomImage elementKey='first' />
-				<CustomImage elementKey='second' />
+			<Flex boxSize='full' gap='inherit'>
+				<CustomImage elementKey='first' color={invertedColor} />
+				<CustomImage elementKey='second' color={invertedColor} />
 			</Flex>
 		),
 
 		leftTextRightImage: (
-			<Flex boxSize='full'>
-				<EditableText textProps={subtitleClass} elementKey='subtitle' />
+			<Flex boxSize='full' gap='inherit' align='center'>
+				<EditableText textProps={textProps} elementKey='subtitle' />
 
-				<CustomImage  elementKey='first' />
+				<CustomImage elementKey='first' color={invertedColor} />
+			</Flex>
+		),
+		leftImageRightText: (
+			<Flex boxSize='full' gap='inherit' align='center'>
+				<CustomImage elementKey='first' color={invertedColor} />
+				<EditableText textProps={textProps} elementKey='subtitle' />
 			</Flex>
 		),
 	};
@@ -68,8 +155,8 @@ export default function Visualizer() {
 			pos='relative'
 			w='full'
 			direction='column'
-			gap={5}
-			p={5}
+			gap={16}
+			p={16}
 			alignItems='stretch'
 			rounded='15px'
 			bgColor={selectedColor}

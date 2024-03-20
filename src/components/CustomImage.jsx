@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { FaImage } from 'react-icons/fa6';
 import { Flex, Icon, Image } from '@chakra-ui/react';
 
-function CustomImage({ width, height, elementKey }) {
+function CustomImage({ elementKey, color }) {
 	const fileInputRef = useRef(null);
 
 	const [images, setImages] = useAtom(currentPageImagesAtom);
@@ -34,7 +34,7 @@ function CustomImage({ width, height, elementKey }) {
 			cursor='pointer'
 			align='center'
 			justify='center'
-			border={images[elementKey] ? '' : '3px dashed rgba(255,255,255,0.5)'}
+			border={images[elementKey] ? '' : `3px dashed ${color}`}
 			onDragOver={handleDragOver}
 			onDrop={handleDrop}
 			rounded='10px'
@@ -43,10 +43,13 @@ function CustomImage({ width, height, elementKey }) {
 
 			<Image
 				src={images[elementKey]}
+				filter= 'drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
 				h='full'
 				alt='Preview'
 				fit='contain'
-				fallback={<Icon as={FaImage} color='whiteAlpha.500' boxSize={{ base: 16, md: 32, xl: 48 }} />}
+				objectPosition='end'
+				borderRadius='10px'
+				fallback={<Icon as={FaImage} color={color} boxSize={{ base: 16, md: 32, xl: 48 }} />}
 			/>
 		</Flex>
 	);
