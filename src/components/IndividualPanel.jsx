@@ -66,7 +66,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				model_id: 'eleven_multilingual_v1',
+				model_id: 'eleven_multilingual_v2',
 				text: textToSend,
 				voice_settings: {
 					similarity_boost: 0.5,

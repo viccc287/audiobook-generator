@@ -43,7 +43,11 @@ function CustomImage({ elementKey, color }) {
 
 			<Image
 				src={images[elementKey]}
-				filter= 'drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
+				transition='all 200ms'
+				_hover={{
+					transform: 'scale(1.03)'
+				}}
+				filter= 'drop-shadow(0 5px 20px rgba(0,0,0,0.3))'
 				h='full'
 				alt='Preview'
 				fit='contain'

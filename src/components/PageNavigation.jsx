@@ -128,12 +128,13 @@ export default function PageNavigation() {
 	function handleInsertPageAfter(index) {
 		const newPages = [...pages];
 		newPages.splice(index + 1, 0, {
-			name: `Nueva página`,
+			name: 'Nueva página',
 			template: 'titleSubtitle',
+			color: '#FFFFFF',
 			images: {},
 			text: {
 				title: 'Editar título',
-				subtitle: 'Editar subtítulo',
+				subtitle: 'Editar texto',
 			},
 			audios: {},
 			loading: {},

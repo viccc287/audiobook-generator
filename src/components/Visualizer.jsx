@@ -160,6 +160,7 @@ export default function Visualizer() {
 			alignItems='stretch'
 			rounded='15px'
 			bgColor={selectedColor}
+			transition='background-color 300ms'
 		>
 			{templates[selectedTemplate]}
 			<CustomColorSelector />

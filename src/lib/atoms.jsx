@@ -16,7 +16,7 @@ export const pagesAtom = atom([
 	},
 	{
 		name: 'Cap 1',
-		template: 'titleSubtitle',
+		template: 'titleImageText',
 		color: '#FFFFFF',
 		images: {},
 		text: {
@@ -29,7 +29,7 @@ export const pagesAtom = atom([
 	},
 	{
 		name: 'Cap 2',
-		template: 'textImage',
+		template: 'titleTextImage',
 		color: '#FFFFFF',
 		images: {},
 		text: {
