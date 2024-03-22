@@ -9,9 +9,7 @@ import {
 	MenuList,
 	MenuItem,
 	IconButton,
-	Icon,
 	Button,
-	ButtonGroup,
 	AlertDialog,
 	AlertDialogBody,
 	AlertDialogFooter,
@@ -22,9 +20,7 @@ import {
 	useDisclosure,
 	Flex,
 	Text,
-	StackDivider,
 	Spacer,
-	Circle,
 	Input,
 } from '@chakra-ui/react';
 import {
@@ -34,11 +30,8 @@ import {
 	ChevronDownIcon,
 	PlusSquareIcon,
 	CheckIcon,
-	ArrowRightIcon,
 	ChevronRightIcon,
 	ChevronLeftIcon,
-	CheckCircleIcon,
-	CloseIcon,
 	EditIcon,
 } from '@chakra-ui/icons';
 
@@ -65,12 +58,26 @@ export default function PageNavigation() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [newPageName, setNewPageName] = useState('');
 
+
+	useEffect(() => {
+		const handleResize = ()=> {
+			const container = containerRef.current;
+			if (container.clientWidth < container.scrollWidth) setIsOverflown(true);
+			else if (isOverflown) setIsOverflown(false);
+		};
+		window.addEventListener('resize', handleResize);
+		return () => {
+		  window.removeEventListener('resize', handleResize);
+		};
+
+	  }, [isOverflown]);
+
+
 	useEffect(() => {
 		const container = containerRef.current;
 		if (container.clientWidth < container.scrollWidth) setIsOverflown(true);
 		else if (isOverflown) setIsOverflown(false);
-		else return;
-	}, [pages]);
+	}, [pages, isOverflown]);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -192,7 +199,7 @@ export default function PageNavigation() {
 						e.stopPropagation();
 						dragItemIndex.current = index;
 					}}
-					onDragEnter={e => (draggedOverItemIndex.current = index)}
+					onDragEnter={() => (draggedOverItemIndex.current = index)}
 					onDragEnd={handleSort}
 					onDragOver={e => e.preventDefault()}
 					rounded='0'

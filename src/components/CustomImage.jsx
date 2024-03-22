@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { currentPageImagesAtom } from '../lib/atoms';
 import { useAtom } from 'jotai';
 import { FaImage } from 'react-icons/fa6';
-import { Flex, Icon, Image } from '@chakra-ui/react';
+import { Flex, Icon, Image, Input } from '@chakra-ui/react';
 
 function CustomImage({ elementKey, color }) {
 	const fileInputRef = useRef(null);
@@ -29,7 +29,7 @@ function CustomImage({ elementKey, color }) {
 	return (
 		<Flex
 			as='label'
-			h='full'
+			maxh='full'
 			w='full'
 			cursor='pointer'
 			align='center'
@@ -39,7 +39,7 @@ function CustomImage({ elementKey, color }) {
 			onDrop={handleDrop}
 			rounded='10px'
 		>
-			<input ref={fileInputRef} className='hidden' type='file' onChange={handleImageChange} />
+			<Input ref={fileInputRef} display='none' type='file' onChange={handleImageChange} />
 
 			<Image
 				src={images[elementKey]}

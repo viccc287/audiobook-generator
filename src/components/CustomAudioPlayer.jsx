@@ -37,7 +37,7 @@ function CustomAudioPlayer({ audioUrl }) {
 
 	return (
 		<Flex align='center' justify='center'>
-			<audio ref={audioRef} src={audioUrl} className='hidden'></audio>
+			<Flex as='audio' ref={audioRef} src={audioUrl} display='none'></Flex>
 			{isPlaying ? (
 				<IconButton
 					bgColor='transparent'

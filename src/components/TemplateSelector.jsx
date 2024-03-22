@@ -1,7 +1,6 @@
-import { PhotoIcon } from '@heroicons/react/16/solid';
 import { useSetAtom } from 'jotai';
 import { currentPageTemplateAtom } from '../lib/atoms';
-import { Center, Divider, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
 import { FaImage } from 'react-icons/fa6';
 function TemplateSelector() {
 	const setTemplate = useSetAtom(currentPageTemplateAtom);

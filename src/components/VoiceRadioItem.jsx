@@ -42,7 +42,7 @@ export default function VoiceRadioItem({ name, gender }) {
 		return (
 			<>
 				<Flex alignItems='center' gap={2} flex='1'>
-					<audio ref={audioRef} src={audioSrc} className='hidden'></audio>
+					<Flex as='audio' ref={audioRef} src={audioSrc} display='none'></Flex>
 					{gender === 'female' ? (
 						<Icon as={FaFemale} color='pink.500' boxSize={4} />
 					) : (

@@ -62,7 +62,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 		const options = {
 			method: 'POST',
 			headers: {
-				'xi-api-key': 'a9b66f7a96e4a716848db53e77ac3b9f',
+				'xi-api-key': '3d2b2175bdc519bcd217fd8508ea578b',
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
@@ -107,15 +107,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 	};
 
 	return (
-		<Flex
-			pointerEvents='none'
-			pos='absolute'
-			left={0}
-			top={0}
-			boxSize='full'
-			align='end'
-			justify='end'
-		>
+		<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='end' justify='end'>
 			<Flex
 				pointerEvents='auto'
 				boxSize='fit-content'
@@ -128,7 +120,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 			>
 				<Popover isLazy>
 					<PopoverTrigger>
-						<IconButton bgColor='transparent' icon={<FaGear />}>
+						<IconButton bgColor='transparent' icon={<FaGear />} isLoading={loading[elementKey]}>
 							Trigger
 						</IconButton>
 					</PopoverTrigger>
@@ -142,33 +134,26 @@ function IndividualPanel({ textToSend, elementKey }) {
 									<VoiceRadioItem key={index} name={voice.name} gender={voice.gender} />
 								))}
 							</RadioGroup>
-							<Button
-								onClick={handleFetch}
-								isLoading={loading[elementKey]}
-								loadingText='Generando'
-								fontSize='sm'
-							>
+							<Button onClick={handleFetch} isLoading={loading[elementKey]} loadingText='Generando' fontSize='sm'>
 								Generar con voz de {selectedVoiceName}
 							</Button>
 						</PopoverBody>
 					</PopoverContent>
 				</Popover>
-				<IconButton
-					bgColor='transparent'
-					icon={<FaUpload />}
-					onClick={() => fileInputRef.current.click()}
-				/>
-				<Input
-					ref={fileInputRef}
-					type='file'
-					accept='audio/*'
-					display='none'
-					onChange={handleFileUpload}
-				/>
-				<Flex borderStart='1px solid rgba(0,0,0,0.10)' align='center' >
+				<IconButton bgColor='transparent' icon={<FaUpload />} onClick={() => fileInputRef.current.click()} />
+				<Input ref={fileInputRef} type='file' accept='audio/*' display='none' onChange={handleFileUpload} />
+				<Flex borderStart='1px solid rgba(0,0,0,0.10)' align='center'>
 					{audios[elementKey] && (
-						<Text mx={2} fontSize='sm' fontFamily='inter' overflow='clip' textOverflow='ellipsis' whiteSpace='nowrap' maxW='20ch' >
-							{audios[elementKey].name} (generado)
+						<Text
+							mx={2}
+							fontSize='sm'
+							fontFamily='inter'
+							overflow='clip'
+							textOverflow='ellipsis'
+							whiteSpace='nowrap'
+							maxW='20ch'
+						>
+							{audios[elementKey].name}
 						</Text>
 					)}
 					{audios[elementKey] && <CustomAudioPlayer audioUrl={audios[elementKey].url} />}

@@ -16,12 +16,12 @@ function EditableText({ textProps, elementKey }) {
 				rounded='10px'
 				outline='none'
 				_hover={{
-					outline: '3px solid rgba(0,0,0,0.25)'
+					outline: '3px solid rgba(0,0,0,0.25)',
 				}}
-				filter= 'drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
+				filter='drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
 				p={5}
 				flexGrow={1}
-				_focus={{ outline: '3px solid rgba(0,0,0,0.25)'}}
+				_focus={{ outline: '3px solid rgba(0,0,0,0.25)' }}
 				contentEditable
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}

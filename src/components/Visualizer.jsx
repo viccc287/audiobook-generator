@@ -2,7 +2,7 @@ import CustomImage from './CustomImage.jsx';
 import EditableText from './EditableText.jsx';
 import { currentPageColorAtom, currentPageTemplateAtom } from '../lib/atoms.jsx';
 import { useAtomValue } from 'jotai';
-import { Flex, Input } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import CustomColorSelector from './CustomColorSelector.jsx';
 
 export default function Visualizer() {
@@ -44,24 +44,24 @@ export default function Visualizer() {
 	const invertedColor = invertColor(selectedColor, true);
 
 	const titleProps = {
-		fontFamily: 'playpen',
-		fontSize: '3rem',
+		fontFamily: 'inter',
+		fontSize: { base: '1.5rem', md: '2.25rem', xl: '3rem' },
 		fontWeight: 'black',
 		textAlign: 'center',
 		color: invertedColor,
 	};
 
 	const subtitleProps = {
-		fontFamily: 'playpen',
-		fontSize: '1.75rem',
+		fontFamily: 'inter',
+		fontSize: { base: '1rem', md: '1.4rem', xl: '1.75rem' },
 		fontWeight: 'regular',
 		textAlign: 'center',
 		color: invertedColor,
 	};
 
 	const textProps = {
-		fontFamily: 'playpen',
-		fontSize: '1.5rem',
+		fontFamily: 'inter',
+		fontSize: { base: '1rem', md: '1.3rem', xl: '1.5rem' },
 		fontWeight: 'regular',
 		color: invertedColor,
 	};
@@ -97,7 +97,7 @@ export default function Visualizer() {
 		titleImageText: (
 			<>
 				<EditableText textProps={titleProps} elementKey='title' />
-				<Flex boxSize='full' gap='inherit'>
+				<Flex boxSize='full' gap='inherit' align='center'>
 					<CustomImage elementKey='first' color={invertedColor} />
 					<EditableText textProps={textProps} elementKey='subtitle' />
 				</Flex>
@@ -106,7 +106,7 @@ export default function Visualizer() {
 		titleTextImage: (
 			<>
 				<EditableText textProps={titleProps} elementKey='title' />
-				<Flex boxSize='full' gap='inherit'>
+				<Flex boxSize='full' gap='inherit' align='center'>
 					<EditableText textProps={textProps} elementKey='subtitle' />
 					<CustomImage elementKey='first' color={invertedColor} />
 				</Flex>
@@ -155,8 +155,8 @@ export default function Visualizer() {
 			pos='relative'
 			w='full'
 			direction='column'
-			gap={16}
-			p={16}
+			gap={{ base: 5, md: 10, xl: 16 }}
+			p={{ base: 5, md: 10, xl: 16 }}
 			alignItems='stretch'
 			rounded='15px'
 			bgColor={selectedColor}

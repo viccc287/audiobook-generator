@@ -1,4 +1,4 @@
-import { Flex, IconButton, Input } from '@chakra-ui/react';
+import { Flex, IconButton } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { currentPageColorAtom } from '../lib/atoms';
 import { useRef } from 'react';

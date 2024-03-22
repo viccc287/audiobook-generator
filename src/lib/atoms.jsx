@@ -18,7 +18,7 @@ export const pagesAtom = atom([
 		name: 'Cap 1',
 		template: 'titleImageText',
 		color: '#FFFFFF',
-		images: {},
+		images: { first: 'tito1.jpeg'},
 		text: {
 			title: 'Capítulo 1: ¡Comienza la aventura!',
 			subtitle:
@@ -31,7 +31,7 @@ export const pagesAtom = atom([
 		name: 'Cap 2',
 		template: 'titleTextImage',
 		color: '#FFFFFF',
-		images: {},
+		images: { first: 'tito2.jpeg'},
 		text: {
 			title: 'Capítulo 2: En busca del tesoro',
 			subtitle:
