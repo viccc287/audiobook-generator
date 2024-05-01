@@ -66,6 +66,33 @@ function TemplateSelector() {
 			justify='space-evenly'
 			gap={{ base: '0.2rem', md: '0.5rem', xl: '1rem' }}
 		>
+			<TemplateItem oc={() => setTemplate('cover')} name='Portada'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Título del libro' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					direction='column'
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					minW='min-content'
+				>
+					<ResponsiveText text='Descripción' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
+
+				</GridItem>
+			</TemplateItem>
 			<TemplateItem oc={() => setTemplate('titleSubtitle')} name='Título y subtítulo'>
 				<GridItem
 					as={Flex}
@@ -90,33 +117,7 @@ function TemplateSelector() {
 					<ResponsiveText text='Subtítulo' />
 				</GridItem>
 			</TemplateItem>
-			<TemplateItem oc={() => setTemplate('titleSubtitleImage')} name='Título, subtítulo e imagen'>
-				<GridItem
-					as={Flex}
-					border='1px solid'
-					justify='center'
-					align='center'
-					colSpan={2}
-					rowSpan={2}
-					minW='min-content'
-				>
-					<ResponsiveText text='Título' />
-				</GridItem>
-				<GridItem
-					as={Flex}
-					direction='column'
-					border='1px solid'
-					justify='center'
-					align='center'
-					colSpan={2}
-					rowSpan={3}
-					minW='min-content'
-				>
-					<ResponsiveText text='Subtítulo' />
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
-
-				</GridItem>
-			</TemplateItem>
+			
 
 			<TemplateItem oc={() => setTemplate('textImage')} name='Texto e imagen'>
 				<GridItem

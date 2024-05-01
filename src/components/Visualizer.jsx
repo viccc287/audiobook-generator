@@ -73,7 +73,7 @@ export default function Visualizer() {
 				<EditableText textProps={subtitleProps} elementKey='subtitle' />
 			</>
 		),
-		titleSubtitleImage: (
+		cover: (
 			<>
 				<EditableText textProps={titleProps} elementKey='title' />
 				<EditableText textProps={subtitleProps} elementKey='subtitle' />
@@ -89,7 +89,7 @@ export default function Visualizer() {
 		),
 		textImage: (
 			<>
-				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<EditableText textProps={titleProps} elementKey='title' />
 				<CustomImage elementKey='first' color={invertedColor} />
 			</>
 		),
@@ -128,7 +128,11 @@ export default function Visualizer() {
 				<EditableText textProps={titleProps} elementKey='title' />
 			</>
 		),
-		imageOnly: <CustomImage elementKey='first' color={invertedColor} />,
+		imageOnly: (
+			<Flex boxSize='full' gap='inherit'>
+				<CustomImage elementKey='first' color={invertedColor} />
+			</Flex>
+		),
 		twoImages: (
 			<Flex boxSize='full' gap='inherit'>
 				<CustomImage elementKey='first' color={invertedColor} />

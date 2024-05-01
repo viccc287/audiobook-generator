@@ -211,7 +211,7 @@ export default function PageNavigation() {
 					bgColor='transparent'
 				>
 					<Text pe={4} fontWeight='semibold' color='blackAlpha.500'>
-						{index + 1}
+					{index===0 ? 'P' : index}
 					</Text>
 					{editingPageIndex === index ? (
 						<Input
@@ -291,7 +291,7 @@ export default function PageNavigation() {
 				}
 				fontWeight={displayedPageIndex === index ? 'bold' : 'regular'}
 			>
-				{`${index + 1}. ${page.name}`}
+				{index===0 ? `Portada. ${page.name}` : `${index}. ${page.name}`}
 			</MenuItem>
 		);
 	});

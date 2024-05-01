@@ -95,7 +95,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 					[elementKey]: {
 						file: blob,
 						url: window.URL.createObjectURL(blob),
-						name: [selectedVoiceName],
+						name: selectedVoiceName,
 					},
 				});
 				setLoading({ ...loading, [elementKey]: false });

@@ -2,6 +2,8 @@ import TemplateSelector from './components/TemplateSelector';
 import Visualizer from './components/Visualizer';
 import PageNavigation from './components/PageNavigation';
 import { Flex } from '@chakra-ui/react';
+import ExportButton from './components/ExportButton';
+import ResetButton from './components/ResetButton';
 
 function App() {
 	return (
@@ -12,16 +14,19 @@ function App() {
 				gap={{ base: 4, md: 6, lg: 8 }}
 				direction={{ base: 'column', md: 'row' }}
 			>
-				<Flex w={{ base: '100%', md: '33.33%' }}>
+				<Flex w={{ base: '100%', md: '33.33%' }} direction='column' justify='space-around'>
 					<TemplateSelector />
+					<ExportButton />
+					<ResetButton />
 				</Flex>
 				<Flex w={{ base: '100%', md: '66.66%' }} flex='auto'>
 					<Visualizer />
 				</Flex>
 			</Flex>
 			<PageNavigation />
+
 		</Flex>
-	);
+	)
 }
 
 export default App;
