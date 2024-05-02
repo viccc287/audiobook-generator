@@ -1,13 +1,14 @@
 import { pagesAtom } from '../lib/atoms';
 import { useSetAtom } from 'jotai';
 import { displayedPageIndexAtom } from '../lib/atoms';
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure } from '@chakra-ui/react';
+import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useRef } from 'react';
 
 export default function ResetButton() {
 	const setDisplayedPageIndex = useSetAtom(displayedPageIndexAtom);
 	const setPages = useSetAtom(pagesAtom);
 	const { isOpen: isDeleteDialogOpen, onOpen: openDeleteDialog, onClose: closeDeleteDialog } = useDisclosure();
+	const toast = useToast();
 
 	const cancelRef = useRef(null);
 
@@ -16,18 +17,24 @@ export default function ResetButton() {
 		setPages([
 			{
 				name: 'Portada',
-				template: 'textOnly',
+				template: 'cover',
 				color: '#FFFFFF',
 				images: {},
 				text: {
-					title: 'Portada',
-					subtitle: 'Portada',
+					title: 'Título del cuento',
+					subtitle: 'Mensaje motivador',
 				},
 				audios: {},
 				loading: {},
 			},
 		]);
-        setDisplayedPageIndex(0);
+		setDisplayedPageIndex(0);
+		toast({
+			title: 'Cuento borrado',
+			status: 'success',
+			duration: 4000,
+			isClosable: true,
+		  })
 	}
 
 	return (

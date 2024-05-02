@@ -7,8 +7,10 @@ function EditableText({ textProps, elementKey }) {
 	const [text, setText] = useAtom(currentPageTextAtom);
 
 	const handleTextChange = e => {
-		setText({ ...text, [elementKey]: e.target.textContent });
+		setText({ ...text, [elementKey]: e.target.innerText });
 	};
+
+
 	return (
 		<Flex pos='relative' rounded='10px' bgColor='transparent' w='100%'>
 			<Text
@@ -26,6 +28,7 @@ function EditableText({ textProps, elementKey }) {
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
 				{...textProps}
+				whiteSpace='pre-line'
 			>
 				{text[elementKey]}
 			</Text>

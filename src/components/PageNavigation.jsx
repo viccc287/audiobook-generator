@@ -374,6 +374,7 @@ export default function PageNavigation() {
 				) : null}
 			</Flex>
 			<AlertDialog
+				isCentered
 				isOpen={isDeleteDialogOpen}
 				leastDestructiveRef={cancelRef}
 				onClose={closeDeleteDialog}

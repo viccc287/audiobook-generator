@@ -1,16 +1,26 @@
 import { useAtomValue } from 'jotai';
 import { pagesAtom } from '../lib/atoms';
-import { Button } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 
 export default function ExportButton() {
 	const pages = useAtomValue(pagesAtom);
 	const pagesJSON = JSON.parse(JSON.stringify(pages));
+	const toast = useToast();
 
 	async function exportStory() {
 		// Crear un nuevo objeto FileSystemDirectoryHandle
 
 		if (pages[0].template != 'cover' || !pages[0].text.title || !pages[0].text.subtitle) {
-			alert("La primera página debe tener la plantilla 'Portada', así como tener un título y subtítulo");
+			if (!toast.isActive('coverError')) {
+				toast({
+					id: 'coverError',
+					title: 'Falta portada',
+					description: `La primera página debe tener la plantilla 'Portada', así como tener un título y subtítulo`,
+					status: 'warning',
+					duration: 4000,
+					isClosable: true,
+				  })
+			}
 			return;
 		}
 
@@ -57,15 +67,19 @@ export default function ExportButton() {
 			}
 		}
 
-		console.log(JSON.stringify(pagesJSON));
-
 		// Escribir el archivo JSON dentro de la carpeta
 		const fileHandle = await folderHandle.getFileHandle(`pages.json`, { create: true });
 		const writable = await fileHandle.createWritable();
 		await writable.write(JSON.stringify(pagesJSON));
 		await writable.close();
 
-		alert('El cuento ha sido exportado en la carpeta seleccionada');
+		toast({
+			title: 'Cuento exportado',
+			description: `Páginas: Portada + ${pagesJSON.length-1}`,
+			status: 'success',
+			duration: 3000,
+			isClosable: true,
+		  })
 	}
 
 	return (

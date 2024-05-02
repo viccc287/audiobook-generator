@@ -17,6 +17,20 @@ function CustomAudioPlayer({ audioUrl }) {
 		setIsPlaying(!isPlaying);
 	};
 
+
+	useEffect(() => {
+        const audio = audioRef.current;
+        const endedHandler = () => {
+            setIsPlaying(false);
+        };
+
+        audio.addEventListener('ended', endedHandler);
+
+        return () => {
+            audio.removeEventListener('ended', endedHandler);
+        };
+	}, []);
+	
 	useEffect(() => {
 		const audio = audioRef.current;
 		const endedHandler = () => {
@@ -27,6 +41,16 @@ function CustomAudioPlayer({ audioUrl }) {
 			audio.removeEventListener('ended', endedHandler);
 		};
 	}, []);
+
+	useEffect(() => {
+        return () => {
+            const audio = audioRef.current;
+            if (audio) {
+                audio.pause();
+                setIsPlaying(false);
+            }
+        };
+    }, []);
 
 	const handleDownload = () => {
 		const link = document.createElement('a');

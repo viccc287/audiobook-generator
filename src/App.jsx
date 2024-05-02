@@ -1,9 +1,9 @@
-import TemplateSelector from './components/TemplateSelector';
-import Visualizer from './components/Visualizer';
-import PageNavigation from './components/PageNavigation';
 import { Flex } from '@chakra-ui/react';
 import ExportButton from './components/ExportButton';
+import PageNavigation from './components/PageNavigation';
 import ResetButton from './components/ResetButton';
+import TemplateSelector from './components/TemplateSelector';
+import Visualizer from './components/Visualizer';
 
 function App() {
 	return (

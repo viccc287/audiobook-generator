@@ -12,6 +12,7 @@ function CustomImage({ elementKey, color }) {
 	const handleImageChange = e => {
 		const file = e.target.files[0];
 		const imageURL = URL.createObjectURL(file);
+		console.log(imageURL)
 		setImages({ ...images, [elementKey]: imageURL });
 	};
 
