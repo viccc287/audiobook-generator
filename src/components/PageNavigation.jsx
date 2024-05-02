@@ -1,7 +1,6 @@
-import { pagesAtom } from '../lib/atoms';
-import { useAtom } from 'jotai';
+import { pagesAtom, displayedPageIndexAtom, apiKeyAtom } from '../lib/atoms';
+import { useAtom, useSetAtom } from 'jotai';
 import { useState, useRef, useEffect } from 'react';
-import { displayedPageIndexAtom } from '../lib/atoms';
 
 import {
 	Menu,
@@ -22,6 +21,19 @@ import {
 	Text,
 	Spacer,
 	Input,
+	Icon,
+	Modal,
+	ModalOverlay,
+	ModalContent,
+	ModalCloseButton,
+	ModalHeader,
+	ModalBody,
+	FormControl,
+	FormLabel,
+	ModalFooter,
+	FormHelperText,
+	FormErrorMessage,
+	useToast,
 } from '@chakra-ui/react';
 import {
 	HamburgerIcon,
@@ -34,21 +46,21 @@ import {
 	ChevronLeftIcon,
 	EditIcon,
 } from '@chakra-ui/icons';
+import { FaGear, FaGears, FaKey } from 'react-icons/fa6';
 
 export default function PageNavigation() {
-	const [displayedPageIndex, setDisplayedPageIndex] = useAtom(
-		displayedPageIndexAtom,
-	);
+	const [displayedPageIndex, setDisplayedPageIndex] = useAtom(displayedPageIndexAtom);
 	const [pages, setPages] = useAtom(pagesAtom);
+	const setApiKey = useSetAtom(apiKeyAtom);
 
-	const {
-		isOpen: isDeleteDialogOpen,
-		onOpen: openDeleteDialog,
-		onClose: closeDeleteDialog,
-	} = useDisclosure();
+	const { isOpen: isDeleteDialogOpen, onOpen: openDeleteDialog, onClose: closeDeleteDialog } = useDisclosure();
+	const { isOpen: isKeyDialogOpen, onOpen: openKeyDialog, onClose: closeKeyDialog } = useDisclosure();
+
+	const toast = useToast();
 
 	const containerRef = useRef(null);
-	const cancelRef = useRef(null);
+	const cancelDeleteRef = useRef(null);
+	const inputKeyRef = useRef(null);
 	const dragItemIndex = useRef(0);
 	const draggedOverItemIndex = useRef(0);
 
@@ -57,21 +69,19 @@ export default function PageNavigation() {
 	const [editingPageIndex, setEditingPageIndex] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [newPageName, setNewPageName] = useState('');
-
+	const [inputKeyValue, setInputKeyValue] = useState('');
 
 	useEffect(() => {
-		const handleResize = ()=> {
+		const handleResize = () => {
 			const container = containerRef.current;
 			if (container.clientWidth < container.scrollWidth) setIsOverflown(true);
 			else if (isOverflown) setIsOverflown(false);
 		};
 		window.addEventListener('resize', handleResize);
 		return () => {
-		  window.removeEventListener('resize', handleResize);
+			window.removeEventListener('resize', handleResize);
 		};
-
-	  }, [isOverflown]);
-
+	}, [isOverflown]);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -85,6 +95,20 @@ export default function PageNavigation() {
 		selectedPage.scrollIntoView({ inline: 'center', behavior: 'smooth' });
 	}, [displayedPageIndex]);
 
+	const isErroredKey = inputKeyValue.length !== 32;
+
+	const handleApiKeyChange = () => {
+		setApiKey(inputKeyValue);
+		toast({
+			title: 'API key actualizada',
+			description: `La API key cambió a ${inputKeyValue}`,
+			status: 'success',
+			duration: 3000,
+			isClosable: true,
+		})
+		closeKeyDialog();
+	};
+
 	const handleRenamePage = index => {
 		setEditingPageIndex(index);
 		setNewPageName(pages[index].name);
@@ -94,6 +118,8 @@ export default function PageNavigation() {
 	const handlePageNameChange = event => {
 		setNewPageName(event.target.value);
 	};
+
+	const handleInputKeyChange = e => setInputKeyValue(e.target.value);
 
 	const handleSavePageName = () => {
 		const newPages = [...pages];
@@ -127,8 +153,7 @@ export default function PageNavigation() {
 		newPages[dragItemIndex.current] = newPages[draggedOverItemIndex.current];
 		newPages[draggedOverItemIndex.current] = temp;
 
-		if (dragItemIndex.current === displayedPageIndex)
-			setDisplayedPageIndex(draggedOverItemIndex.current);
+		if (dragItemIndex.current === displayedPageIndex) setDisplayedPageIndex(draggedOverItemIndex.current);
 		setPages(newPages);
 	};
 
@@ -160,9 +185,7 @@ export default function PageNavigation() {
 			setPages(pages.filter((_, index) => index !== indexToDelete));
 
 			if (indexToDelete === displayedPageIndex) {
-				setDisplayedPageIndex(
-					indexToDelete === 0 ? indexToDelete : indexToDelete - 1,
-				);
+				setDisplayedPageIndex(indexToDelete === 0 ? indexToDelete : indexToDelete - 1);
 			} else if (indexToDelete < displayedPageIndex) {
 				setDisplayedPageIndex(displayedPageIndex - 1);
 			}
@@ -188,9 +211,7 @@ export default function PageNavigation() {
 				borderInline='1px'
 				borderColor='blackAlpha.300'
 				key={index}
-				bgColor={
-					displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'
-				}
+				bgColor={displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'}
 			>
 				<Button
 					fontSize='inherit'
@@ -210,8 +231,8 @@ export default function PageNavigation() {
 					fontWeight={displayedPageIndex === index ? 'bold' : 'normal'}
 					bgColor='transparent'
 				>
-					<Text pe={4} fontWeight='semibold' color='blackAlpha.500'>
-					{index===0 ? 'P' : index}
+					<Text pe={4} fontWeight='semibold' color='blackAlpha.500' display={['none','none','none','flex']}>
+						{index === 0 ? 'P' : index}
 					</Text>
 					{editingPageIndex === index ? (
 						<Input
@@ -225,16 +246,11 @@ export default function PageNavigation() {
 							onKeyDown={handleKeyPress}
 						/>
 					) : (
-						<Text px={2}>{page.name}</Text>
+						<Text px={[0,0,0,2]}  fontSize={[10,13,14]} overflow='hidden' textOverflow='ellipsis'>{page.name}</Text>
 					)}
 				</Button>
 				<Menu isLazy>
-					<MenuButton
-						rounded='0'
-						as={IconButton}
-						icon={<ChevronDownIcon />}
-						bgColor='transparent'
-					></MenuButton>
+					<MenuButton rounded='0' as={IconButton} icon={<ChevronDownIcon />} bgColor='transparent'></MenuButton>
 					<MenuList color='black'>
 						<MenuItem
 							_hover={{ bgColor: 'blackAlpha.200' }}
@@ -286,12 +302,10 @@ export default function PageNavigation() {
 				onClick={() => {
 					setDisplayedPageIndex(index);
 				}}
-				bgColor={
-					displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'
-				}
+				bgColor={displayedPageIndex === index ? 'blackAlpha.200' : 'transparent'}
 				fontWeight={displayedPageIndex === index ? 'bold' : 'regular'}
 			>
-				{index===0 ? `Portada. ${page.name}` : `${index}. ${page.name}`}
+				{index === 0 ? `Portada. ${page.name}` : `${index}. ${page.name}`}
 			</MenuItem>
 		);
 	});
@@ -303,8 +317,7 @@ export default function PageNavigation() {
 				pos='sticky'
 				bottom={0}
 				bgColor='white'
-				ps={10}
-				pe={20}
+				ps={[0, 2, 10]}
 				fontFamily='inter'
 				fontSize='sm'
 				alignItems='center'
@@ -347,13 +360,7 @@ export default function PageNavigation() {
 					</Menu>
 				</Flex>
 				<Flex px={3} overflow='hidden'>
-					<Flex
-						ref={containerRef}
-						direction='row'
-						bgColor='transparent'
-						overflow='hidden'
-						scrollBehavior='smooth'
-					>
+					<Flex ref={containerRef} direction='row' bgColor='transparent' overflow='hidden' scrollBehavior='smooth'>
 						{pageNavElements}
 					</Flex>
 				</Flex>
@@ -372,11 +379,44 @@ export default function PageNavigation() {
 						/>
 					</Flex>
 				) : null}
+				<Menu isLazy>
+					<MenuButton
+						ms={[0, 0, 8]}
+						rounded='0'
+						as={IconButton}
+						icon={<Icon as={FaKey} boxSize={3} />}
+						bgColor='transparent'
+						color='#bcbcbc'
+					>
+						API
+					</MenuButton>
+
+					<MenuList
+						maxHeight={72}
+						overflow='auto'
+						color='black'
+						sx={{
+							'&::-webkit-scrollbar': {
+								width: '6px',
+								backgroundColor: 'white',
+							},
+							'&::-webkit-scrollbar-thumb': {
+								backgroundColor: 'rgba(0, 0, 0, 0.25)',
+								borderRadius: '8px',
+							},
+							'&::-webkit-scrollbar-track': {
+								backgroundColor: 'rgba(0, 0, 0, 0.25)',
+							},
+						}}
+					>
+						<MenuItem onClick={openKeyDialog}>Cambiar API key</MenuItem>
+					</MenuList>
+				</Menu>
 			</Flex>
 			<AlertDialog
 				isCentered
 				isOpen={isDeleteDialogOpen}
-				leastDestructiveRef={cancelRef}
+				leastDestructiveRef={cancelDeleteRef}
 				onClose={closeDeleteDialog}
 			>
 				<AlertDialogOverlay>
@@ -385,12 +425,10 @@ export default function PageNavigation() {
 							Borrar Página
 						</AlertDialogHeader>
 
-						<AlertDialogBody>
-							¿Estás seguro? No podrás revertir esto.
-						</AlertDialogBody>
+						<AlertDialogBody>¿Estás seguro? No podrás revertir esto.</AlertDialogBody>
 
 						<AlertDialogFooter>
-							<Button ref={cancelRef} onClick={closeDeleteDialog}>
+							<Button ref={cancelDeleteRef} onClick={closeDeleteDialog}>
 								Cancelar
 							</Button>
 							<Button colorScheme='red' onClick={handleDeletePage} ml={3}>
@@ -400,6 +438,26 @@ export default function PageNavigation() {
 					</AlertDialogContent>
 				</AlertDialogOverlay>
 			</AlertDialog>
+			<Modal isCentered initialFocusRef={inputKeyRef} isOpen={isKeyDialogOpen} onClose={closeKeyDialog}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalHeader>Cambiar API key</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody pb={6}>
+						<FormControl isInvalid={isErroredKey}>
+							<Input ref={inputKeyRef} value={inputKeyValue} onChange={handleInputKeyChange} />
+							{isErroredKey && <FormErrorMessage>Formato de key inválido</FormErrorMessage>}
+						</FormControl>
+					</ModalBody>
+
+					<ModalFooter>
+						<Button colorScheme='blue' mr={3} onClick={handleApiKeyChange} isDisabled={isErroredKey}>
+							Cambiar
+						</Button>
+						<Button onClick={closeKeyDialog}>Cancelar</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</>
 	);
 }

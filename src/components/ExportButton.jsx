@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { pagesAtom } from '../lib/atoms';
 import { Button, useToast } from '@chakra-ui/react';
+import { FaFileExport } from 'react-icons/fa6';
 
 export default function ExportButton() {
 	const pages = useAtomValue(pagesAtom);
@@ -83,7 +84,7 @@ export default function ExportButton() {
 	}
 
 	return (
-		<Button onClick={exportStory} colorScheme='green'>
+		<Button onClick={exportStory} colorScheme='green' leftIcon={<FaFileExport/>} size={['sm','sm','md','md','lg']}>
 			Exportar cuento
 		</Button>
 	);

@@ -26,8 +26,8 @@ import { useRef, useState } from 'react';
 import { FaGear, FaUpload } from 'react-icons/fa6';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
-import { useAtom } from 'jotai';
-import { currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
+import { useAtom, useAtomValue } from 'jotai';
+import { currentPageAudiosAtom, currentPageLoadingAtom, apiKeyAtom } from '../lib/atoms';
 import VoiceRadioItem from './VoiceRadioItem';
 
 function IndividualPanel({ textToSend, elementKey }) {
@@ -46,6 +46,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 
 	const [audios, setAudios] = useAtom(currentPageAudiosAtom);
 	const [loading, setLoading] = useAtom(currentPageLoadingAtom);
+	const apiKey = useAtomValue(apiKeyAtom)
 
 	const toast = useToast();
 
@@ -89,7 +90,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 		const options = {
 			method: 'POST',
 			headers: {
-				'xi-api-key': 'a9b66f7a96e4a716848db53e77ac3b9f',
+				'xi-api-key': apiKey,
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({

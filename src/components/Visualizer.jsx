@@ -44,23 +44,23 @@ export default function Visualizer() {
 	const invertedColor = invertColor(selectedColor, true);
 
 	const titleProps = {
-		fontFamily: 'inter',
-		fontSize: { base: '1.5rem', md: '2.25rem', xl: '3rem' },
+		fontFamily: 'playpen',
+		fontSize: { base: '1.5rem', md: '2.25rem', xl: '2.75rem' },
 		fontWeight: 'black',
 		textAlign: 'center',
 		color: invertedColor,
 	};
 
 	const subtitleProps = {
-		fontFamily: 'inter',
-		fontSize: { base: '1rem', md: '1.4rem', xl: '1.75rem' },
+		fontFamily: 'playpen',
+		fontSize: { base: '1rem', md: '1.3rem', xl: '1.6rem' },
 		fontWeight: 'regular',
 		textAlign: 'center',
 		color: invertedColor,
 	};
 
 	const textProps = {
-		fontFamily: 'inter',
+		fontFamily: 'playpen',
 		fontSize: { base: '1rem', md: '1.3rem', xl: '1.5rem' },
 		fontWeight: 'regular',
 		color: invertedColor,

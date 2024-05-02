@@ -3,6 +3,7 @@ import { useSetAtom } from 'jotai';
 import { displayedPageIndexAtom } from '../lib/atoms';
 import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useRef } from 'react';
+import { FaTrash } from 'react-icons/fa6';
 
 export default function ResetButton() {
 	const setDisplayedPageIndex = useSetAtom(displayedPageIndexAtom);
@@ -39,7 +40,7 @@ export default function ResetButton() {
 
 	return (
 		<>
-			<Button onClick={openDeleteDialog} colorScheme='red'>Limpiar todo</Button>;
+			<Button size={['sm','sm','md','md','lg']} onClick={openDeleteDialog} colorScheme='red' leftIcon={<FaTrash/>}>Limpiar todo</Button>;
 			<AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={closeDeleteDialog}>
 				<AlertDialogOverlay>
 					<AlertDialogContent fontFamily='inter'>

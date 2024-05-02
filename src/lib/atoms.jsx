@@ -8,7 +8,7 @@ export const pagesAtom = atom([
 		images: { first: 'itzelcandado.png' },
 		text: {
 			title: 'La llave y el candado de Itzel',
-			subtitle: 'Una aventura emocionante',
+			subtitle: 'Abriendo y cerrando puertas',
 		},
 		audios: {},
 		loading: {},
@@ -21,7 +21,7 @@ export const pagesAtom = atom([
 		text: {
 			title: '¡Hola amiguitas y amiguitos!',
 			subtitle:
-				'Esta es la historia de lo que un día le pasó a Itzel, ella quiere contársela a todas las niñas y niños, para que al igual que ella, sepan cómo protegerse con la ayuda de las personas de su confianza y cuidarse de las personas que pueden hacerles daño, ya que aprendió que: \n\n¡De boca en boca, a mi cuerpo nadie lo toca! Para poder leer este cuento, es importante que Itzel les comparta algo muy importante que sus papás le enseñaron: existen dos herramientas de protección y cuidado para los niños y las niñas, son materiales que no pueden tocarse porque están en nuestra imaginación pero que nos alejan de situaciones que pueden ponernos en peligro o ayudarnos a estar a salvo.',
+				'Esta es la historia de lo que un día le pasó a Itzel, ella quiere contársela a todas las niñas y niños, para que al igual que ella, sepan cómo protegerse con la ayuda de las personas de su confianza y cuidarse de las personas que pueden hacerles daño, ya que aprendió que: \n\n¡De boca en boca, a mi cuerpo nadie lo toca! \n\n Para poder leer este cuento, es importante que Itzel les comparta algo muy importante que sus papás le enseñaron: existen dos herramientas de protección y cuidado para los niños y las niñas, son materiales que no pueden tocarse porque están en nuestra imaginación pero que nos alejan de situaciones que pueden ponernos en peligro o ayudarnos a estar a salvo.',
 		},
 		audios: {},
 		loading: {},
@@ -346,6 +346,8 @@ export const pagesAtom = atom([
 ]);
 
 export const displayedPageIndexAtom = atom(0);
+
+export const apiKeyAtom = atom('4084b2ebbfed43fddad92a5244b01b7e')
 
 export const currentPageTextAtom = atom(
 	get => get(pagesAtom)[get(displayedPageIndexAtom)].text,
