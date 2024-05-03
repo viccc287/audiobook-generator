@@ -15,7 +15,11 @@ export default function VoiceRadioItem({ name, gender }) {
 		const [isPlaying, setIsPlaying] = useState(false);
 		const audioRef = useRef(null);
 
-		const voiceName = audioSrc.replace('.mp3', '');
+		function capitalize(text) {
+			return text.charAt(0).toUpperCase() + text.slice(1)
+		}
+
+		const voiceName = capitalize(audioSrc.replace('.mp3', ''));
 
 		const togglePlayPause = () => {
 			const audio = audioRef.current;

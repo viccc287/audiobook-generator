@@ -1,8 +1,15 @@
 import {
+	AlertDialog,
+	AlertDialogBody,
+	AlertDialogContent,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogOverlay,
 	Button,
-	IconButton,
-	Popover,
 	Flex,
+	IconButton,
+	Input,
+	Popover,
 	PopoverArrow,
 	PopoverBody,
 	PopoverCloseButton,
@@ -11,35 +18,27 @@ import {
 	PopoverTrigger,
 	RadioGroup,
 	Text,
-	Input,
 	useDisclosure,
-	AlertDialog,
-	AlertDialogBody,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogContent,
-	AlertDialogOverlay,
-	Heading,
-	useToast,
+	useToast
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { FaGear, FaUpload } from 'react-icons/fa6';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
 import { useAtom, useAtomValue } from 'jotai';
-import { currentPageAudiosAtom, currentPageLoadingAtom, apiKeyAtom } from '../lib/atoms';
+import { apiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
 import VoiceRadioItem from './VoiceRadioItem';
 
 function IndividualPanel({ textToSend, elementKey }) {
 	const voicesJSON = [
-		{ name: 'Bill', id: 'pqHfZKP75CvOlQylNhV4', gender: 'male' },
-		{ name: 'Liam', id: 'TX3LPaxmHKxFdv7VOQHJ', gender: 'male' },
-		{ name: 'Patrick', id: 'ODq5zmih8GrVes37Dizd', gender: 'male' },
-		{ name: 'Harry', id: 'SOYHLrjzK2X1ezoPC6cr', gender: 'male' },
-		{ name: 'Sarah', id: 'EXAVITQu4vr4xnSDxMaL', gender: 'female' },
-		{ name: 'Alice', id: 'Xb7hH8MSUJpSbSDYk0k2', gender: 'female' },
-		{ name: 'Freya', id: 'jsCqWAovK2LkecY7zXl4', gender: 'female' },
-		{ name: 'Grace', id: 'oWAxZDx7w5VEj9dCyTzz', gender: 'female' },
+		{ name: 'bill', id: 'pqHfZKP75CvOlQylNhV4', gender: 'male' },
+		{ name: 'liam', id: 'TX3LPaxmHKxFdv7VOQHJ', gender: 'male' },
+		{ name: 'patrick', id: 'ODq5zmih8GrVes37Dizd', gender: 'male' },
+		{ name: 'harry', id: 'SOYHLrjzK2X1ezoPC6cr', gender: 'male' },
+		{ name: 'sarah', id: 'EXAVITQu4vr4xnSDxMaL', gender: 'female' },
+		{ name: 'alice', id: 'Xb7hH8MSUJpSbSDYk0k2', gender: 'female' },
+		{ name: 'freya', id: 'jsCqWAovK2LkecY7zXl4', gender: 'female' },
+		{ name: 'grace', id: 'oWAxZDx7w5VEj9dCyTzz', gender: 'female' },
 	];
 
 	const [selectedVoiceName, setSelectedVoiceName] = useState(voicesJSON[0].name);
@@ -80,6 +79,10 @@ function IndividualPanel({ textToSend, elementKey }) {
 			});
 		}
 	};
+
+	function capitalize(text) {
+		return text.charAt(0).toUpperCase() + text.slice(1)
+	}
 
 	const handleFetch = e => {
 		const voiceId = voicesJSON.find(voice => voice.name === selectedVoiceName).id;
@@ -130,13 +133,13 @@ function IndividualPanel({ textToSend, elementKey }) {
 					[elementKey]: {
 						file: blob,
 						url: window.URL.createObjectURL(blob),
-						name: selectedVoiceName,
+						name: capitalize(selectedVoiceName),
 					},
 				});
 				setLoading({ ...loading, [elementKey]: false });
 				toast({
 					title: 'Audio generado',
-					description: `Audio con voz de ${selectedVoiceName} generado`,
+					description: `Audio con voz de ${capitalize(selectedVoiceName)} generado`,
 					status: 'success',
 					duration: 3000,
 					isClosable: true,
@@ -178,7 +181,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 									))}
 								</RadioGroup>
 								<Button onClick={validateText} isLoading={loading[elementKey]} loadingText='Generando' fontSize='sm'>
-									Generar con voz de {selectedVoiceName}
+									Generar con voz de {capitalize(selectedVoiceName)}
 								</Button>
 							</PopoverBody>
 						</PopoverContent>
