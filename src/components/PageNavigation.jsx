@@ -1,57 +1,58 @@
-import { pagesAtom, displayedPageIndexAtom, apiKeyAtom } from '../lib/atoms';
-import { useAtom, useSetAtom } from 'jotai';
-import { useState, useRef, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { useEffect, useRef, useState } from 'react';
+import { apiKeyAtom, displayedPageIndexAtom, pagesAtom } from '../lib/atoms';
 
 import {
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	IconButton,
-	Button,
+	AddIcon,
+	CheckIcon,
+	ChevronDownIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	DeleteIcon,
+	EditIcon,
+	HamburgerIcon,
+	PlusSquareIcon,
+} from '@chakra-ui/icons';
+import {
 	AlertDialog,
 	AlertDialogBody,
+	AlertDialogContent,
 	AlertDialogFooter,
 	AlertDialogHeader,
-	AlertDialogContent,
 	AlertDialogOverlay,
 	Box,
-	useDisclosure,
+	Button,
 	Flex,
-	Text,
-	Spacer,
-	Input,
-	Icon,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalCloseButton,
-	ModalHeader,
-	ModalBody,
 	FormControl,
-	FormLabel,
-	ModalFooter,
-	FormHelperText,
 	FormErrorMessage,
+	FormLabel,
+	Icon,
+	IconButton,
+	Input,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+	Spacer,
+	Text,
+	VStack,
+	useDisclosure,
 	useToast,
 } from '@chakra-ui/react';
-import {
-	HamburgerIcon,
-	AddIcon,
-	DeleteIcon,
-	ChevronDownIcon,
-	PlusSquareIcon,
-	CheckIcon,
-	ChevronRightIcon,
-	ChevronLeftIcon,
-	EditIcon,
-} from '@chakra-ui/icons';
-import { FaGear, FaGears, FaKey } from 'react-icons/fa6';
+import { FaKey } from 'react-icons/fa6';
 
 export default function PageNavigation() {
 	const [displayedPageIndex, setDisplayedPageIndex] = useAtom(displayedPageIndexAtom);
 	const [pages, setPages] = useAtom(pagesAtom);
-	const setApiKey = useSetAtom(apiKeyAtom);
+
+	const [apiKeys, setApiKeys] = useAtom(apiKeyAtom);
 
 	const { isOpen: isDeleteDialogOpen, onOpen: openDeleteDialog, onClose: closeDeleteDialog } = useDisclosure();
 	const { isOpen: isKeyDialogOpen, onOpen: openKeyDialog, onClose: closeKeyDialog } = useDisclosure();
@@ -60,7 +61,8 @@ export default function PageNavigation() {
 
 	const containerRef = useRef(null);
 	const cancelDeleteRef = useRef(null);
-	const inputKeyRef = useRef(null);
+	const inputAudioKeyRef = useRef(null);
+	const inputTextKeyRef = useRef(null);
 	const dragItemIndex = useRef(0);
 	const draggedOverItemIndex = useRef(0);
 
@@ -69,7 +71,8 @@ export default function PageNavigation() {
 	const [editingPageIndex, setEditingPageIndex] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [newPageName, setNewPageName] = useState('');
-	const [inputKeyValue, setInputKeyValue] = useState('');
+	const [audioKeyValue, setAudioKeyValue] = useState('');
+	const [textKeyValue, setTextKeyValue] = useState('');
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -95,17 +98,30 @@ export default function PageNavigation() {
 		selectedPage.scrollIntoView({ inline: 'center', behavior: 'smooth' });
 	}, [displayedPageIndex]);
 
-	const isErroredKey = inputKeyValue.length !== 32;
+	const isInvalidAudioKey = audioKeyValue.length !== 32;
+	const isInvalidTextKey = textKeyValue.length !== 32;
 
-	const handleApiKeyChange = () => {
-		setApiKey(inputKeyValue);
+	const confirmAudioApiKeyChange = () => {
+		setApiKeys({ ...apiKeys, audio: audioKeyValue });
 		toast({
-			title: 'API key actualizada',
-			description: `La API key cambió a ${inputKeyValue}`,
+			title: 'API key de audio actualizada',
+			description: `La API key de audio cambió`,
 			status: 'success',
 			duration: 3000,
 			isClosable: true,
-		})
+		});
+		closeKeyDialog();
+	};
+
+	const confirmTextApiKeyChange = () => {
+		setApiKeys({ ...apiKeys, text: textKeyValue });
+		toast({
+			title: 'API key de texto actualizada',
+			description: `La API key de texto cambió`,
+			status: 'success',
+			duration: 3000,
+			isClosable: true,
+		});
 		closeKeyDialog();
 	};
 
@@ -119,7 +135,8 @@ export default function PageNavigation() {
 		setNewPageName(event.target.value);
 	};
 
-	const handleInputKeyChange = e => setInputKeyValue(e.target.value);
+	const handleInputAudioKeyChange = e => setAudioKeyValue(e.target.value);
+	const handleInputTextKeyChange = e => setTextKeyValue(e.target.value);
 
 	const handleSavePageName = () => {
 		const newPages = [...pages];
@@ -231,7 +248,7 @@ export default function PageNavigation() {
 					fontWeight={displayedPageIndex === index ? 'bold' : 'normal'}
 					bgColor='transparent'
 				>
-					<Text pe={4} fontWeight='semibold' color='blackAlpha.500' display={['none','none','none','flex']}>
+					<Text pe={4} fontWeight='semibold' color='blackAlpha.500' display={['none', 'none', 'none', 'flex']}>
 						{index === 0 ? 'P' : index}
 					</Text>
 					{editingPageIndex === index ? (
@@ -246,7 +263,9 @@ export default function PageNavigation() {
 							onKeyDown={handleKeyPress}
 						/>
 					) : (
-						<Text px={[0,0,0,2]}  fontSize={[10,13,14]} overflow='hidden' textOverflow='ellipsis'>{page.name}</Text>
+						<Text px={[0, 0, 0, 2]} fontSize={[10, 13, 14]} overflow='hidden' textOverflow='ellipsis'>
+							{page.name}
+						</Text>
 					)}
 				</Button>
 				<Menu isLazy>
@@ -438,23 +457,32 @@ export default function PageNavigation() {
 					</AlertDialogContent>
 				</AlertDialogOverlay>
 			</AlertDialog>
-			<Modal isCentered initialFocusRef={inputKeyRef} isOpen={isKeyDialogOpen} onClose={closeKeyDialog}>
+			<Modal isCentered initialFocusRef={inputAudioKeyRef} isOpen={isKeyDialogOpen} onClose={closeKeyDialog}>
 				<ModalOverlay />
 				<ModalContent>
 					<ModalHeader>Cambiar API key</ModalHeader>
 					<ModalCloseButton />
-					<ModalBody pb={6}>
-						<FormControl isInvalid={isErroredKey}>
-							<Input ref={inputKeyRef} value={inputKeyValue} onChange={handleInputKeyChange} />
-							{isErroredKey && <FormErrorMessage>Formato de key inválido</FormErrorMessage>}
+					<ModalBody pb={6} as={VStack} gap={8}>
+						<FormControl isInvalid={isInvalidAudioKey} as={VStack} align='start'>
+							<FormLabel>API Key de audio</FormLabel>
+							<Input ref={inputAudioKeyRef} value={audioKeyValue} onChange={handleInputAudioKeyChange} />
+							{isInvalidAudioKey && <FormErrorMessage>Formato de key inválido</FormErrorMessage>}
+							<Button colorScheme='blue' mr={3} onClick={confirmAudioApiKeyChange} isDisabled={isInvalidAudioKey}>
+								Cambiar key
+							</Button>
+						</FormControl>
+						<FormControl isInvalid={isInvalidTextKey} as={VStack} align='start'>
+							<FormLabel>API Key de texto</FormLabel>
+							<Input ref={inputTextKeyRef} value={textKeyValue} onChange={handleInputTextKeyChange} />
+							{isInvalidTextKey && <FormErrorMessage>Formato de key inválido</FormErrorMessage>}
+							<Button colorScheme='blue' mr={3} onClick={confirmTextApiKeyChange} isDisabled={isInvalidTextKey}>
+								Cambiar key
+							</Button>
 						</FormControl>
 					</ModalBody>
 
 					<ModalFooter>
-						<Button colorScheme='blue' mr={3} onClick={handleApiKeyChange} isDisabled={isErroredKey}>
-							Cambiar
-						</Button>
-						<Button onClick={closeKeyDialog}>Cancelar</Button>
+						<Button onClick={closeKeyDialog}>Volver</Button>
 					</ModalFooter>
 				</ModalContent>
 			</Modal>

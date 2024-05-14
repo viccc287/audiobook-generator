@@ -32,7 +32,7 @@ function EditableText({ textProps, elementKey }) {
 			>
 				{text[elementKey]}
 			</Text>
-			{<IndividualPanel textToSend={text[elementKey]} elementKey={elementKey} />}
+			<IndividualPanel textToSend={text[elementKey]} elementKey={elementKey} />
 		</Flex>
 	);
 }

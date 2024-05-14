@@ -1,3 +1,5 @@
+import { CohereClient } from 'cohere-ai';
+
 import {
 	AlertDialog,
 	AlertDialogBody,
@@ -19,15 +21,16 @@ import {
 	RadioGroup,
 	Text,
 	useDisclosure,
-	useToast
+	useToast,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import { FaGear, FaUpload } from 'react-icons/fa6';
+import { FaGear, FaUpload, FaWandMagicSparkles } from 'react-icons/fa6';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
 import { useAtom, useAtomValue } from 'jotai';
-import { apiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom } from '../lib/atoms';
+import { apiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom, currentPageTextAtom } from '../lib/atoms';
 import VoiceRadioItem from './VoiceRadioItem';
+import { aiInstructions } from '../lib/ai';
 
 function IndividualPanel({ textToSend, elementKey }) {
 	const voicesJSON = [
@@ -45,7 +48,9 @@ function IndividualPanel({ textToSend, elementKey }) {
 
 	const [audios, setAudios] = useAtom(currentPageAudiosAtom);
 	const [loading, setLoading] = useAtom(currentPageLoadingAtom);
-	const apiKey = useAtomValue(apiKeyAtom)
+	const [text, setText] = useAtom(currentPageTextAtom);
+
+	const apiKeys = useAtomValue(apiKeyAtom);
 
 	const toast = useToast();
 
@@ -55,16 +60,21 @@ function IndividualPanel({ textToSend, elementKey }) {
 
 	const cancelRef = useRef();
 
+	const cohere = new CohereClient({
+		token: apiKeys.text,
+	});
+
 	const validateText = () => {
-		if (!textToSend) toast({
-			title: 'Oops!',
-			description: `Parece que no hay texto por aquí... ¡Escribe algo y vuelve a intentar!`,
-			status: 'warning',
-			duration: 4000,
-			isClosable: true,
-		})
+		if (!textToSend)
+			toast({
+				title: 'Oops!',
+				description: `Parece que no hay texto por aquí... ¡Escribe algo y vuelve a intentar!`,
+				status: 'warning',
+				duration: 4000,
+				isClosable: true,
+			});
 		else openTTSAlert();
-	}
+	};
 
 	const handleFileUpload = e => {
 		e.preventDefault();
@@ -81,7 +91,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 	};
 
 	function capitalize(text) {
-		return text.charAt(0).toUpperCase() + text.slice(1)
+		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
 
 	const handleFetch = e => {
@@ -93,7 +103,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 		const options = {
 			method: 'POST',
 			headers: {
-				'xi-api-key': apiKey,
+				'xi-api-key': apiKeys.audio,
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
@@ -117,7 +127,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 							status: 'error',
 							duration: 4000,
 							isClosable: true,
-						  })
+						});
 					} else if (response.status === 500) {
 						console.error('Error interno del servidor');
 					} else {
@@ -143,12 +153,125 @@ function IndividualPanel({ textToSend, elementKey }) {
 					status: 'success',
 					duration: 3000,
 					isClosable: true,
-				  })
+				});
 			})
 			.catch(err => {
 				setLoading({ ...loading, [elementKey]: false });
 				console.error(err);
 			});
+	};
+
+	const handleGenerate = e => {
+		e.preventDefault();
+
+		let instructions;
+
+		// if text field is empty, generate
+		if (textToSend.replaceAll(' ', '').length === 0) {
+			if (elementKey === 'title') instructions = aiInstructions.generateTitle;
+			else instructions = aiInstructions.generateSubtitle;
+		}
+		//else complete
+		else {
+			if (elementKey === 'title') instructions = aiInstructions.completeTitle;
+			else instructions = aiInstructions.completeSubtitle;
+		}
+
+		setLoading({ ...loading, [elementKey]: true });
+
+		(async () => {
+			try {
+				const stream = await cohere.chatStream({
+					temperature: 1,
+					message: `
+					${instructions}
+					  ## Input Text
+					  ${textToSend}`,
+				});
+
+				let newText = '';
+
+				for await (const chat of stream) {
+					if (chat.eventType === 'text-generation') {
+						newText += chat.text;
+						setText({ ...text, [elementKey]: newText });
+					}
+				}
+
+				setLoading({ ...loading, [elementKey]: false });
+			} catch (error) {
+				console.error(error);
+				toast({
+					title: 'Error generando el texto',
+					description: `Contactar a un administrador.`,
+					status: 'error',
+					duration: 4000,
+					isClosable: true,
+				});
+				setLoading({ ...loading, [elementKey]: false });
+			}
+		})();
+
+		// FETCH VERSION
+		/* const url = 'https://api.cohere.ai/v1/chat';
+		console.log(textToSend);
+		const data = {
+			tmeperature: 1,
+			stream: true,
+			message: `
+			## Instructions
+			Complete the following paragraph of a children's story.
+			Use the Spanish language.
+			Include the original text at the beginning of the result.
+			The output text must have a maximum length of ${maxWords} words.
+			If the input text does not provide enough context to complete the story, the topic of the generated story should revolve around one of the following:
+			
+			Prevention of child sexual abuse.
+			Strategies to identify and prevent child sexual abuse.
+			Prevention of domestic violence.
+			Sexual education for children
+			## Input Text
+			${textToSend}`,
+		};
+		const requestOptions = {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${apiKeys.text}`,
+			},
+			body: JSON.stringify(data),
+		};
+
+		fetch(url, requestOptions)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Error en la respuesta del servidor');
+				}
+				return response.json();
+			})
+			.then(data => {
+				setText({ ...text, [elementKey]: data.text });
+				setLoading({ ...loading, [elementKey]: false });
+				toast({
+					title: 'Texto generado',
+					description: `Puedes modificarlo o seguir generando`,
+					status: 'success',
+					duration: 3000,
+					isClosable: true,
+				});
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				toast({
+					title: 'Error generando el texto',
+					description: `Contactar a un administrador.`,
+					status: 'error',
+					duration: 4000,
+					isClosable: true,
+				});
+				setLoading({ ...loading, [elementKey]: false });
+			}); */
 	};
 
 	return (
@@ -164,6 +287,13 @@ function IndividualPanel({ textToSend, elementKey }) {
 					rounded='10px'
 					boxShadow='0 5px 20px rgba(0,0,0,0.25)'
 				>
+					<IconButton
+						bgColor='transparent'
+						icon={<FaWandMagicSparkles />}
+						onClick={handleGenerate}
+						isLoading={loading[elementKey]}
+					/>
+
 					<Popover isLazy>
 						<PopoverTrigger>
 							<IconButton bgColor='transparent' icon={<FaGear />} isLoading={loading[elementKey]}>
@@ -186,6 +316,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 							</PopoverBody>
 						</PopoverContent>
 					</Popover>
+
 					<IconButton bgColor='transparent' icon={<FaUpload />} onClick={() => fileInputRef.current.click()} />
 					<Input ref={fileInputRef} type='file' accept='audio/*' display='none' onChange={handleFileUpload} />
 					<Flex borderStart='1px solid rgba(0,0,0,0.10)' align='center'>
@@ -215,12 +346,17 @@ function IndividualPanel({ textToSend, elementKey }) {
 
 						<AlertDialogBody as={Flex} direction='column' gap={3}>
 							<Text>
- 							Generar este texto consumirá <Text as='b' fontSize='1.2em'>{textToSend && textToSend.trim().length}</Text> caracteres de la cuota mensual.
- 						</Text>
-							<Text>
-								¡Hazlo solo si has terminado de escribir todo el cuento y estás totalmente seguro de que es el texto que deseas!
+								Generar este texto consumirá{' '}
+								<Text as='b' fontSize='1.2em'>
+									{textToSend && textToSend.trim().length}
+								</Text>{' '}
+								caracteres de la cuota mensual.
 							</Text>
-							<Text as ='b' textColor='red'>
+							<Text>
+								¡Hazlo solo si has terminado de escribir todo el cuento y estás totalmente seguro de que es el texto que
+								deseas!
+							</Text>
+							<Text as='b' textColor='red'>
 								Si recargas la página o cierras el navegador, el audio generado se perderá.
 							</Text>
 						</AlertDialogBody>

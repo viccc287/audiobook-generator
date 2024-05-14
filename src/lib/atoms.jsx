@@ -347,7 +347,7 @@ export const pagesAtom = atom([
 
 export const displayedPageIndexAtom = atom(0);
 
-export const apiKeyAtom = atom('4084b2ebbfed43fddad92a5244b01b7e')
+export const apiKeyAtom = atom({ text: 'Yf5d2dPwsYx9kFTcMwXRTOmtFe40fm1hXPSrHbP1', audio: '4084b2ebbfed43fddad92a5244b01b7e'})
 
 export const currentPageTextAtom = atom(
 	get => get(pagesAtom)[get(displayedPageIndexAtom)].text,

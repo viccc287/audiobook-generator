@@ -7,7 +7,7 @@ import Visualizer from './components/Visualizer';
 
 function App() {
 	return (
-		<Flex minH='100svh' direction='column' _mediaDark={{ backgroundColor: 'purple.900' }}>
+		<Flex minH='100svh' direction='column' _mediaDark={{ backgroundColor: '#552F7E' }}>
 			<Flex
 				flex='auto'
 				p={{ base: 4, md: 6, lg: 8 }}
