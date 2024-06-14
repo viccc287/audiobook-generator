@@ -20,14 +20,23 @@ export default function ExportButton() {
 					status: 'warning',
 					duration: 4000,
 					isClosable: true,
-				  })
+				});
 			}
 			return;
 		}
 
 		const PARENT_FOLDER_NAME = 'books';
 
-		const bookTitle = pages[0].text.title.toLowerCase().replaceAll(' ', '_');
+		let bookTitleRaw = pages[0].text.title.toLowerCase().replaceAll(' ', '_').trim();
+		let bookTitle = bookTitleRaw
+			.normalize("NFD").replace(/[\u0300-\u036f]/g, '') // Remover acentos
+			.replace(/[<>:"/\\|?*]/g, ''); // Remover caracteres no válidos
+	
+		// Limitar el título a 50 caracteres
+		if (bookTitle.length > 50) {
+			bookTitle = bookTitle.substring(0, 50);
+		}
+
 		const dirHandle = await window.showDirectoryPicker();
 
 		// Crear una carpeta para los archivos
@@ -76,15 +85,15 @@ export default function ExportButton() {
 
 		toast({
 			title: 'Cuento exportado',
-			description: `Páginas: Portada + ${pagesJSON.length-1}`,
+			description: `Páginas: Portada + ${pagesJSON.length - 1}`,
 			status: 'success',
 			duration: 3000,
 			isClosable: true,
-		  })
+		});
 	}
 
 	return (
-		<Button onClick={exportStory} colorScheme='green' leftIcon={<FaFileExport/>} size={['sm','sm','md','md','md']}>
+		<Button onClick={exportStory} colorScheme='green' leftIcon={<FaFileExport />} size={['sm', 'sm', 'md', 'md', 'md']}>
 			Exportar cuento
 		</Button>
 	);
