@@ -41,7 +41,6 @@ export default function ExportButton() {
 			bookTitle = 'nuevo_cuento';
 		}
 
-		console.log(bookTitle);
 
 		const dirHandle = await window.showDirectoryPicker();
 
