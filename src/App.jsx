@@ -1,32 +1,32 @@
-import { useState } from 'react';
+import { Flex} from '@chakra-ui/react';
+import ExportButton from './components/ExportButton';
+import PageNavigation from './components/PageNavigation';
+import ResetButton from './components/ResetButton';
 import TemplateSelector from './components/TemplateSelector';
 import Visualizer from './components/Visualizer';
-import { GlobalProvider } from './contexts/GlobalContext';
+
 function App() {
-	const [template, setTemplate] = useState('titleSubtitle');
-
-	const handleTemplateSelect = selectedTemplate => {
-		setTemplate(selectedTemplate);
-	};
-
 	return (
-		<div className='flex h-fit min-h-screen w-screen flex-col bg-violet-950'>
-			<div className='flex h-20 w-screen items-center gap-5 bg-black/50 px-10 font-jakarta font-bold text-white'>
-				{/* <img src='/logo.jpg' className='h-full' /> */}
-				<p className='bg-black/50 p-3 text-sm'>AUDIOCUENTOS</p>
-			</div>
-			<div className='flex size-full p-8'>
-				<TemplateSelector
-					className='flex size-fit h-full w-1/3 flex-wrap items-start gap-5 '
-					changeTemplateFunction={handleTemplateSelect}
-				/>
-				<div className='align-center flex w-2/3 justify-center'>
-					<GlobalProvider>
-						<Visualizer withTemplate={template} />
-					</GlobalProvider>
-				</div>
-			</div>
-		</div>
+		<Flex minH='100svh' direction='column' _mediaDark={{ backgroundColor: '#552F7E' }}>
+			<Flex
+				flex='auto'
+				p={{ base: 4, md: 6, lg: 8 }}
+				gap={{ base: 4, md: 6, lg: 8 }}
+				direction={{ base: 'column', md: 'row' }}
+			>
+				<Flex w={{ base: '100%', md: '33.33%' }} direction='column' justify='space-between' gap={5}>
+					<TemplateSelector />
+					<Flex  justify='center' align='center' gap={[1,2,2,2,10]}  direction={['row', 'row', 'column', 'row']} p={[0,0,0,0,4]}>
+						<ResetButton />
+						<ExportButton />
+					</Flex>
+				</Flex>
+				<Flex w={{ base: '100%', md: '66.66%' }} flex='auto'>
+					<Visualizer />
+				</Flex>
+			</Flex>
+			<PageNavigation />
+		</Flex>
 	);
 }
 

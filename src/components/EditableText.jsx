@@ -1,30 +1,39 @@
-import IndividualPanel from './IndividualPanel';
-import { useGlobalContext } from '../contexts/GlobalContext';
+import { currentPageTextAtom } from '../lib/atoms.jsx';
+import { useAtom } from 'jotai';
+import IndividualPanel from '../components/IndividualPanel.jsx';
+import { Flex, Text } from '@chakra-ui/react';
 
-function EditableText({ textStyles, index }) {
-	const { state, dispatch } = useGlobalContext();
+function EditableText({ textProps, elementKey }) {
+	const [text, setText] = useAtom(currentPageTextAtom);
 
 	const handleTextChange = e => {
-		dispatch({
-			type: 'SET_TEXT',
-			payload: {
-				index: index,
-				text: e.target.textContent,
-			},
-		});
+		setText({ ...text, [elementKey]: e.target.innerText });
 	};
+
+
 	return (
-		<div className='relative h-auto w-full max-w-full rounded bg-white/5'>
-			<p
-				className={`h-full w-full max-w-full p-10 leading-normal  text-white focus:outline-dashed focus:outline-4 ${textStyles}`}
+		<Flex pos='relative' rounded='10px' bgColor='transparent' w='100%'>
+			<Text
+				transition='all 100ms'
+				rounded='10px'
+				outline='none'
+				_hover={{
+					outline: '3px solid rgba(0,0,0,0.25)',
+				}}
+				filter='drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
+				p={5}
+				flexGrow={1}
+				_focus={{ outline: '3px solid rgba(0,0,0,0.25)' }}
 				contentEditable
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
+				{...textProps}
+				whiteSpace='pre-line'
 			>
-				{state.text[index]}
-			</p>
-			<IndividualPanel textToSend={state.text[index]} index={index} />
-		</div>
+				{text[elementKey]}
+			</Text>
+			<IndividualPanel textToSend={text[elementKey]} elementKey={elementKey} />
+		</Flex>
 	);
 }
 export default EditableText;

@@ -1,66 +1,143 @@
-import { useState } from 'react';
-import Image from './Image.jsx';
+import CustomImage from './CustomImage.jsx';
 import EditableText from './EditableText.jsx';
+import { currentPageColorAtom, currentPageTemplateAtom } from '../lib/atoms.jsx';
+import { useAtomValue } from 'jotai';
+import { Flex } from '@chakra-ui/react';
+import CustomColorSelector from './CustomColorSelector.jsx';
+import invertColor from '../utils/colorUtils.js';
 
-export default function Visualizer({ withTemplate }) {
+export default function Visualizer() {
+	const selectedTemplate = useAtomValue(currentPageTemplateAtom);
+	const selectedColor = useAtomValue(currentPageColorAtom);
 
-	const titleClass = 'font-jakarta text-4xl font-bold'
-	const subtitleClass = 'font-poppins text-2xl'
 
-	const Templates = {
+	const invertedColor = invertColor(selectedColor, true);
+
+	const titleProps = {
+		fontFamily: 'playpen',
+		fontSize: { base: '1.5rem', md: '2.25rem', xl: '2.75rem' },
+		fontWeight: 'black',
+		textAlign: 'center',
+		color: invertedColor,
+	};
+
+	const subtitleProps = {
+		fontFamily: 'playpen',
+		fontSize: { base: '1rem', md: '1.3rem', xl: '1.6rem' },
+		fontWeight: 'regular',
+		textAlign: 'center',
+		color: invertedColor,
+	};
+
+	const textProps = {
+		fontFamily: 'playpen',
+		fontSize: { base: '1rem', md: '1.3rem', xl: '1.5rem' },
+		fontWeight: 'regular',
+		color: invertedColor,
+	};
+
+	const templates = {
 		titleSubtitle: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText textStyles={titleClass} index={0} />
-				<EditableText textStyles={subtitleClass} index={1} />
-			</div>
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+			</>
 		),
-		textImage: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText textStyles={titleClass} index={0} />
-				<div className='flex size-full flex-wrap items-start'>
-					<Image width='full' height='full' index={0} />
-				</div>
-			</div>
-		),
-		text2Images: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText textStyles={titleClass} index={0} />
-				<div className='flex size-full flex-wrap items-start'>
-					<Image width='1/2' height='full' index={0} />
-					<Image width='1/2' height='full' index={1} />
-				</div>
-			</div>
-		),
-		imageOnly: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<div className='flex size-full flex-wrap items-start'>
-					<Image width='full' height='full' index={0} />
-				</div>
-			</div>
-		),
-		twoImages: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<div className='flex size-full flex-wrap items-start'>
-					<Image width='1/2' height='full' index={0} />
-					<Image width='1/2' height='full' index={1} />
-				</div>
-			</div>
+		cover: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<CustomImage elementKey='first' color={invertedColor} />
+			</>
 		),
 		textOnly: (
-			<div className='flex size-full flex-col items-center gap-5'>
-				<EditableText textStyles={subtitleClass} index={1} />
-			</div>
+			<>
+				<Flex boxSize='full' gap='inherit' align='center'>
+					<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				</Flex>
+			</>
 		),
+		textImage: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<CustomImage elementKey='first' color={invertedColor} />
+			</>
+		),
+
+		titleImageText: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<Flex boxSize='full' gap='inherit' align='center'>
+					<CustomImage elementKey='first' color={invertedColor} />
+					<EditableText textProps={textProps} elementKey='subtitle' />
+				</Flex>
+			</>
+		),
+		titleTextImage: (
+			<>
+				<EditableText textProps={titleProps} elementKey='title' />
+				<Flex boxSize='full' gap='inherit' align='center'>
+					<EditableText textProps={textProps} elementKey='subtitle' />
+					<CustomImage elementKey='first' color={invertedColor} />
+				</Flex>
+			</>
+		),
+
+		text2Images: (
+			<>
+				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<Flex boxSize='full' gap='inherit'>
+					<CustomImage elementKey='first' color={invertedColor} />
+					<CustomImage elementKey='second' color={invertedColor} />
+				</Flex>
+			</>
+		),
+		imageText: (
+			<>
+				<CustomImage elementKey='first' color={invertedColor} />
+				<EditableText textProps={titleProps} elementKey='title' />
+			</>
+		),
+		imageOnly: (
+			<Flex boxSize='full' gap='inherit'>
+				<CustomImage elementKey='first' color={invertedColor} />
+			</Flex>
+		),
+		twoImages: (
+			<Flex boxSize='full' gap='inherit'>
+				<CustomImage elementKey='first' color={invertedColor} />
+				<CustomImage elementKey='second' color={invertedColor} />
+			</Flex>
+		),
+
 		leftTextRightImage: (
-			<div className='flex size-full items-center gap-5'>
-				<div className='flex h-full w-1/2'>
-				<EditableText textStyles={subtitleClass} index={1} />
-				</div>
-				<div className='flex h-full w-1/2 flex-wrap items-start'>
-					<Image width='full' height='full' index={0} />
-				</div>
-			</div>
+			<Flex boxSize='full' gap='inherit' align='center'>
+				<EditableText textProps={textProps} elementKey='subtitle' />
+
+				<CustomImage elementKey='first' color={invertedColor} />
+			</Flex>
+		),
+		leftImageRightText: (
+			<Flex boxSize='full' gap='inherit' align='center'>
+				<CustomImage elementKey='first' color={invertedColor} />
+				<EditableText textProps={textProps} elementKey='subtitle' />
+			</Flex>
 		),
 	};
-	return Templates[withTemplate];
+	return (
+		<Flex
+			pos='relative'
+			w='full'
+			direction='column'
+			gap={{ base: 5, md: 10, xl: 16 }}
+			p={{ base: 5, md: 10, xl: 16 }}
+			alignItems='stretch'
+			rounded='15px'
+			bgColor={selectedColor}
+			transition='background-color 300ms'
+		>
+			{templates[selectedTemplate]}
+			<CustomColorSelector />
+		</Flex>
+	);
 }

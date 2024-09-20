@@ -1,113 +1,363 @@
-import { PhotoIcon } from '@heroicons/react/16/solid';
-function TemplateSelector({ changeTemplateFunction, className }) {
-	return (
-		<div className={className}>
-			<button
-				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('titleSubtitle')}
-			>
-				<div className='flex h-32 w-40 flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='h-full w-full divide-y divide-black border border-black'>
-						<div className='flex h-2/3 items-center justify-center text-xs font-semibold'>
-							<p>Título</p>
-						</div>
-						<div className='flex h-1/3 items-center justify-center text-xs font-semibold'>
-							<p>Subtítulo</p>
-						</div>
-					</div>
-				</div>
-				<div className='pt-3 font-semibold text-white'>Título y subtítulo </div>
-            </button>
-            
-			<button
-				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('textImage')}
-			>
-				<div className='flex h-32 w-40 flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='h-full w-full divide-y divide-black border border-black'>
-						<div className='flex h-1/3 items-center justify-center text-xs font-semibold'>
-							<p>Texto</p>
-						</div>
-						<div className='flex h-2/3 items-center justify-center text-xs font-semibold'>
-							<PhotoIcon className='h-full text-neutral-400' />
-						</div>
-					</div>
-				</div>
-				<div className='pt-3 font-semibold text-white'>Texto e imagen </div>
-            </button>
-            
-			<button
-				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('text2Images')}
-			>
-				<div className='flex h-32 w-40 flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='h-full w-full divide-y divide-black border border-black'>
-						<div className='flex h-1/3 items-center justify-center text-xs font-semibold'>
-							<p>Texto</p>
-						</div>
-						<div className='flex h-2/3 items-center justify-center text-xs font-semibold'>
-							<PhotoIcon className='h-full text-neutral-400' />
-							<PhotoIcon className='h-full text-neutral-400' />
-						</div>
-					</div>
-				</div>
-				<div className='pt-3 font-semibold text-white'>Texto y 2 imágenes </div>
-            </button>
-     
-			<button
-				className='flex size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('imageOnly')}
-			>
-				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='flex h-full w-full justify-center divide-y divide-x divide-black border border-black'>
-						<PhotoIcon className='h-full text-neutral-400' />
-					</div>
-				</div>
-				<div className='pt-3 font-semibold text-white'>Imagen</div>
-            </button>
-            
-			<button
-				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('twoImages')}
-			>
-				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='flex h-full w-full justify-center divide-x divide-black border border-black'>
-                        <PhotoIcon className='h-full text-neutral-400' />
-                        <PhotoIcon className='h-full text-neutral-400' />
-					</div>
-				</div>
-				<div className='pt-3 font-semibold text-white'>Dos imágenes </div>
-            </button>
+import { useSetAtom } from 'jotai';
+import { currentPageTemplateAtom } from '../lib/atoms';
+import { Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { FaImage } from 'react-icons/fa6';
+function TemplateSelector() {
+	const setTemplate = useSetAtom(currentPageTemplateAtom);
 
-            <button
-				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('textOnly')}
+	function TemplateItem({ name, oc, children }) {
+		//Children must be GridItems. 5 rows and 2 cols
+		return (
+			<Flex
+				w={{ base: '110px', md: '140px', xl: '180px' }}
+				h={{ base: 'fit-content', md: 'fit-content', xl: '150px' }}
+				bgColor='blackAlpha.500'
+				rounded='16px'
+				p={3}
+				direction='column'
+				gap={1}
+				transition='all 500ms'
+				_hover={{
+					outline: '1px solid',
+					outlineColor: 'green.500',
+					transform: 'scale(1.1)',
+					transition: 'all 100ms',
+				}}
+				onClick={oc}
 			>
-				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='flex h-full w-full justify-center items-center divide-x divide-black border border-black'>
-                    <div className='flex h-1/3 items-center justify-center text-xs font-semibold'>
-							<p>Texto</p>
-						</div>
-					</div>
-				</div>
-				<p className='pt-3 font-semibold text-white'>Solo texto</p>
-            </button>
-            
-            <button
-				className='flex  size-fit flex-col items-center justify-center rounded-lg bg-black/20 p-3 transition duration-200 hover:bg-black/40 hover:ring hover:ring-white '
-				onClick={() => changeTemplateFunction('leftTextRightImage')}
-			>
-				<div className='flex h-32 w-40  flex-col rounded-xl border-2 bg-white p-3'>
-					<div className='flex h-full w-full justify-center divide-x divide-black border border-black'>
-                    <div className='flex w-1/2 items-center justify-center text-xs font-semibold'>
-							<p>Texto</p>
-						</div>
-                        <PhotoIcon className='h-full w-1/2 text-neutral-400' />
-					</div>
-				</div>
-				<p className='pt-3 font-semibold text-white'>Texto a la izquierda e imagen a la derecha</p>
-			</button>
-		</div>
+				<Grid
+					bgColor='white'
+					flexGrow='1'
+					flexShrink='0'
+					p={2}
+					rounded='8px'
+					templateRows='repeat(5, 1fr)'
+					templateColumns='repeat(2, 1fr)'
+				>
+					{children}
+				</Grid>
+				<Text
+					display={{ base: 'none', md: 'block' }}
+					color='white'
+					textAlign='center'
+					fontFamily='inter'
+					fontWeight='semibold'
+					fontSize='0.75rem'
+				>
+					{name}
+				</Text>
+			</Flex>
+		);
+	}
+
+	function ResponsiveText({ text }) {
+		return (
+			<Text fontFamily='inter' fontWeight='semibold' fontSize={{ base: '0.5em', md: '0.7rem', xl: '0.8rem' }}>
+				{text}
+			</Text>
+		);
+	}
+
+	return (
+		<Flex
+			w='100%'
+			h='fit-content'
+			wrap='wrap'
+			justify='space-evenly'
+			gap={{ base: '0.2rem', md: '0.5rem', xl: '1rem' }}
+		>
+			<TemplateItem oc={() => setTemplate('cover')} name='Portada'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Título del libro' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					direction='column'
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					minW='min-content'
+				>
+					<ResponsiveText text='Descripción' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
+
+				</GridItem>
+			</TemplateItem>
+			<TemplateItem oc={() => setTemplate('titleSubtitle')} name='Título y subtítulo'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Título' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					minW='min-content'
+				>
+					<ResponsiveText text='Subtítulo' />
+				</GridItem>
+			</TemplateItem>
+			
+
+			<TemplateItem oc={() => setTemplate('textImage')} name='Texto e imagen'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					p={1}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('text2Images')} name='Texto y 2 imágenes'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					wrap='wrap'
+					gap={5}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('titleImageText')} name='Título, imagen y texto'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Título' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					wrap='wrap'
+					gap={5}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<ResponsiveText text='Texto' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('titleTextImage')} name='Título, texto e imagen'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Título' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					wrap='wrap'
+					gap={5}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('imageText')} name='Imagen y título'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={3}
+					p={1}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={2}
+					rowSpan={2}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('imageOnly')} name='Solo imagen'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={5}
+					rowSpan={5}
+					wrap='wrap'
+					gap={5}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('twoImages')} name='Dos imágenes'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={5}
+					rowSpan={5}
+					p={2}
+					wrap='wrap'
+					gap={5}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('textOnly')} name='Solo texto'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={5}
+					rowSpan={5}
+					gap={5}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('leftTextRightImage')} name='Texto izquierda e imagen derecha'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={1}
+					rowSpan={5}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={1}
+					rowSpan={5}
+					gap={5}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+			</TemplateItem>
+
+			<TemplateItem oc={() => setTemplate('leftImageRightText')} name='Texto izquierda e imagen derecha'>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={1}
+					rowSpan={5}
+					minW='min-content'
+				>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+				</GridItem>
+				<GridItem
+					as={Flex}
+					border='1px solid'
+					justify='center'
+					align='center'
+					colSpan={1}
+					rowSpan={5}
+					p={1}
+					minW='min-content'
+				>
+					<ResponsiveText text='Texto' />
+				</GridItem>
+			</TemplateItem>
+		</Flex>
 	);
 }
 

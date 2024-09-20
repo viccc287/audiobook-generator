@@ -1,12 +1,9 @@
-import { useRef, useState, useEffect } from 'react';
-import {
-	PlayIcon,
-	PauseIcon,
-	ArrowDownTrayIcon,
-	XCircleIcon,
-} from '@heroicons/react/16/solid';
+import { Flex, IconButton } from '@chakra-ui/react';
 
-function CustomAudioPlayer({ audioUrl}) {
+import { useEffect, useRef, useState } from 'react';
+import { FaDownload, FaPause, FaPlay } from 'react-icons/fa6';
+
+function CustomAudioPlayer({ audioUrl }) {
 	const audioRef = useRef(null);
 	const [isPlaying, setIsPlaying] = useState(false);
 
@@ -17,10 +14,23 @@ function CustomAudioPlayer({ audioUrl}) {
 		} else {
 			audio.pause();
 		}
-		setIsPlaying(!isPlaying); 
+		setIsPlaying(!isPlaying);
 	};
 
 
+	useEffect(() => {
+        const audio = audioRef.current;
+        const endedHandler = () => {
+            setIsPlaying(false);
+        };
+
+        audio.addEventListener('ended', endedHandler);
+
+        return () => {
+            audio.removeEventListener('ended', endedHandler);
+        };
+	}, []);
+	
 	useEffect(() => {
 		const audio = audioRef.current;
 		const endedHandler = () => {
@@ -32,6 +42,16 @@ function CustomAudioPlayer({ audioUrl}) {
 		};
 	}, []);
 
+	useEffect(() => {
+        return () => {
+            const audio = audioRef.current;
+            if (audio) {
+                audio.pause();
+                setIsPlaying(false);
+            }
+        };
+    }, []);
+
 	const handleDownload = () => {
 		const link = document.createElement('a');
 		link.href = audioUrl;
@@ -40,25 +60,26 @@ function CustomAudioPlayer({ audioUrl}) {
 	};
 
 	return (
-			<div className='flex items-center justify-center gap-1 h-full'>
-			<audio ref={audioRef} src={audioUrl} className='hidden'></audio>
-				{isPlaying ? (
-					<PauseIcon
-						className={`h-full cursor-pointer text-red-600 transition duration-200 hover:scale-110`}
-						onClick={togglePlayPause}
-					/>
-				) : (
-					<PlayIcon
-						className={`h-full cursor-pointer text-lime-700 transition duration-200 hover:scale-110`}
-						onClick={togglePlayPause}
-					/>
-				)}
+		<Flex align='center' justify='center'>
+			<Flex as='audio' ref={audioRef} src={audioUrl} display='none'></Flex>
+			{isPlaying ? (
+				<IconButton
+					bgColor='transparent'
+					icon={<FaPause />}
+					onClick={togglePlayPause}
+					color='red.600'
+				/>
+			) : (
+				<IconButton
+					bgColor='transparent'
+					icon={<FaPlay />}
+					onClick={togglePlayPause}
+					color='green.600'
+				/>
+			)}
 
-				<ArrowDownTrayIcon
-					className={`h-full cursor-pointer text-blue-800 transition duration-200 hover:scale-110`}
-					onClick={handleDownload}
-			/>
-			</div>
+			<IconButton bgColor='transparent' icon={<FaDownload />} onClick={handleDownload} />
+		</Flex>
 	);
 }
 
