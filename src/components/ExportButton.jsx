@@ -29,13 +29,19 @@ export default function ExportButton() {
 
 		let bookTitleRaw = pages[0].text.title.toLowerCase().replaceAll(' ', '_').trim();
 		let bookTitle = bookTitleRaw
-			.normalize("NFD").replace(/[\u0300-\u036f]/g, '') // Remover acentos
-			.replace(/[<>:"/\\|?*]/g, ''); // Remover caracteres no válidos
-	
-		// Limitar el título a 50 caracteres
-		if (bookTitle.length > 50) {
-			bookTitle = bookTitle.substring(0, 50);
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '') // Remover acentos
+			.replace(/[<>:"/\\|?*]/g, '') // Remover caracteres no permitidos en Windows
+			.replace(/\s+/g, ' ') // Reemplazar múltiples espacios por uno solo
+			.trim() // Eliminar espacios al inicio y al final
+			.replace(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])$/i, '_$1') // Manejar nombres reservados
+			.slice(0, 64); // Limitar a 64 caracteres
+
+		if (bookTitle.length === 0) {
+			bookTitle = 'nuevo_cuento';
 		}
+
+		console.log(bookTitle);
 
 		const dirHandle = await window.showDirectoryPicker();
 
