@@ -31,7 +31,7 @@ export default function ExportButton() {
 		let bookTitle = bookTitleRaw
 			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '') // Remover acentos
-			.replace(/[<>:"/\\|?*]/g, '') // Remover caracteres no permitidos en Windows
+			.replace(/[<>:"/\\|?*.,;!¡¿()[\]{}]/g, '')
 			.replace(/\s+/g, ' ') // Reemplazar múltiples espacios por uno solo
 			.trim() // Eliminar espacios al inicio y al final
 			.replace(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])$/i, '_$1') // Manejar nombres reservados
