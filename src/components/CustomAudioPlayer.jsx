@@ -1,4 +1,4 @@
-import { Flex, IconButton } from '@chakra-ui/react';
+import { Flex, IconButton, Tooltip } from '@chakra-ui/react';
 
 import { useEffect, useRef, useState } from 'react';
 import { FaDownload, FaPause, FaPlay } from 'react-icons/fa6';
@@ -17,20 +17,19 @@ function CustomAudioPlayer({ audioUrl }) {
 		setIsPlaying(!isPlaying);
 	};
 
-
 	useEffect(() => {
-        const audio = audioRef.current;
-        const endedHandler = () => {
-            setIsPlaying(false);
-        };
+		const audio = audioRef.current;
+		const endedHandler = () => {
+			setIsPlaying(false);
+		};
 
-        audio.addEventListener('ended', endedHandler);
+		audio.addEventListener('ended', endedHandler);
 
-        return () => {
-            audio.removeEventListener('ended', endedHandler);
-        };
+		return () => {
+			audio.removeEventListener('ended', endedHandler);
+		};
 	}, []);
-	
+
 	useEffect(() => {
 		const audio = audioRef.current;
 		const endedHandler = () => {
@@ -43,14 +42,14 @@ function CustomAudioPlayer({ audioUrl }) {
 	}, []);
 
 	useEffect(() => {
-        return () => {
-            const audio = audioRef.current;
-            if (audio) {
-                audio.pause();
-                setIsPlaying(false);
-            }
-        };
-    }, []);
+		return () => {
+			const audio = audioRef.current;
+			if (audio) {
+				audio.pause();
+				setIsPlaying(false);
+			}
+		};
+	}, []);
 
 	const handleDownload = () => {
 		const link = document.createElement('a');
@@ -63,22 +62,17 @@ function CustomAudioPlayer({ audioUrl }) {
 		<Flex align='center' justify='center'>
 			<Flex as='audio' ref={audioRef} src={audioUrl} display='none'></Flex>
 			{isPlaying ? (
-				<IconButton
-					bgColor='transparent'
-					icon={<FaPause />}
-					onClick={togglePlayPause}
-					color='red.600'
-				/>
+				<Tooltip label='Pausar' hasArrow openDelay={400}>
+					<IconButton bgColor='transparent' icon={<FaPause />} onClick={togglePlayPause} color='red.600' />
+				</Tooltip>
 			) : (
-				<IconButton
-					bgColor='transparent'
-					icon={<FaPlay />}
-					onClick={togglePlayPause}
-					color='green.600'
-				/>
+				<Tooltip label='Reproducir' hasArrow openDelay={400}>
+					<IconButton bgColor='transparent' icon={<FaPlay />} onClick={togglePlayPause} color='green.600' />
+				</Tooltip>
 			)}
-
-			<IconButton bgColor='transparent' icon={<FaDownload />} onClick={handleDownload} />
+			<Tooltip label='Descargar audio' hasArrow openDelay={400}>
+				<IconButton bgColor='transparent' icon={<FaDownload />} onClick={handleDownload} />
+			</Tooltip>
 		</Flex>
 	);
 }

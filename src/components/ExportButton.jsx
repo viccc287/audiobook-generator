@@ -98,7 +98,7 @@ export default function ExportButton() {
 	}
 
 	return (
-		<Button onClick={exportStory} colorScheme='green' leftIcon={<FaFileExport />} size={['sm', 'sm', 'md', 'md', 'md']}>
+		<Button onClick={exportStory} colorScheme='green' leftIcon={<FaFileExport />} size={['xs', 'sm', 'md', 'md', 'md']}>
 			Exportar cuento
 		</Button>
 	);

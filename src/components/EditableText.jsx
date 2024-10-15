@@ -2,21 +2,24 @@ import { currentPageTextAtom } from '../lib/atoms.jsx';
 import { useAtom } from 'jotai';
 import IndividualPanel from '../components/IndividualPanel.jsx';
 import { Flex, Text } from '@chakra-ui/react';
+import { useState } from 'react';
 
 function EditableText({ textProps, elementKey }) {
 	const [text, setText] = useAtom(currentPageTextAtom);
 
+	const [showPanel, setShowPanel] = useState(true);
+
 	const handleTextChange = e => {
+		setShowPanel(true);
 		setText({ ...text, [elementKey]: e.target.innerText });
 	};
-
 
 	return (
 		<Flex pos='relative' rounded='10px' bgColor='transparent' w='100%'>
 			<Text
 				transition='all 100ms'
 				rounded='10px'
-				outline='none'
+				outline={text[elementKey].trim() === '' ? '3px solid rgba(0,0,0,0.25)' : 'none'}
 				_hover={{
 					outline: '3px solid rgba(0,0,0,0.25)',
 				}}
@@ -27,12 +30,14 @@ function EditableText({ textProps, elementKey }) {
 				contentEditable
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
+				onFocus={() => setShowPanel(false)}
 				{...textProps}
 				whiteSpace='pre-line'
+				wordBreak='break-word'
 			>
 				{text[elementKey]}
 			</Text>
-			<IndividualPanel textToSend={text[elementKey]} elementKey={elementKey} />
+			{showPanel && <IndividualPanel textToSend={text[elementKey]} elementKey={elementKey} />}
 		</Flex>
 	);
 }

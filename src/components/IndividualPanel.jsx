@@ -7,6 +7,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogOverlay,
+	Box,
 	Button,
 	Flex,
 	IconButton,
@@ -20,6 +21,7 @@ import {
 	PopoverTrigger,
 	RadioGroup,
 	Text,
+	Tooltip,
 	useDisclosure,
 	useToast,
 } from '@chakra-ui/react';
@@ -94,7 +96,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
 
-	const handleFetch = e => {
+	const handleGenerateAudio = e => {
 		const voiceId = voicesJSON.find(voice => voice.name === selectedVoiceName).id;
 		e.preventDefault();
 		setLoading({ ...loading, [elementKey]: true });
@@ -161,7 +163,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 			});
 	};
 
-	const handleGenerate = e => {
+	const handleGenerateText = e => {
 		e.preventDefault();
 
 		let instructions;
@@ -185,7 +187,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 					temperature: 1,
 					message: `
 					${instructions}
-					  ## Input Text
+					  ##Input Text:
 					  ${textToSend}`,
 				});
 
@@ -284,22 +286,27 @@ function IndividualPanel({ textToSend, elementKey }) {
 					justify='center'
 					overflow='clip'
 					bgColor='white'
+					_dark={{ bgColor: 'gray.800' }}
 					rounded='10px'
 					boxShadow='0 5px 20px rgba(0,0,0,0.25)'
 				>
-					<IconButton
-						bgColor='transparent'
-						icon={<FaWandMagicSparkles />}
-						onClick={handleGenerate}
-						isLoading={loading[elementKey]}
-					/>
+					<Tooltip label='Generar texto' hasArrow openDelay={400}>
+						<IconButton
+							bgColor='transparent'
+							icon={<FaWandMagicSparkles />}
+							onClick={handleGenerateText}
+							isLoading={loading[elementKey]}
+						/>
+					</Tooltip>
 
 					<Popover isLazy>
-						<PopoverTrigger>
-							<IconButton bgColor='transparent' icon={<FaGear />} isLoading={loading[elementKey]}>
-								Trigger
-							</IconButton>
-						</PopoverTrigger>
+						<Tooltip label='Opciones de texto a voz' hasArrow openDelay={400}>
+							<Box display='inline-block'>
+								<PopoverTrigger>
+									<IconButton bgColor='transparent' icon={<FaGear />} isLoading={loading[elementKey]}></IconButton>
+								</PopoverTrigger>
+							</Box>
+						</Tooltip>
 						<PopoverContent fontFamily='inter' fontSize='sm'>
 							<PopoverArrow />
 							<PopoverCloseButton />
@@ -317,7 +324,9 @@ function IndividualPanel({ textToSend, elementKey }) {
 						</PopoverContent>
 					</Popover>
 
-					<IconButton bgColor='transparent' icon={<FaUpload />} onClick={() => fileInputRef.current.click()} />
+					<Tooltip label='Cargar audio' hasArrow openDelay={400}>
+						<IconButton bgColor='transparent' icon={<FaUpload />} onClick={() => fileInputRef.current.click()} />
+					</Tooltip>
 					<Input ref={fileInputRef} type='file' accept='audio/*' display='none' onChange={handleFileUpload} />
 					<Flex borderStart='1px solid rgba(0,0,0,0.10)' align='center'>
 						{audios[elementKey] && (
@@ -365,7 +374,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 							<Button ref={cancelRef} onClick={closeTTSAlert}>
 								Cancelar
 							</Button>
-							<Button colorScheme='green' onClick={handleFetch} ml={3}>
+							<Button colorScheme='green' onClick={handleGenerateAudio} ml={3}>
 								Entiendo
 							</Button>
 						</AlertDialogFooter>

@@ -42,6 +42,7 @@ import {
 	ModalOverlay,
 	Spacer,
 	Text,
+	Tooltip,
 	VStack,
 	useDisclosure,
 	useToast,
@@ -248,7 +249,13 @@ export default function PageNavigation() {
 					fontWeight={displayedPageIndex === index ? 'bold' : 'normal'}
 					bgColor='transparent'
 				>
-					<Text pe={4} fontWeight='semibold' color='blackAlpha.500' display={['none', 'none', 'none', 'flex']}>
+					<Text
+						pe={4}
+						fontWeight='semibold'
+						color='blackAlpha.500'
+						_dark={{ color: 'whiteAlpha.500' }}
+						display={['none', 'none', 'none', 'flex']}
+					>
 						{index === 0 ? 'P' : index}
 					</Text>
 					{editingPageIndex === index ? (
@@ -269,8 +276,14 @@ export default function PageNavigation() {
 					)}
 				</Button>
 				<Menu isLazy>
-					<MenuButton rounded='0' as={IconButton} icon={<ChevronDownIcon />} bgColor='transparent'></MenuButton>
-					<MenuList color='black'>
+					<Tooltip
+						label={index === 0 ? 'Acciones para la portada' : `Acciones para la página ${index}`}
+						openDelay={400}
+						hasArrow
+					>
+						<MenuButton rounded='0' as={IconButton} icon={<ChevronDownIcon />} bgColor='transparent'></MenuButton>
+					</Tooltip>
+					<MenuList>
 						<MenuItem
 							_hover={{ bgColor: 'blackAlpha.200' }}
 							icon={<PlusSquareIcon />}
@@ -333,32 +346,35 @@ export default function PageNavigation() {
 		<>
 			<Flex
 				w='100%'
-				pos='sticky'
 				bottom={0}
 				bgColor='white'
+				_dark={{ bgColor: 'whiteAlpha.200' }}
 				ps={[0, 2, 10]}
 				fontFamily='inter'
 				fontSize='sm'
 				alignItems='center'
 			>
 				<Flex>
-					<IconButton
-						icon={<AddIcon boxSize={3} />}
-						onClick={() => handleInsertPageAfter(displayedPageIndex)}
-						bgColor='transparent'
-					/>
-					<Menu isLazy>
-						<MenuButton
-							rounded='0'
-							as={IconButton}
-							icon={<HamburgerIcon boxSize={3} />}
+					<Tooltip label='Insertar nueva página' openDelay={400} hasArrow>
+						<IconButton
+							icon={<AddIcon boxSize={3} />}
+							onClick={() => handleInsertPageAfter(displayedPageIndex)}
 							bgColor='transparent'
-						></MenuButton>
+						/>
+					</Tooltip>
+					<Menu isLazy>
+						<Tooltip label='Vista general de páginas' openDelay={400} hasArrow>
+							<MenuButton
+								rounded='0'
+								as={IconButton}
+								icon={<HamburgerIcon boxSize={3} />}
+								bgColor='transparent'
+							></MenuButton>
+						</Tooltip>
 						<Box p='0'>
 							<MenuList
 								maxHeight={72}
 								overflow='auto'
-								color='black'
 								sx={{
 									'&::-webkit-scrollbar': {
 										width: '6px',

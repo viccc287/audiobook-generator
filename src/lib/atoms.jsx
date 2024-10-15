@@ -347,7 +347,11 @@ export const pagesAtom = atom([
 
 export const displayedPageIndexAtom = atom(0);
 
-export const apiKeyAtom = atom({ text: 'Ok2iyhqrvNzN11NgThRDTia94cH4jA96Mwhbom5J', audio: 'sk_c5d9f056607e5b43bac904445842f0105160e72c47357a6b'})
+export const apiKeyAtom = atom({
+	text: 'Ok2iyhqrvNzN11NgThRDTia94cH4jA96Mwhbom5J',
+	audio: 'sk_c5d9f056607e5b43bac904445842f0105160e72c47357a6b',
+	image: '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',
+});
 
 export const currentPageTextAtom = atom(
 	get => get(pagesAtom)[get(displayedPageIndexAtom)].text,

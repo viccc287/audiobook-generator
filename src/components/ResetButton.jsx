@@ -40,7 +40,7 @@ export default function ResetButton() {
 
 	return (
 		<>
-			<Button size={['sm','sm','md','md','lg']} onClick={openDeleteDialog} colorScheme='red' leftIcon={<FaTrash/>}>Limpiar todo</Button>
+			<Button size={['xs','sm','md','md','md']} onClick={openDeleteDialog} colorScheme='red' leftIcon={<FaTrash/>}>Limpiar todo</Button>
 			<AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={closeDeleteDialog}>
 				<AlertDialogOverlay>
 					<AlertDialogContent fontFamily='inter'>
