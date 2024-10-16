@@ -1,58 +1,94 @@
 import { useSetAtom } from 'jotai';
 import { currentPageTemplateAtom } from '../lib/atoms';
-import { Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { Flex, Grid, GridItem, Icon, Text, Tooltip, useMediaQuery } from '@chakra-ui/react';
 import { FaImage } from 'react-icons/fa6';
 function TemplateSelector() {
+	const [isLargerThanMobile] = useMediaQuery('(min-width: 445px)');
 	const setTemplate = useSetAtom(currentPageTemplateAtom);
 
 	function TemplateItem({ name, oc, children }) {
-		//Children must be GridItems. 5 rows and 2 cols
-		return (
-			<Flex
-				w={{ base: '110px', md: '140px', xl: '180px' }}
-				h={{ base: 'fit-content', md: 'fit-content', xl: '150px' }}
-				bgColor='blackAlpha.500'
-				rounded='16px'
-				p={3}
-				direction='column'
-				gap={1}
-				transition='all 500ms'
-				_hover={{
-					outline: '1px solid',
-					outlineColor: 'green.500',
-					transform: 'scale(1.1)',
-					transition: 'all 100ms',
-				}}
-				onClick={oc}
-			>
-				<Grid
-					bgColor='white'
-					flexGrow='1'
-					flexShrink='0'
-					p={2}
-					rounded='8px'
-					templateRows='repeat(5, 1fr)'
-					templateColumns='repeat(2, 1fr)'
-				>
-					{children}
-				</Grid>
-				<Text
-					display={{ base: 'none', md: 'block' }}
-					color='white'
-					textAlign='center'
-					fontFamily='inter'
-					fontWeight='semibold'
-					fontSize='0.75rem'
-				>
-					{name}
-				</Text>
-			</Flex>
-		);
+		if (!isLargerThanMobile) {
+			return (
+				<Tooltip label={`Usar la plantilla ${name}`} aria-label={name} openDelay={1250} placement='auto' hasArrow>
+					<Flex
+						w={{ base: '110px', md: '120px', lg: '150px', xl: '170px' }}
+						h={{ base: 'fit-content', md: 'fit-content', xl: '150px' }}
+						bgColor='blackAlpha.500'
+						rounded='16px'
+						p={2}
+						direction='column'
+						gap={1}
+						transition='all 500ms'
+						_hover={{
+							cursor: 'pointer',
+							outline: '1px solid',
+							outlineColor: 'green.500',
+							transition: 'all 100ms',
+						}}
+						onClick={oc}
+					>
+						<Text color='white' _dark={{ color: '#dedede' }} textAlign='center' fontFamily='inter' fontSize='0.6rem'>
+							{name}
+						</Text>
+					</Flex>
+				</Tooltip>
+			);
+		} else
+			return (
+				<Tooltip label={`Usar la plantilla ${name}`} aria-label={name} openDelay={1250} placement='auto' hasArrow>
+					<Flex
+						w={{ base: '110px', md: '120px', lg: '150px', xl: '170px' }}
+						h={{ base: 'fit-content', md: 'fit-content', xl: '150px' }}
+						bgColor='blackAlpha.500'
+						rounded='16px'
+						p={3}
+						direction='column'
+						gap={1}
+						transition='all 500ms'
+						_hover={{
+							cursor: 'pointer',
+							outline: '1px solid',
+							outlineColor: 'green.500',
+							transition: 'all 100ms',
+						}}
+						onClick={oc}
+					>
+						<Grid
+							bgColor='white'
+							_dark={{ bgColor: 'whiteAlpha.100', color: '#444444' }}
+							flexGrow='1'
+							flexShrink='0'
+							p={2}
+							rounded='8px'
+							templateRows='repeat(5, 1fr)'
+							templateColumns='repeat(2, 1fr)'
+						>
+							{children}
+						</Grid>
+						<Text
+							display={{ base: 'none', md: 'block' }}
+							color='white'
+							_dark={{ color: '#dedede' }}
+							textAlign='center'
+							fontFamily='inter'
+							fontWeight='semibold'
+							fontSize='0.75rem'
+						>
+							{name}
+						</Text>
+					</Flex>
+				</Tooltip>
+			);
 	}
 
 	function ResponsiveText({ text }) {
 		return (
-			<Text fontFamily='inter' fontWeight='semibold' fontSize={{ base: '0.5em', md: '0.7rem', xl: '0.8rem' }}>
+			<Text
+				_dark={{ color: 'whiteAlpha.700' }}
+				fontFamily='inter'
+				fontWeight='semibold'
+				fontSize={{ base: '0.5em', md: '0.7rem', xl: '0.8rem' }}
+			>
 				{text}
 			</Text>
 		);
@@ -90,7 +126,6 @@ function TemplateSelector() {
 				>
 					<ResponsiveText text='Descripción' />
 					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
-
 				</GridItem>
 			</TemplateItem>
 			<TemplateItem oc={() => setTemplate('titleSubtitle')} name='Título y subtítulo'>
@@ -117,7 +152,6 @@ function TemplateSelector() {
 					<ResponsiveText text='Subtítulo' />
 				</GridItem>
 			</TemplateItem>
-			
 
 			<TemplateItem oc={() => setTemplate('textImage')} name='Texto e imagen'>
 				<GridItem
@@ -141,7 +175,7 @@ function TemplateSelector() {
 					p={1}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 				</GridItem>
 			</TemplateItem>
 
@@ -168,9 +202,9 @@ function TemplateSelector() {
 					gap={5}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 				</GridItem>
 			</TemplateItem>
 
@@ -197,7 +231,7 @@ function TemplateSelector() {
 					gap={5}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 					<ResponsiveText text='Texto' />
 				</GridItem>
 			</TemplateItem>
@@ -226,7 +260,7 @@ function TemplateSelector() {
 					minW='min-content'
 				>
 					<ResponsiveText text='Texto' />
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 				</GridItem>
 			</TemplateItem>
 
@@ -241,7 +275,7 @@ function TemplateSelector() {
 					p={1}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 				</GridItem>
 				<GridItem
 					as={Flex}
@@ -268,8 +302,8 @@ function TemplateSelector() {
 					gap={5}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
-				</GridItem>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
+					</GridItem>
 			</TemplateItem>
 
 			<TemplateItem oc={() => setTemplate('twoImages')} name='Dos imágenes'>
@@ -285,9 +319,9 @@ function TemplateSelector() {
 					gap={5}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
 				</GridItem>
 			</TemplateItem>
 
@@ -328,8 +362,8 @@ function TemplateSelector() {
 					gap={5}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
-				</GridItem>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
+					</GridItem>
 			</TemplateItem>
 
 			<TemplateItem oc={() => setTemplate('leftImageRightText')} name='Texto izquierda e imagen derecha'>
@@ -342,8 +376,8 @@ function TemplateSelector() {
 					rowSpan={5}
 					minW='min-content'
 				>
-					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 10 }} color='gray' />
-				</GridItem>
+					<Icon as={FaImage} boxSize={{ base: 3, md: 5, xl: 6 }} color='gray' />
+					</GridItem>
 				<GridItem
 					as={Flex}
 					border='1px solid'

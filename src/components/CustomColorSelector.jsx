@@ -1,4 +1,4 @@
-import { Flex, IconButton } from '@chakra-ui/react';
+import { Flex, IconButton, Tooltip } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { currentPageColorAtom } from '../lib/atoms';
 import { useRef } from 'react';
@@ -27,7 +27,7 @@ export default function CustomColorSelector() {
 	}, 300);
 
 	return (
-		<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='end' justify='end'>
+		<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='end' justify='end' zIndex={1}>
 			<Flex
 				as='input'
 				type='color'
@@ -37,13 +37,16 @@ export default function CustomColorSelector() {
 				visibility='hidden'
 				pointerEvents='auto'
 			></Flex>
+			<Tooltip label='Cambiar color de página' hasArrow openDelay={400}>
 			<IconButton
 				pointerEvents='auto'
 				icon={<FaPaintRoller />}
 				onClick={() => colorInputRef.current.click()}
 				bgColor='white'
+				_dark={{ bgColor: 'gray.800' }}
 				boxShadow='0 5px 20px rgba(0,0,0,0.25)'
-			/>
+				/>
+			</Tooltip>
 		</Flex>
 	);
 }
