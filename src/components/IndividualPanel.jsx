@@ -26,11 +26,11 @@ import {
 	useToast,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
-import { FaGear, FaUpload, FaWandMagicSparkles } from 'react-icons/fa6';
+import { FaUpload, FaVolumeHigh, FaWandMagicSparkles } from 'react-icons/fa6';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
 import { useAtom, useAtomValue } from 'jotai';
-import { apiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom, currentPageTextAtom } from '../lib/atoms';
+import { audioApiKeyAtom, textApiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom, currentPageTextAtom } from '../lib/atoms';
 import VoiceRadioItem from './VoiceRadioItem';
 import { aiInstructions } from '../lib/ai';
 
@@ -52,7 +52,9 @@ function IndividualPanel({ textToSend, elementKey }) {
 	const [loading, setLoading] = useAtom(currentPageLoadingAtom);
 	const [text, setText] = useAtom(currentPageTextAtom);
 
-	const apiKeys = useAtomValue(apiKeyAtom);
+	const audioApiKey = useAtomValue(audioApiKeyAtom);
+	const textApiKey = useAtomValue(textApiKeyAtom);
+	
 
 	const toast = useToast();
 
@@ -63,7 +65,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 	const cancelRef = useRef();
 
 	const cohere = new CohereClient({
-		token: apiKeys.text,
+		token: textApiKey,
 	});
 
 	const validateText = () => {
@@ -105,7 +107,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 		const options = {
 			method: 'POST',
 			headers: {
-				'xi-api-key': apiKeys.audio,
+				'xi-api-key': audioApiKey,
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
@@ -213,67 +215,6 @@ function IndividualPanel({ textToSend, elementKey }) {
 				setLoading({ ...loading, [elementKey]: false });
 			}
 		})();
-
-		// FETCH VERSION
-		/* const url = 'https://api.cohere.ai/v1/chat';
-		console.log(textToSend);
-		const data = {
-			tmeperature: 1,
-			stream: true,
-			message: `
-			## Instructions
-			Complete the following paragraph of a children's story.
-			Use the Spanish language.
-			Include the original text at the beginning of the result.
-			The output text must have a maximum length of ${maxWords} words.
-			If the input text does not provide enough context to complete the story, the topic of the generated story should revolve around one of the following:
-			
-			Prevention of child sexual abuse.
-			Strategies to identify and prevent child sexual abuse.
-			Prevention of domestic violence.
-			Sexual education for children
-			## Input Text
-			${textToSend}`,
-		};
-		const requestOptions = {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${apiKeys.text}`,
-			},
-			body: JSON.stringify(data),
-		};
-
-		fetch(url, requestOptions)
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Error en la respuesta del servidor');
-				}
-				return response.json();
-			})
-			.then(data => {
-				setText({ ...text, [elementKey]: data.text });
-				setLoading({ ...loading, [elementKey]: false });
-				toast({
-					title: 'Texto generado',
-					description: `Puedes modificarlo o seguir generando`,
-					status: 'success',
-					duration: 3000,
-					isClosable: true,
-				});
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				toast({
-					title: 'Error generando el texto',
-					description: `Contactar a un administrador.`,
-					status: 'error',
-					duration: 4000,
-					isClosable: true,
-				});
-				setLoading({ ...loading, [elementKey]: false });
-			}); */
 	};
 
 	return (
@@ -300,18 +241,19 @@ function IndividualPanel({ textToSend, elementKey }) {
 					</Tooltip>
 
 					<Popover isLazy>
-						<Tooltip label='Opciones de texto a voz' hasArrow openDelay={400}>
+						<PopoverTrigger>
 							<Box display='inline-block'>
-								<PopoverTrigger>
-									<IconButton bgColor='transparent' icon={<FaGear />} isLoading={loading[elementKey]}></IconButton>
-								</PopoverTrigger>
+								<Tooltip label='Texto a voz' hasArrow openDelay={400}>
+									<IconButton bgColor='transparent' icon={<FaVolumeHigh />} isLoading={loading[elementKey]}></IconButton>
+								</Tooltip>
 							</Box>
-						</Tooltip>
+						</PopoverTrigger>
 						<PopoverContent fontFamily='inter' fontSize='sm'>
 							<PopoverArrow />
 							<PopoverCloseButton />
-							<PopoverHeader fontWeight='bold'>Opciones de texto a voz</PopoverHeader>
+							<PopoverHeader fontWeight='bold'>Texto a voz</PopoverHeader>
 							<PopoverBody as={Flex} justifyContent='center' direction='column' gap={3} px={5}>
+								<Text fontWeight='bold'>Selecciona la voz con la que deseas que se lea el texto</Text>
 								<RadioGroup value={selectedVoiceName} onChange={setSelectedVoiceName}>
 									{voicesJSON.map((voice, index) => (
 										<VoiceRadioItem key={index} name={voice.name} gender={voice.gender} />
@@ -325,24 +267,17 @@ function IndividualPanel({ textToSend, elementKey }) {
 					</Popover>
 
 					<Tooltip label='Cargar audio' hasArrow openDelay={400}>
-						<IconButton bgColor='transparent' icon={<FaUpload />} onClick={() => fileInputRef.current.click()} />
+						<IconButton
+							bgColor='transparent'
+							icon={<FaUpload />}
+							onClick={() => fileInputRef.current.click()}
+							onFocus={e => e.preventDefault()}
+						/>
 					</Tooltip>
 					<Input ref={fileInputRef} type='file' accept='audio/*' display='none' onChange={handleFileUpload} />
-					<Flex borderStart='1px solid rgba(0,0,0,0.10)' align='center'>
-						{audios[elementKey] && (
-							<Text
-								mx={2}
-								fontSize='sm'
-								fontFamily='inter'
-								overflow='clip'
-								textOverflow='ellipsis'
-								whiteSpace='nowrap'
-								maxW='20ch'
-							>
-								{audios[elementKey].name}
-							</Text>
-						)}
-						{audios[elementKey] && <CustomAudioPlayer audioUrl={audios[elementKey].url} />}
+					<Flex align='center'>
+						{audios[elementKey] && <CustomAudioPlayer audio={audios[elementKey]} elementKey={elementKey} />}
+						
 					</Flex>
 				</Flex>
 			</Flex>

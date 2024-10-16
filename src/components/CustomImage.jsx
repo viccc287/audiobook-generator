@@ -13,6 +13,9 @@ import {
 	PopoverContent,
 	PopoverHeader,
 	PopoverTrigger,
+	Radio,
+	RadioGroup,
+	SimpleGrid,
 	Slider,
 	SliderFilledTrack,
 	SliderThumb,
@@ -20,13 +23,13 @@ import {
 	Text,
 	Tooltip,
 	useDisclosure,
-	useToast
+	useToast,
 } from '@chakra-ui/react';
 import { textToImage } from '@huggingface/inference';
 import { useAtom, useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
 import { FaImage, FaWandMagicSparkles, FaXmark } from 'react-icons/fa6';
-import { apiKeyAtom, currentPageImagesAtom } from '../lib/atoms';
+import { imageApiKeyAtom, currentPageImagesAtom } from '../lib/atoms';
 
 function CustomImage({ elementKey, color }) {
 	const fileInputRef = useRef(null);
@@ -37,11 +40,13 @@ function CustomImage({ elementKey, color }) {
 	const { isOpen: isPopoverOpen, onOpen: openPopover, onClose: closePopover } = useDisclosure();
 
 	const [images, setImages] = useAtom(currentPageImagesAtom);
-	const { image: imageApiKey } = useAtomValue(apiKeyAtom);
+	const imageApiKey = useAtomValue(imageApiKeyAtom);
 	const [imageLoading, setImageLoading] = useState(false);
 	const [textPrompt, setTextPrompt] = useState('');
+	const [proptImageStyle, setPromptImageStyle] = useState('default');
 	const [widthValue, setWidthValue] = useState(512);
 	const [heightValue, setHeightValue] = useState(512);
+	const [isTextPromptInvalid, setIsTextPromptInvalid] = useState(false);
 
 	const handleImageChange = e => {
 		const file = e.target.files[0];
@@ -64,7 +69,10 @@ function CustomImage({ elementKey, color }) {
 	const handleDelete = e => {
 		e.preventDefault();
 		e.stopPropagation();
-		setImages({ ...images, [elementKey]: '' });
+
+		const updatedImages = { ...images };
+		delete updatedImages[elementKey];
+		setImages(updatedImages);
 	};
 
 	const handleTextPromptInput = e => {
@@ -89,98 +97,120 @@ function CustomImage({ elementKey, color }) {
 				duration: 3000,
 				isClosable: true,
 			});
+			setIsTextPromptInvalid(true);
 			return;
 		}
+
+		setIsTextPromptInvalid(false);
 
 		setImageLoading(true);
 		abortController.current = new AbortController();
 
-		textToImage(
-			{
-				accessToken: imageApiKey,
-				model: 'black-forest-labs/FLUX.1-schnell',
-				inputs: textPrompt,
-				parameters: {
-					num_inference_steps: 4,
-					height: heightValue,
-					width: widthValue,
+		const promptStyles = {
+			default: '',
+			drawing: 'hand drawn, doodle for kids, colorized',
+			'3d': 'render 3D, 3D model',
+			realistic: 'photography, 4k, photorealistic',
+			painting: 'oil painting, impressionism',
+			anime: 'cartoon anime style, japanese',
+		};
+
+		try {
+			let finalStylizedPrompt;
+
+			if (proptImageStyle === 'default') {
+				finalStylizedPrompt = textPrompt;
+			} else {
+				finalStylizedPrompt = `${textPrompt}. ${promptStyles[proptImageStyle]}`;
+			}
+
+			const imageBlob = await textToImage(
+				{
+					accessToken: imageApiKey,
+					model: 'black-forest-labs/FLUX.1-schnell',
+					inputs: finalStylizedPrompt,
+					parameters: {
+						num_inference_steps: 8,
+						height: heightValue,
+						width: widthValue,
+					},
 				},
-			},
-			{
-				use_cache: false,
-				signal: abortController.current.signal,
-			},
-		)
-			.then(imageBlob => {
-				const imageURL = URL.createObjectURL(imageBlob);
-				setImages({ ...images, [elementKey]: imageURL });
+				{
+					use_cache: false,
+					signal: abortController.current.signal,
+				},
+			);
+
+			const imageURL = URL.createObjectURL(imageBlob);
+			setImages({ ...images, [elementKey]: imageURL });
+			toast({
+				title: 'Imagen generada',
+				description: `Imagen '${textPrompt}' generada`,
+				status: 'success',
+				duration: 3000,
+				isClosable: true,
+			});
+			closePopover();
+		} catch (e) {
+			if (e instanceof DOMException && e.name === 'AbortError') {
 				toast({
-					title: 'Imagen generada',
-					description: `Imagen '${textPrompt}' generada`,
-					status: 'success',
-					duration: 3000,
+					title: 'Generación de imagen cancelada',
+					description: `La generación de la imagen fue cancelada.`,
+					status: 'info',
+					duration: 4000,
 					isClosable: true,
 				});
-				closePopover();
-			})
-			.catch(e => {
-				if (e instanceof DOMException && e.name === 'AbortError') {					
-					toast({
-						title: 'Generación de imagen cancelada',
-						description: `La generación de la imagen fue cancelada.`,
-						status: 'info',
-						duration: 4000,
-						isClosable: true,
-					});
-				} else {
-					console.error(e);
-					toast({
-						title: 'Error generando la imagen',
-						description: `Intenta de nuevo en unos segundos. Si el problema persiste contacta a un administrador.`,
-						status: 'error',
-						duration: 4000,
-						isClosable: true,
-					});
-				}
-			})
-			.finally(() => {
-				setImageLoading(false);
-			});
+			} else {
+				console.error(e);
+				toast({
+					title: 'Error generando la imagen',
+					description: `Intenta de nuevo en unos segundos. Si el problema persiste contacta a un administrador.`,
+					status: 'error',
+					duration: 4000,
+					isClosable: true,
+				});
+			}
+		} finally {
+			setImageLoading(false);
+		}
 	};
 
 	return (
 		<Flex
-			as='label'
-			h={['50svw','auto']}
-			w={['50svw','75%','100%']}
-			cursor='pointer'
+			h={['50svw', 'auto']}
+			w={['50svw', '75%', '100%']}
+			grow={1}
 			align='center'
 			justify='center'
-			border={images[elementKey] ? '' : `3px dashed ${color}`}
+			border={images[elementKey] ? '' : `3px dotted ${color}`}
 			onDragOver={handleDragOver}
 			onDrop={handleDrop}
 			rounded='10px'
 			position='relative'
 			direction='column'
-	
+			transition='all 100ms'
 		>
 			<Input ref={fileInputRef} display='none' type='file' onChange={handleImageChange} />
 
-			<Flex pos='relative' h='fit' align='center' justify='center'
-			>
-				<Image
-					src={images[elementKey]}
-					transition='all 200ms'
-					_hover={{
-						transform: 'scale(1.03)',
-					}}
-					filter='drop-shadow(0 5px 20px rgba(0,0,0,0.3))'
-					alt='Preview'
-					fit='contain'
-					objectPosition='end'
-					borderRadius='10px'
-					fallback={<Icon as={FaImage} color={color} boxSize={{ base: 16, md: 32, xl: 48 }} />}
-				/>
+			<Flex pos='relative' h='fit' align='center' justify='center'>
+				<Tooltip label='Cargar nueva imagen' hasArrow openDelay={400}>
+					<Image
+						cursor='pointer'
+						onClick={() => fileInputRef.current.click()}
+						src={images[elementKey]}
+						transition='all 200ms'
+						_hover={{
+							transform: 'scale(1.03)',
+							border: images[elementKey] ? `3px dotted ${color}` : '',
+						}}
+						filter='drop-shadow(0 5px 20px rgba(0,0,0,0.3))'
+						alt='Preview'
+						fit='contain'
+						objectPosition='end'
+						borderRadius='10px'
+						fallback={<Icon as={FaImage} color={color} boxSize={{ base: 16, md: 32, xl: 48 }} />}
+					/>
+				</Tooltip>
 
 				<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='start' justify='end'>
 					<Flex
@@ -195,11 +225,11 @@ function CustomImage({ elementKey, color }) {
 						boxShadow='0 5px 20px rgba(0,0,0,0.25)'
 						zIndex={1}
 					>
-						<Popover isLazy onClose={closePopover} isOpen={isPopoverOpen} onOpen={openPopover}>
+						<Popover strategy='fixed' isLazy onClose={closePopover} isOpen={isPopoverOpen} onOpen={openPopover}>
 							<PopoverTrigger>
 								<Box display='inline-block'>
 									<Tooltip label='Generar imagen desde texto' hasArrow openDelay={400}>
-										<IconButton bg='transparent' icon={<FaWandMagicSparkles />} isLoading={imageLoading}></IconButton>
+										<IconButton bg='transparent' icon={<FaWandMagicSparkles />}></IconButton>
 									</Tooltip>
 								</Box>
 							</PopoverTrigger>
@@ -213,25 +243,40 @@ function CustomImage({ elementKey, color }) {
 								}}
 							>
 								<PopoverArrow />
-								<PopoverCloseButton
-									onClick={
-										imageLoading
-											? (e) => {
-													abortGeneration(e);
-													closePopover();
-												}
-											: closePopover
-									}
-								/>
+								<PopoverCloseButton />
 								<PopoverHeader fontWeight='bold'>Generar imagen</PopoverHeader>
 								<PopoverBody as={Flex} justifyContent='center' direction='column' gap={3} px={5}>
 									<Text fontWeight='bold'>Ingresa la descripción de la imagen</Text>
 									<Input
+										_invalid={{ border: '2px dotted red' }}
+										isInvalid={isTextPromptInvalid}
 										value={textPrompt}
-										placeholder='Un dibujo de una niña leyendo...'
+										placeholder='Una niña leyendo un libro...'
 										fontSize='small'
 										onChange={handleTextPromptInput}
 									></Input>
+
+									<Text fontWeight='bold'>Selecciona el estilo (opcional)</Text>
+
+									<RadioGroup
+										colorScheme='brand'
+										onChange={setPromptImageStyle}
+										value={proptImageStyle}
+										size='sm'
+										onClick={e => {
+											e.stopPropagation();
+										}}
+									>
+										<SimpleGrid columns={2} align='center'>
+											<Radio value='default'>Por defecto</Radio>
+											<Radio value='drawing'>Dibujo</Radio>
+											<Radio value='3d'>3D</Radio>
+											<Radio value='realistic'>Realista</Radio>
+											<Radio value='painting'>Pintura</Radio>
+											<Radio value='anime'>Anime</Radio>
+										</SimpleGrid>
+									</RadioGroup>
+
 									<Text fontWeight='bold'>Selecciona el tamaño de la imagen</Text>
 
 									<Flex w='100%' gap={10} justifyContent='center' fontSize='smaller'>
@@ -288,11 +333,10 @@ function CustomImage({ elementKey, color }) {
 									>
 										Generar imagen
 									</Button>
-									
-										<Button isDisabled={!imageLoading} size='xs' colorScheme='red' onClick={abortGeneration}>
-											Cancelar
-										</Button>
-								
+
+									<Button isDisabled={!imageLoading} size='xs' colorScheme='red' onClick={abortGeneration}>
+										Cancelar
+									</Button>
 								</PopoverBody>
 							</PopoverContent>
 						</Popover>
@@ -308,14 +352,15 @@ function CustomImage({ elementKey, color }) {
 								/>
 							</Tooltip>
 						)}
-
-						
 					</Flex>
 				</Flex>
 			</Flex>
-	
-			{!images[elementKey] && <Text fontStyle='italic' color={color}>Haz clic o arrastra una imagen aquí</Text>}
 
+			{!images[elementKey] && (
+				<Text fontStyle='italic' color={color}>
+					Haz clic o arrastra una imagen aquí
+				</Text>
+			)}
 		</Flex>
 	);
 }

@@ -11,7 +11,10 @@ function EditableText({ textProps, elementKey }) {
 
 	const handleTextChange = e => {
 		setShowPanel(true);
-		setText({ ...text, [elementKey]: e.target.innerText });
+
+		setText({ ...text, [elementKey]: e.target.innerText.trim() });
+
+		e.target.innerText = e.target.innerText.trim();
 	};
 
 	return (
@@ -21,13 +24,16 @@ function EditableText({ textProps, elementKey }) {
 				rounded='10px'
 				outline={text[elementKey].trim() === '' ? '3px solid rgba(0,0,0,0.25)' : 'none'}
 				_hover={{
-					outline: '3px solid rgba(0,0,0,0.25)',
+					outline: '3px dotted rgba(0,0,0,0.25)',
 				}}
 				filter='drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
 				p={5}
 				flexGrow={1}
-				_focus={{ outline: '3px solid rgba(0,0,0,0.25)' }}
+				_focus={{ outline: '3px solid rgba(0,0,0,0.15)' }}
 				contentEditable
+				onKeyDown={e => {
+					if (e.key === 'Escape') e.target.blur();
+				}}
 				suppressContentEditableWarning={true}
 				onBlur={handleTextChange}
 				onFocus={() => setShowPanel(false)}
