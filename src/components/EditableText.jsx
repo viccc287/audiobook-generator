@@ -3,11 +3,18 @@ import { useAtom } from 'jotai';
 import IndividualPanel from '../components/IndividualPanel.jsx';
 import { Flex, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import tinycolor from 'tinycolor2';
 
-function EditableText({ textProps, elementKey }) {
+
+
+function EditableText({ textProps, elementKey, color }) {
 	const [text, setText] = useAtom(currentPageTextAtom);
 
 	const [showPanel, setShowPanel] = useState(true);
+
+	let dimmedColor = tinycolor(color);
+	dimmedColor.setAlpha(0.4);
+	dimmedColor = dimmedColor.toRgbString();
 
 	const handleTextChange = e => {
 		setShowPanel(true);
@@ -22,14 +29,14 @@ function EditableText({ textProps, elementKey }) {
 			<Text
 				transition='all 100ms'
 				rounded='10px'
-				outline={text[elementKey].trim() === '' ? '3px solid rgba(0,0,0,0.25)' : 'none'}
 				_hover={{
-					outline: '3px dotted rgba(0,0,0,0.25)',
+					outline: `3px dotted ${dimmedColor}`,
 				}}
 				filter='drop-shadow(0 5px 20px rgba(0,0,0,0.25))'
-				p={5}
+				p={[2,3,4]}
 				flexGrow={1}
-				_focus={{ outline: '3px solid rgba(0,0,0,0.15)' }}
+				_focus={{ outline: `3px solid ${dimmedColor}` }}
+				outline={text[elementKey].trim() === '' ? `3px dotted ${dimmedColor}` : ''}
 				contentEditable
 				onKeyDown={e => {
 					if (e.key === 'Escape') e.target.blur();

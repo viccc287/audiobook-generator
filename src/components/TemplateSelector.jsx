@@ -20,9 +20,9 @@ function TemplateSelector() {
 						gap={1}
 						transition='all 500ms'
 						_hover={{
+							cursor: 'pointer',
 							outline: '1px solid',
 							outlineColor: 'green.500',
-							transform: 'scale(1.1)',
 							transition: 'all 100ms',
 						}}
 						onClick={oc}
@@ -46,6 +46,7 @@ function TemplateSelector() {
 						gap={1}
 						transition='all 500ms'
 						_hover={{
+							cursor: 'pointer',
 							outline: '1px solid',
 							outlineColor: 'green.500',
 							transition: 'all 100ms',

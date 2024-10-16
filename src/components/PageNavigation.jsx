@@ -348,15 +348,17 @@ export default function PageNavigation() {
 							icon={<AddIcon boxSize={3} />}
 							onClick={() => handleInsertPageAfter(displayedPageIndex)}
 							bgColor='transparent'
+							onFocus={e=>e.preventDefault()}
 						/>
 					</Tooltip>
 					<Menu isLazy>
-						<Tooltip label='Vista general de páginas' openDelay={400} hasArrow>
+						<Tooltip label='Vista general de páginas' openDelay={400} hasArrow >
 							<MenuButton
 								rounded='0'
 								as={IconButton}
 								icon={<HamburgerIcon boxSize={3} />}
 								bgColor='transparent'
+								onFocus={e=>e.preventDefault()}
 							></MenuButton>
 						</Tooltip>
 						<Box p='0'>
@@ -417,7 +419,6 @@ export default function PageNavigation() {
 					<MenuList
 						maxHeight={72}
 						overflow='auto'
-						color='black'
 						sx={{
 							'&::-webkit-scrollbar': {
 								width: '6px',

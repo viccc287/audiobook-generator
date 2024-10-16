@@ -23,16 +23,16 @@ import {
 	Text,
 	Tooltip,
 	useDisclosure,
-	useToast,
+	useToast
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { FaUpload, FaVolumeHigh, FaWandMagicSparkles } from 'react-icons/fa6';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
 import { useAtom, useAtomValue } from 'jotai';
-import { audioApiKeyAtom, textApiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom, currentPageTextAtom } from '../lib/atoms';
-import VoiceRadioItem from './VoiceRadioItem';
 import { aiInstructions } from '../lib/ai';
+import { audioApiKeyAtom, currentPageAudiosAtom, currentPageLoadingAtom, currentPageTextAtom, textApiKeyAtom } from '../lib/atoms';
+import VoiceRadioItem from './VoiceRadioItem';
 
 function IndividualPanel({ textToSend, elementKey }) {
 	const voicesJSON = [
@@ -46,6 +46,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 		{ name: 'grace', id: 'oWAxZDx7w5VEj9dCyTzz', gender: 'female' },
 	];
 
+	
 	const [selectedVoiceName, setSelectedVoiceName] = useState(voicesJSON[0].name);
 
 	const [audios, setAudios] = useAtom(currentPageAudiosAtom);
@@ -219,7 +220,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 
 	return (
 		<>
-			<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='end' justify='end'>
+			<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' justify='end'>
 				<Flex
 					pointerEvents='auto'
 					boxSize='fit-content'
@@ -231,6 +232,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 					rounded='10px'
 					boxShadow='0 5px 20px rgba(0,0,0,0.25)'
 				>
+
 					<Tooltip label='Generar texto' hasArrow openDelay={400}>
 						<IconButton
 							bgColor='transparent'
@@ -277,9 +279,10 @@ function IndividualPanel({ textToSend, elementKey }) {
 					<Input ref={fileInputRef} type='file' accept='audio/*' display='none' onChange={handleFileUpload} />
 					<Flex align='center'>
 						{audios[elementKey] && <CustomAudioPlayer audio={audios[elementKey]} elementKey={elementKey} />}
-						
 					</Flex>
+					
 				</Flex>
+			
 			</Flex>
 			<AlertDialog isCentered isOpen={isTTSAlertOpen} leastDestructiveRef={cancelRef} onClose={closeTTSAlert}>
 				<AlertDialogOverlay>

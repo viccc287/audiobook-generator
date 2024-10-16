@@ -30,12 +30,17 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
 import { FaImage, FaWandMagicSparkles, FaXmark } from 'react-icons/fa6';
 import { imageApiKeyAtom, currentPageImagesAtom } from '../lib/atoms';
+import tinycolor from 'tinycolor2';
 
 function CustomImage({ elementKey, color }) {
 	const fileInputRef = useRef(null);
 	const abortController = useRef(null);
 
 	const toast = useToast();
+
+	let dimmedColor = tinycolor(color);
+	dimmedColor.setAlpha(0.4);
+	dimmedColor = dimmedColor.toRgbString();
 
 	const { isOpen: isPopoverOpen, onOpen: openPopover, onClose: closePopover } = useDisclosure();
 
@@ -176,192 +181,190 @@ function CustomImage({ elementKey, color }) {
 	};
 
 	return (
-		<Flex
-			h={['50svw', 'auto']}
-			w={['50svw', '75%', '100%']}
-			grow={1}
-			align='center'
-			justify='center'
-			border={images[elementKey] ? '' : `3px dotted ${color}`}
-			onDragOver={handleDragOver}
-			onDrop={handleDrop}
-			rounded='10px'
-			position='relative'
-			direction='column'
-			transition='all 100ms'
-		>
-			<Input ref={fileInputRef} display='none' type='file' onChange={handleImageChange} />
+		<Tooltip label='Cargar nueva imagen' hasArrow openDelay={400} onFocus={e=>e.preventDefault()}>
+			<Flex
+				h={['50svw', 'auto']}
+				w={['50svw', '75%', '100%']}
+				grow={1}
+				align='center'
+				justify='center'
+				outline={images[elementKey] ? '3px dotted transparent' : `3px dotted ${dimmedColor}`}
+				_hover={{ outline: `3px dotted ${dimmedColor}` }}
+				onDragOver={handleDragOver}
+				onDrop={handleDrop}
+				rounded='10px'
+				position='relative'
+				direction='column'
+				transition='all 100ms'
+				onClick={() => fileInputRef.current.click()}
+				cursor='pointer'
+			>
+				<Input ref={fileInputRef} display='none' type='file' onChange={handleImageChange} />
 
-			<Flex pos='relative' h='fit' align='center' justify='center'>
-				<Tooltip label='Cargar nueva imagen' hasArrow openDelay={400}>
+				<Flex pos='relative' h='fit' align='center' justify='center'>
 					<Image
-						cursor='pointer'
-						onClick={() => fileInputRef.current.click()}
 						src={images[elementKey]}
-						transition='all 200ms'
-						_hover={{
-							transform: 'scale(1.03)',
-							border: images[elementKey] ? `3px dotted ${color}` : '',
-						}}
+						transition='all 100ms'
 						filter='drop-shadow(0 5px 20px rgba(0,0,0,0.3))'
 						alt='Preview'
 						fit='contain'
 						objectPosition='end'
 						borderRadius='10px'
-						fallback={<Icon as={FaImage} color={color} boxSize={{ base: 16, md: 32, xl: 48 }} />}
+						fallback={<Icon as={FaImage} color={dimmedColor} boxSize={{ base: 16, md: 32, xl: 48 }} />}
 					/>
-				</Tooltip>
 
-				<Flex pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='start' justify='end'>
-					<Flex
-						pointerEvents='auto'
-						boxSize='fit-content'
-						align='center'
-						justify='center'
-						overflow='clip'
-						bgColor='white'
-						_dark={{ bgColor: 'gray.800' }}
-						rounded='10px'
-						boxShadow='0 5px 20px rgba(0,0,0,0.25)'
-						zIndex={1}
-					>
-						<Popover strategy='fixed' isLazy onClose={closePopover} isOpen={isPopoverOpen} onOpen={openPopover}>
-							<PopoverTrigger>
-								<Box display='inline-block'>
-									<Tooltip label='Generar imagen desde texto' hasArrow openDelay={400}>
-										<IconButton bg='transparent' icon={<FaWandMagicSparkles />}></IconButton>
-									</Tooltip>
-								</Box>
-							</PopoverTrigger>
-							<PopoverContent
-								cursor='default'
-								fontFamily='inter'
-								fontSize='sm'
-								onClick={e => {
-									e.preventDefault();
-									e.stopPropagation();
-								}}
-							>
-								<PopoverArrow />
-								<PopoverCloseButton />
-								<PopoverHeader fontWeight='bold'>Generar imagen</PopoverHeader>
-								<PopoverBody as={Flex} justifyContent='center' direction='column' gap={3} px={5}>
-									<Text fontWeight='bold'>Ingresa la descripción de la imagen</Text>
-									<Input
-										_invalid={{ border: '2px dotted red' }}
-										isInvalid={isTextPromptInvalid}
-										value={textPrompt}
-										placeholder='Una niña leyendo un libro...'
-										fontSize='small'
-										onChange={handleTextPromptInput}
-									></Input>
+					{/* Popover */}
+					<Flex onClick={e=>e.stopPropagation()} pointerEvents='none' pos='absolute' left={0} top={0} boxSize='full' align='start' justify='end'>
+						<Flex
+							pointerEvents='auto'
+							boxSize='fit-content'
+							align='center'
+							justify='center'
+							overflow='clip'
+							bgColor='white'
+							_dark={{ bgColor: 'gray.800' }}
+							rounded='10px'
+							boxShadow='0 5px 20px rgba(0,0,0,0.25)'
+							zIndex={1}
+						>
+							<Popover  strategy='fixed' isLazy onClose={closePopover} isOpen={isPopoverOpen} onOpen={openPopover}>
+								<PopoverTrigger>
+									<Box display='inline-block'>
+										<Tooltip label='Generar imagen desde texto' hasArrow openDelay={400}>
+											<IconButton bg='transparent' icon={<FaWandMagicSparkles /> }></IconButton>
+										</Tooltip>
+									</Box>
+								</PopoverTrigger>
+								<PopoverContent
+									cursor='default'
+									fontFamily='inter'
+									fontSize='sm'
+									onClick={e => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+								>
+									<PopoverArrow />
+									<PopoverCloseButton />
+									<PopoverHeader fontWeight='bold'>Generar imagen</PopoverHeader>
+									<PopoverBody as={Flex} justifyContent='center' direction='column' gap={3} px={5}>
+										<Text fontWeight='bold'>Ingresa la descripción de la imagen</Text>
+										<Input
+											_invalid={{ border: '2px dotted red' }}
+											isInvalid={isTextPromptInvalid}
+											value={textPrompt}
+											placeholder='Una niña leyendo un libro...'
+											fontSize='small'
+											onChange={handleTextPromptInput}
+										></Input>
 
-									<Text fontWeight='bold'>Selecciona el estilo (opcional)</Text>
+										<Text fontWeight='bold'>Selecciona el estilo (opcional)</Text>
 
-									<RadioGroup
-										colorScheme='brand'
-										onChange={setPromptImageStyle}
-										value={proptImageStyle}
-										size='sm'
-										onClick={e => {
-											e.stopPropagation();
-										}}
-									>
-										<SimpleGrid columns={2} align='center'>
-											<Radio value='default'>Por defecto</Radio>
-											<Radio value='drawing'>Dibujo</Radio>
-											<Radio value='3d'>3D</Radio>
-											<Radio value='realistic'>Realista</Radio>
-											<Radio value='painting'>Pintura</Radio>
-											<Radio value='anime'>Anime</Radio>
-										</SimpleGrid>
-									</RadioGroup>
-
-									<Text fontWeight='bold'>Selecciona el tamaño de la imagen</Text>
-
-									<Flex w='100%' gap={10} justifyContent='center' fontSize='smaller'>
-										<Slider
-											w='70%'
-											value={widthValue}
-											min={128}
-											max={1024}
-											step={64}
-											onChange={val => setWidthValue(val)}
+										<RadioGroup
+											colorScheme='brand'
+											onChange={setPromptImageStyle}
+											value={proptImageStyle}
+											size='sm'
+											onClick={e => {
+												e.stopPropagation();
+											}}
 										>
-											<SliderTrack>
-												<SliderFilledTrack bg='brand.400' />
-											</SliderTrack>
-											<SliderThumb bg='brand.400' />
-										</Slider>
-										<Text w='30%'>Ancho: {widthValue}</Text>
-									</Flex>
-									<Flex w='100%' gap={10} justifyContent='center' fontSize='smaller'>
-										<Slider
-											w='70%'
-											value={heightValue}
-											min={128}
-											max={1024}
-											step={128}
-											onChange={val => setHeightValue(val)}
+											<SimpleGrid columns={2} align='center'>
+												<Radio value='default'>Por defecto</Radio>
+												<Radio value='drawing'>Dibujo</Radio>
+												<Radio value='3d'>3D</Radio>
+												<Radio value='realistic'>Realista</Radio>
+												<Radio value='painting'>Pintura</Radio>
+												<Radio value='anime'>Anime</Radio>
+											</SimpleGrid>
+										</RadioGroup>
+
+										<Text fontWeight='bold'>Selecciona el tamaño de la imagen</Text>
+
+										<Flex w='100%' gap={10} justifyContent='center' fontSize='smaller'>
+											<Slider
+												w='70%'
+												value={widthValue}
+												min={128}
+												max={1024}
+												step={64}
+												onChange={val => setWidthValue(val)}
+											>
+												<SliderTrack>
+													<SliderFilledTrack bg='brand.400' />
+												</SliderTrack>
+												<SliderThumb bg='brand.400' />
+											</Slider>
+											<Text w='30%'>Ancho: {widthValue}</Text>
+										</Flex>
+										<Flex w='100%' gap={10} justifyContent='center' fontSize='smaller'>
+											<Slider
+												w='70%'
+												value={heightValue}
+												min={128}
+												max={1024}
+												step={128}
+												onChange={val => setHeightValue(val)}
+											>
+												<SliderTrack>
+													<SliderFilledTrack bg='brand.400' />
+												</SliderTrack>
+												<SliderThumb bg='brand.400' />
+											</Slider>
+											<Text w='30%'>Alto: {heightValue}</Text>
+										</Flex>
+
+										{(widthValue >= 768 || heightValue >= 768) && (
+											<Text
+												fontWeight='semibold'
+												fontSize='xs'
+												color='blackAlpha.600'
+												_dark={{ color: 'whiteAlpha.600' }}
+											>
+												*Una imagen grande tardará un poco más en generarse
+											</Text>
+										)}
+
+										<Button
+											onClick={handleGenerateImage}
+											isLoading={imageLoading}
+											loadingText={`Generando imagen`}
+											fontSize='normal'
+											colorScheme='green'
+											size='lg'
 										>
-											<SliderTrack>
-												<SliderFilledTrack bg='brand.400' />
-											</SliderTrack>
-											<SliderThumb bg='brand.400' />
-										</Slider>
-										<Text w='30%'>Alto: {heightValue}</Text>
-									</Flex>
+											Generar imagen
+										</Button>
 
-									{(widthValue >= 768 || heightValue >= 768) && (
-										<Text
-											fontWeight='semibold'
-											fontSize='xs'
-											color='blackAlpha.600'
-											_dark={{ color: 'whiteAlpha.600' }}
-										>
-											*Una imagen grande tardará un poco más en generarse
-										</Text>
-									)}
+										<Button isDisabled={!imageLoading} size='xs' colorScheme='red' onClick={abortGeneration}>
+											Cancelar
+										</Button>
+									</PopoverBody>
+								</PopoverContent>
+							</Popover>
 
-									<Button
-										onClick={handleGenerateImage}
-										isLoading={imageLoading}
-										loadingText={`Generando imagen`}
-										fontSize='normal'
-										colorScheme='green'
-										size='lg'
-									>
-										Generar imagen
-									</Button>
-
-									<Button isDisabled={!imageLoading} size='xs' colorScheme='red' onClick={abortGeneration}>
-										Cancelar
-									</Button>
-								</PopoverBody>
-							</PopoverContent>
-						</Popover>
-
-						{images[elementKey] && (
-							<Tooltip label='Eliminar imagen' hasArrow openDelay={400}>
-								<IconButton
-									pointerEvents='auto'
-									icon={<FaXmark color='red' />}
-									onClick={handleDelete}
-									bg='transparent'
-									boxShadow='0 5px 20px rgba(0,0,0,0.25)'
-								/>
-							</Tooltip>
-						)}
+							{images[elementKey] && (
+								<Tooltip label='Eliminar imagen' hasArrow openDelay={400}>
+									<IconButton
+										pointerEvents='auto'
+										icon={<FaXmark color='red' />}
+										onClick={handleDelete}
+										bg='transparent'
+										boxShadow='0 5px 20px rgba(0,0,0,0.25)'
+									/>
+								</Tooltip>
+							)}
+						</Flex>
 					</Flex>
 				</Flex>
-			</Flex>
 
-			{!images[elementKey] && (
-				<Text fontStyle='italic' color={color}>
-					Haz clic o arrastra una imagen aquí
-				</Text>
-			)}
-		</Flex>
+				{!images[elementKey] && (
+					<Text fontStyle='italic' fontWeight='bold' color={dimmedColor}>
+						Haz clic o arrastra una imagen aquí
+					</Text>
+				)}
+			</Flex>
+		</Tooltip>
 	);
 }
 

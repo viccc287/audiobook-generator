@@ -37,45 +37,45 @@ export default function Visualizer() {
 	const templates = {
 		titleSubtitle: (
 			<>
-				<EditableText textProps={titleProps} elementKey='title' />
-				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
 			</>
 		),
 		cover: (
 			<>
-				<EditableText textProps={titleProps} elementKey='title' />
-				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
 				<CustomImage elementKey='first' color={invertedColor} />
 			</>
 		),
 		textOnly: (
 			<>
 				<Flex boxSize='full' gap='inherit' align='center'>
-					<EditableText textProps={subtitleProps} elementKey='subtitle' />
+					<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
 				</Flex>
 			</>
 		),
 		textImage: (
 			<>
-				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
 				<CustomImage elementKey='first' color={invertedColor} />
 			</>
 		),
 
 		titleImageText: (
 			<>
-				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
 				<Flex boxSize='full' gap='inherit' align='center'>
 					<CustomImage elementKey='first' color={invertedColor} />
-					<EditableText textProps={textProps} elementKey='subtitle' />
+					<EditableText textProps={textProps} elementKey='subtitle' color={invertedColor} />
 				</Flex>
 			</>
 		),
 		titleTextImage: (
 			<>
-				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
 				<Flex boxSize='full' gap='inherit' align='center'>
-					<EditableText textProps={textProps} elementKey='subtitle' />
+					<EditableText textProps={textProps} elementKey='subtitle' color={invertedColor} />
 					<CustomImage elementKey='first' color={invertedColor} />
 				</Flex>
 			</>
@@ -83,7 +83,7 @@ export default function Visualizer() {
 
 		text2Images: (
 			<>
-				<EditableText textProps={subtitleProps} elementKey='subtitle' />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
 				<Flex boxSize='full' gap='inherit'>
 					<CustomImage elementKey='first' color={invertedColor} />
 					<CustomImage elementKey='second' color={invertedColor} />
@@ -93,7 +93,7 @@ export default function Visualizer() {
 		imageText: (
 			<>
 				<CustomImage elementKey='first' color={invertedColor} />
-				<EditableText textProps={titleProps} elementKey='title' />
+				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
 			</>
 		),
 		imageOnly: (
@@ -110,7 +110,7 @@ export default function Visualizer() {
 
 		leftTextRightImage: (
 			<Flex boxSize='full' gap='inherit' align='center'>
-				<EditableText textProps={textProps} elementKey='subtitle' />
+				<EditableText textProps={textProps} elementKey='subtitle' color={invertedColor} />
 
 				<CustomImage elementKey='first' color={invertedColor} />
 			</Flex>
@@ -118,7 +118,7 @@ export default function Visualizer() {
 		leftImageRightText: (
 			<Flex boxSize='full' gap='inherit' align='center'>
 				<CustomImage elementKey='first' color={invertedColor} />
-				<EditableText textProps={textProps} elementKey='subtitle' />
+				<EditableText textProps={textProps} elementKey='subtitle' color={invertedColor} />
 			</Flex>
 		),
 	};
@@ -138,7 +138,6 @@ export default function Visualizer() {
 			transition='background-color 300ms'
 		>
 			{templates[selectedTemplate]}
-		
 		</Flex>
 	);
 }
