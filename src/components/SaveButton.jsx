@@ -19,11 +19,12 @@ export default function SaveButton() {
 			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '')
 			.replace(/[<>:"/\\|?*.,;!¡¿()[\]{}]/g, '')
+			.replace(/[^\x20-\x7E]/g, '')
 			.replace(/\s+/g, ' ')
 			.trim()
 			.replace(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])$/i, '_$1')
-            .slice(0, 64)
-            .concat('_save');
+			.slice(0, 64)
+			.concat('_save');
 
 		return bookTitle.length > 0 ? bookTitle : 'nuevo_cuento';
 	}
