@@ -12,6 +12,7 @@ export const theme = extendTheme({
 
 			'html, body': {
 				overscrollBehaviorY: 'none',
+				fontFamily: 'inter',
 			},
 	
 			'&::-webkit-scrollbar': {

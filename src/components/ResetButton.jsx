@@ -1,7 +1,18 @@
 import { pagesAtom } from '../lib/atoms';
 import { useSetAtom } from 'jotai';
 import { displayedPageIndexAtom } from '../lib/atoms';
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, useDisclosure, useToast } from '@chakra-ui/react';
+import {
+	AlertDialog,
+	AlertDialogBody,
+	AlertDialogContent,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogOverlay,
+	Button,
+	Text,
+	useDisclosure,
+	useToast,
+} from '@chakra-ui/react';
 import { useRef } from 'react';
 import { FaTrash } from 'react-icons/fa6';
 
@@ -13,8 +24,8 @@ export default function ResetButton() {
 
 	const cancelRef = useRef(null);
 
-    function clearBook() {
-        closeDeleteDialog();
+	function clearBook() {
+		closeDeleteDialog();
 		setPages([
 			{
 				name: 'Portada',
@@ -23,7 +34,7 @@ export default function ResetButton() {
 				images: {},
 				text: {
 					title: 'Título del cuento',
-					subtitle: 'Mensaje motivador',
+					subtitle: 'Texto',
 				},
 				audios: {},
 				loading: {},
@@ -35,20 +46,25 @@ export default function ResetButton() {
 			status: 'success',
 			duration: 4000,
 			isClosable: true,
-		  })
+		});
 	}
 
 	return (
 		<>
-			<Button size={['xs','sm','md','md','md']} onClick={openDeleteDialog} colorScheme='red' leftIcon={<FaTrash/>}>Limpiar todo</Button>
-			<AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={closeDeleteDialog}>
+			<Button size={['xs', 'sm', 'sm', 'sm', 'md']} onClick={openDeleteDialog} colorScheme='red' leftIcon={<FaTrash />}>
+				Borrar todo
+			</Button>
+			<AlertDialog isOpen={isDeleteDialogOpen} leastDestructiveRef={cancelRef} onClose={closeDeleteDialog} isCentered>
 				<AlertDialogOverlay>
-					<AlertDialogContent fontFamily='inter'>
+					<AlertDialogContent>
 						<AlertDialogHeader fontSize='lg' fontWeight='bold'>
 							Borrar todas las páginas
 						</AlertDialogHeader>
 
-						<AlertDialogBody>¿Estás seguro? Esta acción borrará todas las páginas.</AlertDialogBody>
+						<AlertDialogBody>
+							<Text>¿Estás seguro? Esta acción borrará todas las páginas y su contenido.</Text>
+							<Text>Si no quieres perder el contenido actual, guarda el cuento antes de borrar todo.</Text>
+						</AlertDialogBody>
 
 						<AlertDialogFooter>
 							<Button ref={cancelRef} onClick={closeDeleteDialog}>
@@ -62,5 +78,5 @@ export default function ResetButton() {
 				</AlertDialogOverlay>
 			</AlertDialog>
 		</>
-	)
+	);
 }

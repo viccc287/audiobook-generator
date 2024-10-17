@@ -1,19 +1,19 @@
 import {
-	Button,
-	useToast
+    Button,
+    useToast
 } from '@chakra-ui/react';
 import { saveAs } from 'file-saver';
 import { useAtomValue } from 'jotai';
 import JSZip from 'jszip';
-import { FaFileExport } from 'react-icons/fa6';
+import { FaFloppyDisk } from 'react-icons/fa6';
 import { pagesAtom } from '../lib/atoms';
 
-export default function ExportButton() {
+export default function SaveButton() {
 	const pages = useAtomValue(pagesAtom);
 	const pagesJSON = JSON.parse(JSON.stringify(pages));
 	const toast = useToast();
 
-	function generateExportFileName(title) {
+	function generateSaveFileName(title) {
 		let bookTitleRaw = title.toLowerCase().replaceAll(' ', '_');
 		let bookTitle = bookTitleRaw
 			.normalize('NFD')
@@ -22,12 +22,15 @@ export default function ExportButton() {
 			.replace(/\s+/g, ' ')
 			.trim()
 			.replace(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])$/i, '_$1')
-			.slice(0, 64);
+            .slice(0, 64)
+            .concat('_save');
+
 		return bookTitle.length > 0 ? bookTitle : 'nuevo_cuento';
 	}
 
-	async function exportStory() {
-		if (pages[0].template != 'cover' || !pages[0].text.title || !pages[0].text.subtitle) {
+    async function saveStory() {
+        
+        if (pages[0].template !== 'cover' || !pages[0].text.title || !pages[0].text.subtitle) {
 			if (!toast.isActive('coverError')) {
 				toast({
 					id: 'coverError',
@@ -41,11 +44,7 @@ export default function ExportButton() {
 			return;
 		}
 
-		const PARENT_FOLDER_NAME = 'books';
-		const bookTitle = generateExportFileName(pages[0].text.title);
-
 		const zip = new JSZip();
-		const folder = zip.folder(bookTitle);
 
 		for (let i = 0; i < pages.length; i++) {
 			const page = pages[i];
@@ -53,34 +52,26 @@ export default function ExportButton() {
 			for (const [key, url] of Object.entries(page.images)) {
 				const response = await fetch(url);
 				const blob = await response.blob();
-				folder.file(`page${i + 1}-${key}.jpg`, blob);
+				const imageFileName = `page${i + 1}-${key}.jpg`;
+				zip.file(imageFileName, blob);
+				pagesJSON[i].images[key] = imageFileName;
 			}
 
 			for (const [key, audio] of Object.entries(page.audios)) {
-				folder.file(`page${i + 1}-${key}.mp3`, audio.file);
+				const audioFileName = `page${i + 1}-${key}.mp3`;
+				zip.file(audioFileName, audio.file);
+				pagesJSON[i].audios[key].url = audioFileName;
 			}
 		}
 
-		for (let i = 0; i < pagesJSON.length; i++) {
-			const page = pagesJSON[i];
-
-			for (const [key] of Object.entries(page.images)) {
-				page.images[key] = `./${PARENT_FOLDER_NAME}/${bookTitle}/page${i + 1}-${key}.jpg`;
-			}
-
-			for (const [key] of Object.entries(page.audios)) {
-				page.audios[key].url = `./${PARENT_FOLDER_NAME}/${bookTitle}/page${i + 1}-${key}.mp3`;
-			}
-		}
-
-		folder.file('pages.json', JSON.stringify(pagesJSON));
+		zip.file('pages.json', JSON.stringify(pagesJSON));
 
 		const content = await zip.generateAsync({ type: 'blob' });
-		saveAs(content, `${bookTitle}.zip`);
+		saveAs(content, generateSaveFileName(pages[0].text.title) + '.zip');
 
 		toast({
-			title: 'Cuento exportado',
-			description: `Páginas: Portada + ${pagesJSON.length - 1}`,
+			title: 'Cuento guardado',
+			description: `Cuento guardado con éxito`,
 			status: 'success',
 			duration: 3000,
 			isClosable: true,
@@ -88,8 +79,13 @@ export default function ExportButton() {
 	}
 
 	return (
-		<Button onClick={exportStory} colorScheme='cyan' leftIcon={<FaFileExport />} size={['xs', 'sm', 'sm', 'sm', 'md']}>
-			Exportar cuento
+		<Button
+			onClick={saveStory}
+			colorScheme='green'
+			leftIcon={<FaFloppyDisk />}
+			size={['xs', 'sm', 'sm', 'sm', 'md']}
+		>
+			Guardar cuento
 		</Button>
 	);
 }

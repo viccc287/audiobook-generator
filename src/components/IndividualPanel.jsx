@@ -304,7 +304,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 								deseas!
 							</Text>
 							<Text as='b' textColor='red'>
-								Si recargas la página o cierras el navegador, el audio generado se perderá.
+								Si recargas la página o cierras el navegador sin haber guardado el cuento, el audio generado se perderá.
 							</Text>
 						</AlertDialogBody>
 
@@ -313,7 +313,7 @@ function IndividualPanel({ textToSend, elementKey }) {
 								Cancelar
 							</Button>
 							<Button colorScheme='green' onClick={handleGenerateAudio} ml={3}>
-								Entiendo
+								Generar
 							</Button>
 						</AlertDialogFooter>
 					</AlertDialogContent>

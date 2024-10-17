@@ -1,14 +1,19 @@
-import { Button, Flex, Grid, GridItem, Tooltip, useColorMode } from '@chakra-ui/react';
-import { FaMoon, FaSun } from 'react-icons/fa6';
+import { Button, Collapse, Flex, Grid, GridItem, SimpleGrid } from '@chakra-ui/react';
+import { useState } from 'react';
+import { FaBars, FaChevronDown } from 'react-icons/fa6';
 import CustomColorSelector from './components/CustomColorSelector';
 import ExportButton from './components/ExportButton';
+import ImportButton from './components/ImportButton';
 import PageNavigation from './components/PageNavigation';
+import PreviewButton from './components/PreviewButton';
 import ResetButton from './components/ResetButton';
+import SaveButton from './components/SaveButton';
 import TemplateSelector from './components/TemplateSelector';
+import { ToggleModeButton } from './components/ToggleModeButton';
 import Visualizer from './components/Visualizer';
 
 function App() {
-	const { colorMode, toggleColorMode } = useColorMode();
+	const [buttonsVisible, setButtonsVisible] = useState(true);
 	return (
 		<Grid
 			h='100svh'
@@ -17,45 +22,63 @@ function App() {
 			_dark={{ bgColor: 'brand.900' }}
 			templateAreas={{
 				base: `"templates"
+				"visualizer"
 					"buttons"
-				   "visualizer"
 				   "nav"`,
 				md: `"templates visualizer"
 				"buttons visualizer"
 				 "nav nav"`,
 			}}
 			templateColumns={{ base: '1fr', md: '1fr 2fr' }}
-			templateRows={{ base: 'auto auto 1fr auto', md: '1fr auto auto' }}
+			templateRows={{ base: 'auto 1fr auto auto', md: '1fr auto auto' }}
 		>
 			{
 				<GridItem
-					p={[1, 2, 4, 8]}
+					m={[1, 2, 4, 6]}
 					as={Flex}
 					gridArea='templates'
 					direction='column'
 					gap='20px'
 					overflow='auto'
 					sx={{ scrollbarGutter: 'stable' }}
+					alignItems='stretch'
 				>
+
 					<TemplateSelector />
 				</GridItem>
 			}
 
-			<GridItem m={[1, 2, 4, 8]} gridArea='visualizer' pos='relative' overflow='hidden'>
-				<CustomColorSelector />
+			<GridItem m={[1, 2, 4, 6]} gridArea='visualizer' pos='relative' overflow='hidden'>
 				<Visualizer />
+				<CustomColorSelector />
 			</GridItem>
+			<GridItem as={Flex} direction='column' gridArea='buttons' overflow='hidden' alignItems='stretch'>
+				<Collapse in={buttonsVisible}>
+					<SimpleGrid align='center' justify='center' columns={2} gap={[2, 2, 3, 4]} mx={[1, 2, 4, 6]}>
+						<Flex direction='column' align='stretch' gap={2}>
+							<SaveButton />
+							
+							<ImportButton />
+							<ResetButton />
+						</Flex>
+						<Flex direction='column' align='stretch' gap={2}>
+							<PreviewButton />
+							<ExportButton />
+				
+							<ToggleModeButton />
+						</Flex>
+					</SimpleGrid>
+				</Collapse>
 
-			<GridItem gridArea='buttons' overflow='auto'>
-				<Flex align='center' justify='center' gap={[2, 2, 3, 4, 6]} direction='row' wrap='wrap' p={[1, 2, 2, 3, 6]}>
-					<ExportButton />
-					<ResetButton />
-					<Tooltip label='Cambiar tema' openDelay={400} hasArrow>
-						<Button size='sm' rightIcon={colorMode === 'light' ? <FaMoon /> : <FaSun />} onClick={toggleColorMode}>
-							{colorMode === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-						</Button>
-					</Tooltip>
-				</Flex>
+				<Button
+					onClick={() => setButtonsVisible(!buttonsVisible)}
+					leftIcon={buttonsVisible ? <FaChevronDown /> : <FaBars />}
+					aria-label={buttonsVisible ? 'Hide buttons' : 'Show buttons'}
+					fontSize='sm'
+					m={[1, 2, 4, 6]}
+				>
+					{buttonsVisible ? 'Ocultar opciones' : 'Opciones'}
+				</Button>
 			</GridItem>
 
 			<GridItem gridArea='nav' overflow='auto'>
