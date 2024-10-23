@@ -19,6 +19,7 @@ export default function ExportButton() {
 			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '')
 			.replace(/[<>:"/\\|?*.,;!¡¿()[\]{}]/g, '')
+			.replace(/[^\x20-\x7E]/g, '')
 			.replace(/\s+/g, ' ')
 			.trim()
 			.replace(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])$/i, '_$1')
