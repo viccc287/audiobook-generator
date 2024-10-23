@@ -129,7 +129,7 @@ export default function PageNavigation() {
 			images: {},
 			text: {
 				title: 'Editar título',
-				subtitle: 'Editar texto',
+				subtitle: '',
 			},
 			audios: {},
 			loading: {},
