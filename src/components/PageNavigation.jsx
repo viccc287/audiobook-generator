@@ -519,7 +519,7 @@ function APIKeysModal({ isKeyDialogOpen, closeKeyDialog }) {
 					</FormControl>
 					<FormControl as={VStack} align='start'>
 						<FormLabel>
-							<Link href='https://elevenlabs.io/api' isExternal>
+							<Link href='https://huggingface.co/docs/api-inference/index' isExternal>
 								API key de imagen <ExternalLinkIcon mx='2px' />
 							</Link>
 						</FormLabel>
