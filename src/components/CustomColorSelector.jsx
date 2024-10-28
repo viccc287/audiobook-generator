@@ -47,6 +47,7 @@ export default function CustomColorSelector() {
 				boxShadow='0 5px 20px rgba(0,0,0,0.25)'
 				/>
 			</Tooltip>
+			
 		</Flex>
 	);
 }

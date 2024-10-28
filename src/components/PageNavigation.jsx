@@ -49,6 +49,7 @@ import {
 	useToast,
 } from '@chakra-ui/react';
 import { FaKey } from 'react-icons/fa6';
+import EditablePageName from './EditablePageName';
 
 export default function PageNavigation() {
 	const [displayedPageIndex, setDisplayedPageIndex] = useAtom(displayedPageIndexAtom);
@@ -66,8 +67,6 @@ export default function PageNavigation() {
 	const [indexToDelete, setIndexToDelete] = useState(null);
 	const [isOverflown, setIsOverflown] = useState(false);
 	const [editingPageIndex, setEditingPageIndex] = useState(null);
-	const [isEditing, setIsEditing] = useState(false);
-	const [newPageName, setNewPageName] = useState('');
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -93,36 +92,18 @@ export default function PageNavigation() {
 		selectedPage.scrollIntoView({ inline: 'center', behavior: 'smooth' });
 	}, [displayedPageIndex]);
 
-	const handleRenamePage = index => {
+	// -----------------------------------------------------
+
+	const handleStartEdit = index => {
 		setEditingPageIndex(index);
-		setNewPageName(pages[index].name);
-		setIsEditing(true);
 	};
 
-	const handlePageNameChange = event => {
-		setNewPageName(event.target.value);
-	};
-
-	const handleSavePageName = () => {
+	const handleSavePageName = (index, newName) => {
 		const newPages = [...pages];
-		newPages[editingPageIndex].name = newPageName;
+		newPages[index].name = newName;
 		setPages(newPages);
 		setEditingPageIndex(null);
-		setIsEditing(false);
 	};
-
-	const handleKeyPress = event => {
-		if (event.key === 'Enter') {
-			event.preventDefault();
-			handleSavePageName();
-		} else if (event.key === 'Escape') {
-			event.preventDefault();
-			setEditingPageIndex(null);
-			setIsEditing(false);
-		}
-	};
-
-	// -----------------------------------------------------
 
 	const confirmDeletePage = index => {
 		setIndexToDelete(index);
@@ -148,7 +129,7 @@ export default function PageNavigation() {
 			images: {},
 			text: {
 				title: 'Editar título',
-				subtitle: 'Editar texto',
+				subtitle: '',
 			},
 			audios: {},
 			loading: {},
@@ -189,6 +170,7 @@ export default function PageNavigation() {
 
 	const PageItem = ({ page, index }) => {
 		const [draggingOver, setDraggingOver] = useState(false);
+		const isEditing = editingPageIndex === index;
 
 		return (
 			<Flex
@@ -223,7 +205,6 @@ export default function PageNavigation() {
 					onClick={() => {
 						setDisplayedPageIndex(index);
 					}}
-					onDoubleClick={() => handleRenamePage(index)}
 					fontWeight={displayedPageIndex === index ? 'bold' : 'normal'}
 					bgColor='transparent'
 				>
@@ -236,22 +217,12 @@ export default function PageNavigation() {
 					>
 						{index === 0 ? 'P' : index}
 					</Text>
-					{editingPageIndex === index ? (
-						<Input
-							w={24}
-							px={2}
-							fontSize='sm'
-							fontWeight='normal'
-							value={newPageName}
-							onChange={handlePageNameChange}
-							onBlur={handleSavePageName}
-							onKeyDown={handleKeyPress}
-						/>
-					) : (
-						<Text px={[0, 0, 0, 2]} fontSize={[10, 13, 14]} overflow='hidden' textOverflow='ellipsis'>
-							{page.name}
-						</Text>
-					)}
+					<EditablePageName
+						initialName={page.name}
+						onSave={newName => handleSavePageName(index, newName)}
+						isEditing={isEditing}
+						onStartEdit={() => handleStartEdit(index)}
+					/>
 				</Button>
 				<Menu isLazy>
 					<Tooltip
@@ -293,11 +264,7 @@ export default function PageNavigation() {
 						>
 							Eliminar página
 						</MenuItem>
-						<MenuItem
-							_hover={{ bgColor: 'blackAlpha.200' }}
-							icon={<EditIcon />}
-							onClick={() => handleRenamePage(index)}
-						>
+						<MenuItem _hover={{ bgColor: 'blackAlpha.200' }} icon={<EditIcon />} onClick={() => handleStartEdit(index)}>
 							Renombrar página
 						</MenuItem>
 					</MenuList>
@@ -348,17 +315,17 @@ export default function PageNavigation() {
 							icon={<AddIcon boxSize={3} />}
 							onClick={() => handleInsertPageAfter(displayedPageIndex)}
 							bgColor='transparent'
-							onFocus={e=>e.preventDefault()}
+							onFocus={e => e.preventDefault()}
 						/>
 					</Tooltip>
 					<Menu isLazy>
-						<Tooltip label='Vista general de páginas' openDelay={400} hasArrow >
+						<Tooltip label='Vista general de páginas' openDelay={400} hasArrow>
 							<MenuButton
 								rounded='0'
 								as={IconButton}
 								icon={<HamburgerIcon boxSize={3} />}
 								bgColor='transparent'
-								onFocus={e=>e.preventDefault()}
+								onFocus={e => e.preventDefault()}
 							></MenuButton>
 						</Tooltip>
 						<Box p='0'>
@@ -552,7 +519,7 @@ function APIKeysModal({ isKeyDialogOpen, closeKeyDialog }) {
 					</FormControl>
 					<FormControl as={VStack} align='start'>
 						<FormLabel>
-							<Link href='https://elevenlabs.io/api' isExternal>
+							<Link href='https://huggingface.co/docs/api-inference/index' isExternal>
 								API key de imagen <ExternalLinkIcon mx='2px' />
 							</Link>
 						</FormLabel>

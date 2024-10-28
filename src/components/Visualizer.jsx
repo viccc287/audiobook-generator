@@ -44,8 +44,8 @@ export default function Visualizer() {
 		cover: (
 			<>
 				<EditableText textProps={titleProps} elementKey='title' color={invertedColor} />
-				<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
 				<CustomImage elementKey='first' color={invertedColor} />
+				<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
 			</>
 		),
 		textOnly: (
@@ -84,7 +84,7 @@ export default function Visualizer() {
 		text2Images: (
 			<>
 				<EditableText textProps={subtitleProps} elementKey='subtitle' color={invertedColor} />
-				<Flex boxSize='full' gap='inherit'>
+				<Flex boxSize='full' gap='inherit' align='center'>
 					<CustomImage elementKey='first' color={invertedColor} />
 					<CustomImage elementKey='second' color={invertedColor} />
 				</Flex>
@@ -97,12 +97,12 @@ export default function Visualizer() {
 			</>
 		),
 		imageOnly: (
-			<Flex boxSize='full' gap='inherit'>
+			<Flex boxSize='full' gap='inherit' align='center'>
 				<CustomImage elementKey='first' color={invertedColor} />
 			</Flex>
 		),
 		twoImages: (
-			<Flex boxSize='full' gap='inherit'>
+			<Flex boxSize='full' gap='inherit' align='center'>
 				<CustomImage elementKey='first' color={invertedColor} />
 				<CustomImage elementKey='second' color={invertedColor} />
 			</Flex>
