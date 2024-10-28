@@ -34,6 +34,7 @@ function EditableText({ textProps, elementKey, color }) {
 		e.preventDefault();
 		e.stopPropagation();
 		textContainerRef.current.blur();
+		setText({ ...text, [elementKey]: textContainerRef.current.innerText.trim() });
 		setShowCloseEditMode(false);
 		setShowPanel(true);
 	};
