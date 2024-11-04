@@ -366,7 +366,7 @@ function TemplateSelector() {
 					</GridItem>
 			</TemplateItem>
 
-			<TemplateItem oc={() => setTemplate('leftImageRightText')} name='Texto izquierda e imagen derecha'>
+			<TemplateItem oc={() => setTemplate('leftImageRightText')} name='Texto derecha e imagen izquierda'>
 				<GridItem
 					as={Flex}
 					border='1px solid'
