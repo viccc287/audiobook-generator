@@ -108,7 +108,7 @@ function CustomAudioPlayer({ audio, elementKey }) {
 					<IconButton bgColor='transparent' icon={<FaPlay />} onClick={togglePlayPause} color='green.600' />
 				</Tooltip>
 			)}
-			<Tooltip label='Eliminar imagen' hasArrow openDelay={400}>
+			<Tooltip label='Eliminar audio' hasArrow openDelay={400}>
 				<IconButton
 					pointerEvents='auto'
 					icon={<FaXmark color='red' />}
