@@ -85,11 +85,18 @@ function CustomImage({ elementKey, color }) {
 		setTextPrompt(e.target.value);
 	};
 
-	const abortGeneration = e => {
+	const abortGenerationButton = e => {
 		e.preventDefault();
 		e.stopPropagation();
+		if (abortController.current)
 		abortController.current.abort();
-	};
+	}
+
+	const abortGenerationCloseModal = () => {
+		if (abortController.current)
+		abortController.current.abort();
+		closePopover();
+	}
 
 	const handleGenerateImage = async e => {
 		e.preventDefault();
@@ -243,7 +250,7 @@ function CustomImage({ elementKey, color }) {
 							<IconButton bg='transparent' icon={<FaWandMagicSparkles />} onClick={openPopover} onFocus={e => e.preventDefault()} />
 						</Tooltip>
 
-						<Modal isOpen={isPopoverOpen} onClose={closePopover} isCentered>
+						<Modal isOpen={isPopoverOpen} onClose={abortGenerationCloseModal} isCentered>
 							<ModalOverlay />
 							<ModalContent fontFamily='inter' fontSize='sm'>
 								<ModalHeader fontWeight='bold'>Generar imagen</ModalHeader>
@@ -332,7 +339,7 @@ function CustomImage({ elementKey, color }) {
 									>
 										Generar imagen
 									</Button>
-									<Button isDisabled={!imageLoading} size='sm' colorScheme='red' onClick={abortGeneration}>
+									<Button isDisabled={!imageLoading} size='sm' colorScheme='red' onClick={abortGenerationButton}>
 										Cancelar generación
 									</Button>
 								</ModalFooter>

@@ -42,6 +42,33 @@ export default function ExportButton() {
 			return;
 		}
 
+		let allAudiosReady = true;
+
+		for (let i = 0; i < pages.length; i++) {
+			const page = pages[i];
+
+			for (const isLoading of Object.values(page.loading)) {
+				console.log(isLoading);
+				
+				if (isLoading) {
+					if (!toast.isActive('audioError')) {
+						toast({
+							id: 'audioError',
+							title: 'Audio en proceso',
+							description: `El audio de la página ${i} aún se está generando`,
+							status: 'warning',
+							duration: 4000,
+							isClosable: true,
+						});
+					}
+					allAudiosReady = false;
+					return;
+				}
+			}
+		}
+
+		if (!allAudiosReady) return;
+
 		const PARENT_FOLDER_NAME = 'books';
 		const bookTitle = generateExportFileName(pages[0].text.title);
 
